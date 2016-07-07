@@ -3,22 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KRing.Interfaces;
 
 namespace KRing
 {
-    public static class UserInterface
+    public class ConsoleLineInterface : UserInterface
     {
-        public static void StartupMessage()
+        public ConsoleLineInterface()
+        {
+
+        }
+
+        public void StartupMessage()
         {
             Console.WriteLine("Welcome To KRing");
         }
 
-        public static void WelcomeMessage(User User)
+        public void WelcomeMessage(User User)
         {
             if(User.IsLoggedIn) Console.WriteLine("Welcome {0}", User.UserName);
         }
 
-        public static string RequestPassword()
+        public string RequestPassword()
         {
             Console.WriteLine("Please enter your password:");
             string password = null;
@@ -33,7 +39,7 @@ namespace KRing
             return password;
         }
 
-        public static string RequestUserName()
+        public string RequestUserName()
         {
             Console.WriteLine("Please Enter Username:");
 
@@ -42,7 +48,7 @@ namespace KRing
             return EnteredUsername;
         }
 
-        public static void BadLogin()
+        public void BadLogin()
         {
             Console.WriteLine("Username and/or password was incorrect");
         }

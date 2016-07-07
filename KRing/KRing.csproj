@@ -44,9 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Authenticator.cs" />
+    <Compile Include="Interfaces\UserInterface.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="User.cs" />
-    <Compile Include="UserInterface.cs" />
+    <Compile Include="ConsoleLineInterface.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

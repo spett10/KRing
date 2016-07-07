@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KRing.Interfaces;
 
 namespace KRing
 {
@@ -11,21 +12,23 @@ namespace KRing
         /* swe should get both username and passsword before checking both, and just reporting error, not what is wrong */
         static void Main(string[] args)
         {
-            UserInterface.StartupMessage();
+            UserInterface UI = new ConsoleLineInterface();
 
-            string username = UserInterface.RequestUserName();
+            UI.StartupMessage();
 
-            string password = UserInterface.RequestPassword();
+            string username = UI.RequestUserName();
+
+            string password = UI.RequestPassword();
 
             Session currentSession = Authenticator.LogIn(username, password);
 
             if (currentSession.User.IsLoggedIn)
             {
-                UserInterface.WelcomeMessage(currentSession.User);
+                UI.WelcomeMessage(currentSession.User);
             }
             else
             {
-                UserInterface.BadLogin();
+                UI.BadLogin();
             }
 
 
