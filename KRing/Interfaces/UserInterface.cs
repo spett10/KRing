@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security;
 using KRing;
+using KRing.DTO;
 
 namespace KRing.Interfaces
 {
@@ -16,9 +17,11 @@ namespace KRing.Interfaces
 
         void GoodbyeMessage(User User);
 
-        SecureString RequestPassword();
+        SecureString RequestPassword(string msg);
 
-        string RequestUserName();
+        DBEntryDTO RequestNewEntryInformation(User user);
+
+        string RequestUserInput(string msg);
 
         void BadLogin();
 

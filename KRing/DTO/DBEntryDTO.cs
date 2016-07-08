@@ -9,20 +9,20 @@ namespace KRing.DTO
 {
     public class DBEntryDTO
     {
-        public string Username { get; private set; }
+        public User User { get; private set; }
         public string Domain { get; private set; }
         public SecureString Password { get; private set; }
 
-        public DBEntryDTO(string username, string domain, SecureString password)
+        public DBEntryDTO(User user, string domain, SecureString password)
         {
-            Username = username;
+            User = user;
             Domain = domain;
             Password = password;
         }
 
         ~DBEntryDTO()
         {
-            Password.Dispose();
+            Password.Dispose(); //Remove secure string with password from memory. 
         }
     }
 }

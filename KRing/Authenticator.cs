@@ -78,9 +78,21 @@ namespace KRing
         {
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
             byte[] buffer = new byte[size];
-            rng.GetBytes(buffer);
+            try
+            {
+                rng.GetBytes(buffer);
 
-            return buffer;
+                return buffer;
+            }
+            finally
+            {
+                rng.Dispose();
+            }
+        }
+
+        public static byte[] GenerateSalt()
+        {
+            return GenerateSalt(SaltByteSize);
         }
 
         private static bool CompareByteArrays(byte[] array1, byte[] array2)

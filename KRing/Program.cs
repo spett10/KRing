@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security;
 using KRing.Interfaces;
+using KRing.DTO;
+using KRing.DB;
 
 namespace KRing
 {
@@ -25,9 +27,9 @@ namespace KRing
             /* Login Loop */
             while (!LoggedIn)
             {
-                string username = UI.RequestUserName();
+                string username = UI.RequestUserInput("Please Enter Username:");
 
-                SecureString password = UI.RequestPassword();
+                SecureString password = UI.RequestPassword("Please Enter Your Password");
                 currentSession = Authenticator.LogIn(username, password);
 
                 if (currentSession.User.IsLoggedIn)
@@ -53,7 +55,9 @@ namespace KRing
             }
 
             /* User Logged In */
+            DBController db = DBController.Instance;
             bool IsRunning = true;
+            
             while (IsRunning)
             {
                 ActionType nextAction = UI.MainMenu();
@@ -67,7 +71,9 @@ namespace KRing
                         break;
 
                     case ActionType.AddPassword:
-
+                        DBEntryDTO newEntry = UI.RequestNewEntryInformation(currentSession.User);
+                        db.AddEntry(newEntry);
+                        db.Write();
                         break;
                 }
 

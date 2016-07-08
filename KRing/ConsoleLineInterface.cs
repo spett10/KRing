@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security;
 using KRing.Interfaces;
+using KRing.DTO;
 
 namespace KRing
 {
@@ -33,9 +34,9 @@ namespace KRing
 
         }
 
-        public SecureString RequestPassword()
+        public SecureString RequestPassword(string msg)
         {
-            Console.WriteLine("Please enter your password:");
+            Console.WriteLine(msg);
             SecureString password = new SecureString();
 
             ConsoleKeyInfo nextKey = Console.ReadKey(true);
@@ -65,9 +66,17 @@ namespace KRing
             return password;
         }
 
-        public string RequestUserName()
+        public DBEntryDTO RequestNewEntryInformation(User user)
         {
-            Console.WriteLine("Please Enter Username:");
+            string domain = RequestUserInput("Please enter domain associated with password you want to store");
+            SecureString password = RequestPassword("Please Enter the password to be stored");
+
+            return new DBEntryDTO(user, domain, password);
+        }
+
+        public string RequestUserInput(string msg)
+        {
+            Console.WriteLine(msg);
 
             string EnteredUsername = Console.ReadLine();
 

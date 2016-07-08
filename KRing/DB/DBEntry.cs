@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using KRing.DTO;
+using System.ComponentModel;
 
 namespace KRing.DB
 {
@@ -25,9 +27,10 @@ namespace KRing.DB
         public List<string> ToStrings()
         {
             List<string> properties = new List<string>();
-            foreach(var p in this.GetType().GetProperties())
+            foreach(PropertyDescriptor descriptor in TypeDescriptor.GetProperties(this))
             {
-                properties.Add(p.ToString());
+                object value = descriptor.GetValue(this);
+                properties.Add(value.ToString());
             }
 
             return properties;
