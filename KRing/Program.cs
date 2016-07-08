@@ -19,13 +19,16 @@ namespace KRing
             int attempts = 0;
             bool LoggedIn = false;
 
+            Session currentSession = new Session(new User("Guest", false));
+
+            /* Login Loop */
             while (!LoggedIn && attempts <= MaxLoginAttempts)
             {
                 string username = UI.RequestUserName();
 
                 string password = UI.RequestPassword();
 
-                Session currentSession = Authenticator.LogIn(username, password);
+                currentSession = Authenticator.LogIn(username, password);
 
                 if (currentSession.User.IsLoggedIn)
                 {
@@ -45,6 +48,30 @@ namespace KRing
                     
                 }
             }
+
+            /* User Logged In */
+            bool IsRunning = true;
+            while (IsRunning)
+            {
+                ActionType nextAction = UI.MainMenu();
+
+                switch (nextAction)
+                {
+                    case ActionType.Logout:
+                        IsRunning = false;
+                        currentSession.User.Logout();
+                        UI.GoodbyeMessage(currentSession.User);
+                        break;
+
+                    case ActionType.AddPassword:
+
+                        break;
+                }
+
+            }
+
+            /* Program Exit */
+            return;
             
         }
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using KRing;
 
 namespace KRing.Interfaces
 {
@@ -13,6 +13,8 @@ namespace KRing.Interfaces
 
         void WelcomeMessage(User User);
 
+        void GoodbyeMessage(User User);
+
         string RequestPassword();
 
         string RequestUserName();
@@ -20,6 +22,8 @@ namespace KRing.Interfaces
         void BadLogin();
 
         void LoginTimeoutMessage();
+
+        ActionType MainMenu();
 
     }
 }

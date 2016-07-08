@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionType.cs" />
     <Compile Include="Authenticator.cs" />
     <Compile Include="Interfaces\UserInterface.cs" />
     <Compile Include="Session.cs" />

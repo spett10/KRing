@@ -17,6 +17,11 @@ namespace KRing
             UserName = Name;
             IsLoggedIn = LoggedIn;
         }
+
+        public void Logout()
+        {
+            this.IsLoggedIn = false;
+        }
         
     }
 }
