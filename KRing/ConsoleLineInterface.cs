@@ -30,6 +30,7 @@ namespace KRing
         {
             if (User.UserName != "Guest") Console.WriteLine("Goodbye {0}", User.UserName);
             else Console.WriteLine("Goodbye");
+
         }
 
         public SecureString RequestPassword()

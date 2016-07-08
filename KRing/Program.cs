@@ -28,7 +28,6 @@ namespace KRing
                 string username = UI.RequestUserName();
 
                 SecureString password = UI.RequestPassword();
-                Console.WriteLine(password.ToString());
                 currentSession = Authenticator.LogIn(username, password);
 
                 if (currentSession.User.IsLoggedIn)

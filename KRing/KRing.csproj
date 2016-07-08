@@ -47,8 +47,10 @@
     <Compile Include="Authenticator.cs" />
     <Compile Include="DB\DBController.cs" />
     <Compile Include="DTO\DBEntryDTO.cs" />
+    <Compile Include="FileUtil.cs" />
     <Compile Include="Interfaces\UserInterface.cs" />
     <Compile Include="DB\DBEntry.cs" />
+    <Compile Include="SecureStringExtension.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="User.cs" />
     <Compile Include="ConsoleLineInterface.cs" />
