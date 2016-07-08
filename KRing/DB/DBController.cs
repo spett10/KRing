@@ -61,7 +61,6 @@ namespace KRing.DB
         }
         
 
-        /* Todo: Add a DBEntry to underlying file */
         public void AddEntry(DBEntryDTO newDTO)
         {
 
@@ -74,6 +73,7 @@ namespace KRing.DB
             EntryCount++;
         }
         
+        /* we could call write after addentry? */
         public void Write()
         {
             using (StreamWriter sw = new StreamWriter(DBPath))
