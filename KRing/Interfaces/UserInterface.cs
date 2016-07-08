@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security;
 using KRing;
 
 namespace KRing.Interfaces
@@ -15,7 +16,7 @@ namespace KRing.Interfaces
 
         void GoodbyeMessage(User User);
 
-        string RequestPassword();
+        SecureString RequestPassword();
 
         string RequestUserName();
 

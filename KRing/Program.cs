@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security;
 using KRing.Interfaces;
 
 namespace KRing
@@ -22,12 +23,12 @@ namespace KRing
             Session currentSession = new Session(new User("Guest", false));
 
             /* Login Loop */
-            while (!LoggedIn && attempts <= MaxLoginAttempts)
+            while (!LoggedIn)
             {
                 string username = UI.RequestUserName();
 
-                string password = UI.RequestPassword();
-
+                SecureString password = UI.RequestPassword();
+                Console.WriteLine(password.ToString());
                 currentSession = Authenticator.LogIn(username, password);
 
                 if (currentSession.User.IsLoggedIn)
@@ -43,10 +44,13 @@ namespace KRing
                     if (attempts >= MaxLoginAttempts)
                     {
                         UI.LoginTimeoutMessage();
+                        password.Dispose();
                         return;
                     }
                     
                 }
+
+                password.Clear();
             }
 
             /* User Logged In */

@@ -22,6 +22,11 @@ namespace KRing
         {
             this.IsLoggedIn = false;
         }
-        
+
+        public override string ToString()
+        {
+            return UserName;
+        }
+
     }
 }

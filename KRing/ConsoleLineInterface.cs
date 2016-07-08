@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security;
 using KRing.Interfaces;
 
 namespace KRing
@@ -31,16 +32,16 @@ namespace KRing
             else Console.WriteLine("Goodbye");
         }
 
-        public string RequestPassword()
+        public SecureString RequestPassword()
         {
             Console.WriteLine("Please enter your password:");
-            string password = null;
+            SecureString password = new SecureString();
             while(true)
             {
                 var key = Console.ReadKey(true);
                 if (key.Key == ConsoleKey.Enter)
                     break;
-                password += key.KeyChar;
+                password.AppendChar(key.KeyChar);
             }
 
             return password;

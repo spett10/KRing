@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Security;
 using System.Security.Cryptography;
+using System.Runtime.InteropServices;
 
 namespace KRing
 {
@@ -22,7 +24,7 @@ namespace KRing
             UserCount = 1;
         }
 
-        public static Session LogIn(string username, string password)
+        public static Session LogIn(string username, SecureString password)
         {
             string StoredUser;
             bool IsPasswordCorrect = false;
@@ -33,7 +35,9 @@ namespace KRing
                 byte[] storedPasswordSalted = Convert.FromBase64String(profile.ReadLine());
                 byte[] storedSalt = Convert.FromBase64String(profile.ReadLine());
 
-                byte[] givenPasswordSalted = GenerateSaltedHash(password, storedSalt);
+
+                
+                byte[] givenPasswordSalted = GenerateSaltedHash(password.ConvertToUnsecureString(), storedSalt);
 
                 IsPasswordCorrect = CompareByteArrays(storedPasswordSalted, givenPasswordSalted);
             }
@@ -45,6 +49,23 @@ namespace KRing
             return new Session(new User(username, AllowLogin));
         }
 
+        /* TODO: move to other class, secureStirngExtension fx? */
+        private static string ConvertToUnsecureString(this SecureString securePassword)
+        {
+            if (securePassword == null)
+                throw new ArgumentNullException("securePassword");
+
+            IntPtr unmanagedString = IntPtr.Zero;
+            try
+            {
+                unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(securePassword);
+                return Marshal.PtrToStringUni(unmanagedString);
+            }
+            finally /* If we dont free the buffer after use, the password can be in unmanaged memory */
+            {
+                Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
+            }
+        }
 
         /* TODO: move to fileutiliyclass */
         private static void LineChanger(string newText, string filePath, int lineToEdit)
