@@ -23,7 +23,7 @@ namespace KRing
 
         public void WelcomeMessage(User User)
         {
-            if(User.IsLoggedIn) Console.WriteLine("Welcome {0}", User.UserName);
+            if(User.IsLoggedIn) Console.WriteLine("\nWelcome {0}\n", User.UserName);
         }
 
         public void GoodbyeMessage(User User)
@@ -37,12 +37,29 @@ namespace KRing
         {
             Console.WriteLine("Please enter your password:");
             SecureString password = new SecureString();
-            while(true)
+
+            ConsoleKeyInfo nextKey = Console.ReadKey(true);
+
+            while(nextKey.Key != ConsoleKey.Enter)
             {
-                var key = Console.ReadKey(true);
-                if (key.Key == ConsoleKey.Enter)
-                    break;
-                password.AppendChar(key.KeyChar);
+                if(nextKey.Key == ConsoleKey.Backspace)
+                {
+                    if(password.Length > 0)
+                    {
+                        password.RemoveAt(password.Length - 1);
+
+                        Console.Write(nextKey.KeyChar);
+                        Console.Write(" ");
+                        Console.Write(nextKey.KeyChar);
+                    }
+                }
+                else
+                {
+                    password.AppendChar(nextKey.KeyChar);
+                    Console.Write("*");
+                }
+
+                nextKey = Console.ReadKey(true);
             }
 
             return password;
