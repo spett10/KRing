@@ -12,6 +12,8 @@ namespace KRing
     {
         private static readonly string ProfilePath = "..\\..\\Data\\profile.txt";
         private static readonly int SaltByteSize = 16;
+        private static readonly int Iterations = 1000;
+
 
         public static int UserCount { get; private set; }
 
@@ -55,8 +57,7 @@ namespace KRing
 
         static byte[] GenerateSaltedHash(string plaintext, byte[] salt)
         {
-            int myIterations = 1000;
-            Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(plaintext, salt, myIterations);
+            Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(plaintext, salt, Iterations);
             return algorithm.GetBytes(plaintext.Length + salt.Length);
         }
 

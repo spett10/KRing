@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace KRing.Interfaces
 {
-    public interface UserInterface
+    public interface IUserInterface
     {
         void StartupMessage();
 
@@ -18,6 +18,8 @@ namespace KRing.Interfaces
         string RequestUserName();
 
         void BadLogin();
+
+        void LoginTimeoutMessage();
 
     }
 }

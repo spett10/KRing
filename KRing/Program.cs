@@ -9,29 +9,43 @@ namespace KRing
 {
     class Program
     {
-        /* swe should get both username and passsword before checking both, and just reporting error, not what is wrong */
         static void Main(string[] args)
         {
-            UserInterface UI = new ConsoleLineInterface();
-
+            IUserInterface UI = new ConsoleLineInterface();
+            
             UI.StartupMessage();
 
-            string username = UI.RequestUserName();
+            int MaxLoginAttempts = 3;
+            int attempts = 0;
+            bool LoggedIn = false;
 
-            string password = UI.RequestPassword();
-
-            Session currentSession = Authenticator.LogIn(username, password);
-
-            if (currentSession.User.IsLoggedIn)
+            while (!LoggedIn && attempts <= MaxLoginAttempts)
             {
-                UI.WelcomeMessage(currentSession.User);
-            }
-            else
-            {
-                UI.BadLogin();
-            }
+                string username = UI.RequestUserName();
 
+                string password = UI.RequestPassword();
 
+                Session currentSession = Authenticator.LogIn(username, password);
+
+                if (currentSession.User.IsLoggedIn)
+                {
+                    UI.WelcomeMessage(currentSession.User);
+                    LoggedIn = true;
+                }
+                else
+                {
+                    UI.BadLogin();
+                    attempts++;
+
+                    if (attempts >= MaxLoginAttempts)
+                    {
+                        UI.LoginTimeoutMessage();
+                        return;
+                    }
+                    
+                }
+            }
+            
         }
     }
 }

@@ -7,7 +7,7 @@ using KRing.Interfaces;
 
 namespace KRing
 {
-    public class ConsoleLineInterface : UserInterface
+    public class ConsoleLineInterface : IUserInterface
     {
         public ConsoleLineInterface()
         {
@@ -51,6 +51,11 @@ namespace KRing
         public void BadLogin()
         {
             Console.WriteLine("Username and/or password was incorrect");
+        }
+
+        public void LoginTimeoutMessage()
+        {
+            Console.WriteLine("\nToo many wrong attempts. Exiting.");
         }
     }
 }
