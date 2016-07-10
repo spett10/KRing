@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using KRing.DTO;
-
+using System.Security.Cryptography;
 
 namespace KRing.DB
 {
@@ -20,6 +20,8 @@ namespace KRing.DB
         private static DBController instance;
 
         private readonly string DBPath = "..\\..\\Data\\db.txt";
+        private readonly string INSECURE_HARDCODED_KEY = "Yellow Submarine";
+
 
         public List<DBEntry> Entries { get; private set; }
         public int EntryCount { get; private set; }
@@ -42,20 +44,29 @@ namespace KRing.DB
             Entries = new List<DBEntry>();
             using (StreamReader sr = new StreamReader(DBPath))
             {
-                EntryCount = Int32.Parse(sr.ReadLine());
+                int count = 0;
+                bool IsDBPopulated = Int32.TryParse(sr.ReadLine(), out count);
 
-                for(int i = 0; i < EntryCount; i++)
+                if(IsDBPopulated)
                 {
-                    string username = sr.ReadLine();
-                    string domain = sr.ReadLine();
-                    string password = sr.ReadLine();
-                    string salt = sr.ReadLine();
+                    EntryCount = count;
 
-                    DBEntry newEntry = new DBEntry(new User(username, false), domain, password, salt);
+                    for (int i = 0; i < EntryCount; i++)
+                    {
+                        string username = sr.ReadLine();
+                        string domain = sr.ReadLine();
+                        string password = sr.ReadLine();
+                        string salt = sr.ReadLine();
 
-                    Entries.Add(newEntry);
+                        DBEntry newEntry = new DBEntry(domain, password);
+
+                        Entries.Add(newEntry);
+                    }
                 }
-
+                else
+                {
+                    EntryCount = 0;
+                }
             }
 
         }
@@ -63,33 +74,56 @@ namespace KRing.DB
 
         public void AddEntry(DBEntryDTO newDTO)
         {
-
-            byte[] salt = Authenticator.GenerateSalt();
-            string salt64 = Convert.ToBase64String(salt);
-
-            DBEntry newEntry = new DBEntry(newDTO.User, newDTO.Domain, newDTO.Password.ConvertToUnsecureString(), salt64);
-
+            DBEntry newEntry = new DBEntry(newDTO.Domain, newDTO.Password.ConvertToUnsecureString());
             Entries.Add(newEntry);
             EntryCount++;
         }
         
         /* we could call write after addentry? */
-        public void Write()
+        public void Write(string password)
         {
-            using (StreamWriter sw = new StreamWriter(DBPath))
+            //FileStream fs = new FileStream(DBPath, FileMode.Create);
+
+            /* Derive key from user passsword */
+            /* but where do we store the key? */
+            //byte[] key_salt = Authenticator.GenerateSalt();
+            //Rfc2898DeriveBytes rfc = new Rfc2898DeriveBytes(password, key_salt, 4096);             
+            //int keysize_in_bytes = 16;
+            //byte[] raw_key = rfc.GetBytes(keysize_in_bytes);
+
+            /* Are we sure these sizes are correct? */
+            byte[] raw_key = Encoding.ASCII.GetBytes(INSECURE_HARDCODED_KEY);
+            byte[] IV = Authenticator.GenerateSalt();
+
+            /* First, write count at top of DB. Then write IV, neither of these should be encrypted? */
+            using (StreamWriter sw = new StreamWriter(DBPath, false))
             {
-                sw.WriteLine(EntryCount.ToString());
+                sw.WriteLine(EntryCount);
+                sw.WriteLine(Encoding.ASCII.GetString(IV));
+            }
 
-                foreach (DBEntry dbe in Entries)
+            using (FileStream fs = new FileStream(DBPath, FileMode.Append))
+            {
+                using (RijndaelManaged RMcrypto = new RijndaelManaged())
                 {
-                    List<string> strings = dbe.ToStrings();
-
-                    foreach(var str in strings)
+                    using (CryptoStream cs = new CryptoStream(fs, RMcrypto.CreateEncryptor(raw_key, IV), CryptoStreamMode.Write))
                     {
-                        sw.WriteLine(str.ToString());
+                        using (StreamWriter encr = new StreamWriter(cs))
+                        {
+                            foreach(var entry in Entries)
+                            {
+                                List<string> formatedEnty = entry.ToStrings();
+                                foreach(var str in formatedEnty)
+                                {
+                                    encr.WriteLine(str);
+                                }
+                            }
+                        }
                     }
                 }
-            }   
+            }
+
+            
         }
     }
 }

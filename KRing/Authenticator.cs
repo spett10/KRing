@@ -44,7 +44,7 @@ namespace KRing
 
             bool AllowLogin = IsPasswordCorrect && IsCorrectUser;
 
-            return new Session(new User(username, AllowLogin));
+            return new Session(new User(username, AllowLogin, password));
         }
 
         static byte[] GenerateSaltedHash(string plaintext, byte[] salt)

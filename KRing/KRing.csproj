@@ -64,6 +64,7 @@
   <ItemGroup>
     <Content Include="Data\db.txt" />
     <Content Include="Data\profile.txt" />
+    <Content Include="Data\todo.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

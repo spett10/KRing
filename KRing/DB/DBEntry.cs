@@ -11,17 +11,13 @@ namespace KRing.DB
     /* Maybe this should be a private class of DBController? */
     public class DBEntry
     {
-        public User User { get; private set; }
         public string Domain { get; private set; }
-        public string Password { get; private set; }
-        public string Salt { get; private set; }
-
-        public DBEntry(User user, string domain, string password, string salt)
+        public string Password { get; private set; } //encrypted string, not plaintext password. 
+        
+        public DBEntry(string domain, string password)
         {
-            User = user;
             Domain = domain;
             Password = password;
-            Salt = salt;
         }
 
         public List<string> ToStrings()

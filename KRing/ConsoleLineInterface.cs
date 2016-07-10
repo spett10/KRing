@@ -71,7 +71,7 @@ namespace KRing
             string domain = RequestUserInput("Please enter domain associated with password you want to store");
             SecureString password = RequestPassword("Please Enter the password to be stored");
 
-            return new DBEntryDTO(user, domain, password);
+            return new DBEntryDTO(domain, password);
         }
 
         public string RequestUserInput(string msg)

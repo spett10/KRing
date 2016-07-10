@@ -22,7 +22,7 @@ namespace KRing
             int attempts = 0;
             bool LoggedIn = false;
 
-            Session currentSession = new Session(new User("Guest", false));
+            Session currentSession = new Session(new User("Guest", false, new SecureString()));
 
             /* Login Loop */
             while (!LoggedIn)
@@ -47,10 +47,8 @@ namespace KRing
                         UI.LoginTimeoutMessage();
                         password.Dispose();
                         return;
-                    }
-                    
+                    }   
                 }
-
                 password.Clear();
             }
 
@@ -73,7 +71,7 @@ namespace KRing
                     case ActionType.AddPassword:
                         DBEntryDTO newEntry = UI.RequestNewEntryInformation(currentSession.User);
                         db.AddEntry(newEntry);
-                        db.Write();
+                        db.Write(currentSession.User.Password.ConvertToUnsecureString());
                         break;
                 }
 

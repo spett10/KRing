@@ -9,13 +9,11 @@ namespace KRing.DTO
 {
     public class DBEntryDTO
     {
-        public User User { get; private set; }
         public string Domain { get; private set; }
         public SecureString Password { get; private set; }
 
-        public DBEntryDTO(User user, string domain, SecureString password)
+        public DBEntryDTO(string domain, SecureString password)
         {
-            User = user;
             Domain = domain;
             Password = password;
         }

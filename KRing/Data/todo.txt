@@ -1,0 +1,3 @@
+﻿-Add keyderivation to encryption/decryption instead of using user password
+-Use IV for each entry added to DB, not one IV for all of them? 
+-dont store user in dB, make a DB for each user?  
