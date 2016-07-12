@@ -13,7 +13,7 @@ namespace KRing
     public static class Authenticator
     {
         private static readonly string ProfilePath = "..\\..\\Data\\profile.txt";
-        private static readonly int SaltByteSize = 16;
+        public static readonly int SaltByteSize = 16;
         private static readonly int Iterations = 1000;
 
 

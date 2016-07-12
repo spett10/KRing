@@ -44,7 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionType.cs" />
+    <Compile Include="CryptoWrapper.cs" />
     <Compile Include="Authenticator.cs" />
+    <Compile Include="Converter.cs" />
     <Compile Include="DB\DBController.cs" />
     <Compile Include="DTO\DBEntryDTO.cs" />
     <Compile Include="FileUtil.cs" />

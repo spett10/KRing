@@ -66,12 +66,12 @@ namespace KRing
                         IsRunning = false;
                         currentSession.User.Logout();
                         UI.GoodbyeMessage(currentSession.User);
+                        db.Write(currentSession.User.Password.ConvertToUnsecureString());
                         break;
 
                     case ActionType.AddPassword:
                         DBEntryDTO newEntry = UI.RequestNewEntryInformation(currentSession.User);
                         db.AddEntry(newEntry);
-                        db.Write(currentSession.User.Password.ConvertToUnsecureString());
                         break;
                 }
 

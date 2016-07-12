@@ -1,3 +1,20 @@
-﻿-Add keyderivation to encryption/decryption instead of using user password
+﻿-Add keyderivation to encryption/decryption instead of using user password/hardcoded password.
 -Use IV for each entry added to DB, not one IV for all of them? 
 -dont store user in dB, make a DB for each user?  
+-remove DTO, since they are equal now.
+-DBcontroller.write should check amount of entries before attempting write? 
+
+-use CryptoWrapper in DBController to encrypt and decrypt:
+	-take data and encrypt it
+	-then convert to base64 so we dont loose data
+	-Then write it to a file
+
+	conversely
+	-read lines ass base64 stirng
+	-then decrypt it. 
+	-then convert to ascii. 
+
+-use mapping when reading and creating entries on startup?
+
+-Use IV for EACH SINGLE PROPERTY ENCRYPTED! If you use the same iv you can see if domain and
+password are equal (we need semantic security)
