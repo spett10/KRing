@@ -22,7 +22,6 @@ namespace KRing.DB
 
         private readonly string DBPath = "..\\..\\Data\\db.txt";
         private readonly string INSECURE_HARDCODED_KEY = "Yellow Submarine";
-        public byte[] HARDCODED_IV { get; set; }
 
         public List<DBEntry> Entries { get; private set; }
         public int EntryCount { get; private set; }
@@ -55,24 +54,34 @@ namespace KRing.DB
                 if (count > 0)
                 {
                     byte[] KEY = Encoding.ASCII.GetBytes(INSECURE_HARDCODED_KEY);
-                    byte[] IV = Convert.FromBase64String(db.ReadLine());
                         
                     for(int i = 0; i < count; i++)
                     {
+                        /* Read properties for each entry */
                         string domainBase64 = db.ReadLine();
                         byte[] domainRaw = Convert.FromBase64String(domainBase64);
-                        byte[] domainPlain = CryptoWrapper.CBC_Decrypt(domainRaw, KEY, IV);
-                        string domain = Encoding.ASCII.GetString(domainPlain);
-                        
+
+                        string domainIV = db.ReadLine();
+
                         string passwordBase64 = db.ReadLine();
                         byte[] passwordRaw = Convert.FromBase64String(passwordBase64);
-                        byte[] passwordPlain = CryptoWrapper.CBC_Decrypt(passwordRaw, KEY, IV);
+
+                        string passwordIV = db.ReadLine();
+
+                        /* decrypt */
+                        byte[] domainPlain = CryptoWrapper.CBC_Decrypt(domainRaw, KEY, Convert.FromBase64String(domainIV));
+                        string domain = Encoding.ASCII.GetString(domainPlain);
+                        Console.WriteLine(domain);
+
+                        byte[] passwordPlain = CryptoWrapper.CBC_Decrypt(passwordRaw, KEY, Convert.FromBase64String(passwordIV));
                         string password = Encoding.ASCII.GetString(passwordPlain);
-                        
+                        Console.WriteLine(password);
+
                         SecureString securePassword = new SecureString();
                         securePassword.PopulateWithString(password);
 
-                        DBEntry newEntry = new DBEntry(domain, securePassword);
+                        /* create entry in DBController */
+                        DBEntry newEntry = new DBEntry(domain, securePassword, domainIV, passwordIV);
                         Entries.Add(newEntry);
                         EntryCount++;
                     }
@@ -88,40 +97,45 @@ namespace KRing.DB
 
         public void AddEntry(DBEntryDTO newDTO)
         {
-            DBEntry newEntry = new DBEntry(newDTO.Domain, newDTO.Password);
+            byte[] passwordSalt = Authenticator.GenerateSalt();
+            byte[] domainSalt = Authenticator.GenerateSalt();
+
+            DBEntry newEntry = new DBEntry(
+                newDTO.Domain, newDTO.Password, 
+                Convert.ToBase64String(domainSalt), 
+                Convert.ToBase64String(passwordSalt));
+
             Entries.Add(newEntry);
             EntryCount++;
         }
-        
-        /* we could call write after addentry? */
+
         public void Write(string password)
         {
-            /* Are we sure these sizes are correct? */
-            byte[] raw_key = Encoding.ASCII.GetBytes(INSECURE_HARDCODED_KEY);
-            byte[] IV = Authenticator.GenerateSalt();
-            HARDCODED_IV = IV;
-            /*TODO: MAKE IV FOR EACH ENTRY SO ITS SEMANTICALLY SECURE!! */
 
-            /* First, write count at top of DB. Then write IV, neither of these should be encrypted? */
+            byte[] raw_key = Encoding.ASCII.GetBytes(INSECURE_HARDCODED_KEY);
+
             using (StreamWriter sw = new StreamWriter(DBPath, false))
             {
                 sw.WriteLine(EntryCount);
-                sw.WriteLine(Convert.ToBase64String(IV));
-                
-                /* Take each entry of Entries and extract properties, encrypt and write as base64 */
+
                 foreach (var entr in Entries)
                 {
-                    List<string> properties = entr.ToStrings();
+                    byte[] domainIV = Convert.FromBase64String(entr.DomainIV);
+                    byte[] domainData = Encoding.ASCII.GetBytes(entr.Domain);
+                    string encryptedDomainB64 = Convert.ToBase64String(
+                        CryptoWrapper.CBC_Encrypt(domainData, raw_key, domainIV));
 
-                    foreach (var str in properties)
-                    {
-                        Console.WriteLine("Trying to write {0}", str);
-                        byte[] data = Encoding.ASCII.GetBytes(str);
-                        byte[] encr = CryptoWrapper.CBC_Encrypt(data, raw_key, IV);
+                    sw.WriteLine(encryptedDomainB64);
+                    sw.WriteLine(entr.DomainIV);
 
-                        string encrBase64 = Convert.ToBase64String(encr);
-                        sw.WriteLine(encrBase64);
-                    }
+                    byte[] passwordIV = Convert.FromBase64String(entr.PasswordIV);
+                    string encryptedPasswordB64 = Convert.ToBase64String(
+                        CryptoWrapper.CBC_Encrypt(
+                            Encoding.ASCII.GetBytes(
+                                entr.Password.ConvertToUnsecureString()), raw_key, passwordIV));
+
+                    sw.WriteLine(encryptedPasswordB64);
+                    sw.WriteLine(entr.PasswordIV);
                 }
             }
         }
