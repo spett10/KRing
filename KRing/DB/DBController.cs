@@ -63,14 +63,18 @@ namespace KRing.DB
                         byte[] domainRaw = Convert.FromBase64String(domainBase64);
                         byte[] domainPlain = CryptoWrapper.CBC_Decrypt(domainRaw, KEY, IV);
                         string domain = Encoding.ASCII.GetString(domainPlain);
-
+                        
                         string passwordBase64 = db.ReadLine();
                         byte[] passwordRaw = Convert.FromBase64String(passwordBase64);
                         byte[] passwordPlain = CryptoWrapper.CBC_Decrypt(passwordRaw, KEY, IV);
                         string password = Encoding.ASCII.GetString(passwordPlain);
+                        
+                        SecureString securePassword = new SecureString();
+                        securePassword.PopulateWithString(password);
 
-                        Console.WriteLine("domain {0}, password {1}", domain, password);
-                        /* TODO: Add to entries */
+                        DBEntry newEntry = new DBEntry(domain, securePassword);
+                        Entries.Add(newEntry);
+                        EntryCount++;
                     }
                 }
                 else

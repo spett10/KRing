@@ -26,5 +26,15 @@ namespace KRing
                 Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
         }
+
+        public static void PopulateWithString(this SecureString securePassword, string password)
+        {
+            if (securePassword == null)
+                throw new ArgumentNullException("securePassword");
+
+            char[] characters = password.ToCharArray();
+            foreach (char c in characters)
+                securePassword.AppendChar(c);
+        }
     }
 }
