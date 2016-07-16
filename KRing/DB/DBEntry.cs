@@ -32,7 +32,10 @@ namespace KRing.DB
             return properties;
         }
 
-
+        ~DBEntry()
+        {
+            Password.Dispose();
+        }
     }
 
 

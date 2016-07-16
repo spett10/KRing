@@ -21,7 +21,7 @@ namespace KRing.DB
         private static DBController instance;
 
         private readonly string DBPath = "..\\..\\Data\\db.txt";
-        private readonly string INSECURE_HARDCODED_KEY = "Yellow Submarine";
+        private readonly string INSECURE_HARDCODED_KEY = "Yellow Submarine"; //Todo: Use userstored RSA key to encrypt a key for the DB stuff.. its shown on MSDN.
 
         public List<DBEntry> Entries { get; private set; }
         public int EntryCount { get; private set; }
@@ -70,12 +70,10 @@ namespace KRing.DB
 
                         /* decrypt */
                         byte[] domainPlain = CryptoWrapper.CBC_Decrypt(domainRaw, KEY, Convert.FromBase64String(domainIV));
-                        string domain = Encoding.ASCII.GetString(domainPlain);
-                        Console.WriteLine(domain);
+                        string domain = Encoding.UTF8.GetString(domainPlain);
 
                         byte[] passwordPlain = CryptoWrapper.CBC_Decrypt(passwordRaw, KEY, Convert.FromBase64String(passwordIV));
-                        string password = Encoding.ASCII.GetString(passwordPlain);
-                        Console.WriteLine(password);
+                        string password = Encoding.UTF8.GetString(passwordPlain);
 
                         SecureString securePassword = new SecureString();
                         securePassword.PopulateWithString(password);
@@ -93,8 +91,6 @@ namespace KRing.DB
             }
         }
         
-        
-
         public void AddEntry(DBEntryDTO newDTO)
         {
             DBEntry newEntry = new DBEntry(newDTO.Domain, newDTO.Password);
@@ -115,9 +111,9 @@ namespace KRing.DB
                 foreach (var entr in Entries)
                 {
                     byte[] domainIV = Authenticator.GenerateSalt();
-                    byte[] domainData = Encoding.ASCII.GetBytes(entr.Domain);
-                    string encryptedDomainB64 = Convert.ToBase64String(
-                        CryptoWrapper.CBC_Encrypt(domainData, raw_key, domainIV));
+                    byte[] domainData = Encoding.UTF8.GetBytes(entr.Domain);
+                    byte[] domainEncrypted = CryptoWrapper.CBC_Encrypt(domainData, raw_key, domainIV);
+                    string encryptedDomainB64 = Convert.ToBase64String(domainEncrypted);
 
                     sw.WriteLine(encryptedDomainB64);
                     sw.WriteLine(Convert.ToBase64String(domainIV));
@@ -125,7 +121,7 @@ namespace KRing.DB
                     byte[] passwordIV = Authenticator.GenerateSalt();
                     string encryptedPasswordB64 = Convert.ToBase64String(
                         CryptoWrapper.CBC_Encrypt(
-                            Encoding.ASCII.GetBytes(
+                            Encoding.UTF8.GetBytes(
                                 entr.Password.ConvertToUnsecureString()), raw_key, passwordIV));
 
                     sw.WriteLine(encryptedPasswordB64);

@@ -22,6 +22,11 @@ namespace KRing
             Console.WriteLine("Welcome To KRing");
         }
 
+        public void MessageToUser(string msg)
+        {
+            Console.WriteLine(msg);
+        }
+
         public void WelcomeMessage(User User)
         {
             if(User.IsLoggedIn) Console.WriteLine("\nWelcome {0}\n", User.UserName);
@@ -78,9 +83,9 @@ namespace KRing
         {
             Console.WriteLine(msg);
 
-            string EnteredUsername = Console.ReadLine();
+            string EnteredUserInput = Console.ReadLine();
 
-            return EnteredUsername;
+            return EnteredUserInput;
         }
 
         public void BadLogin()
@@ -115,7 +120,7 @@ namespace KRing
                 switch (key.Key)
                 {
                     case ConsoleKey.V:
-                        NewCommand = ActionType.ViewPasswords;
+                        NewCommand = ActionType.ViewPassword;
                         AwaitingCommand = false;
                         break;
                     case ConsoleKey.A:

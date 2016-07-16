@@ -15,6 +15,8 @@ namespace KRing.Interfaces
 
         void WelcomeMessage(User User);
 
+        void MessageToUser(string msg);
+
         void GoodbyeMessage(User User);
 
         SecureString RequestPassword(string msg);

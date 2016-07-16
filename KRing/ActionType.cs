@@ -8,7 +8,7 @@ namespace KRing
 {
         public enum ActionType
         {
-            ViewPasswords = 0,
+            ViewPassword = 0,
             AddPassword = 1,
             UpdatePassword = 2,
             DeletePassword = 3,
