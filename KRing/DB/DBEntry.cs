@@ -14,17 +14,12 @@ namespace KRing.DB
     public class DBEntry
     {
         public string Domain { get; private set; }
-        public string DomainIV { get; private set; }
-        public SecureString Password { get; private set; } 
-        public string PasswordIV { get; private set; }
+        public SecureString Password { get; private set; }
 
-
-        public DBEntry(string domain, SecureString password, string domainIV, string passwordIV)
+        public DBEntry(string domain, SecureString password)
         {
             Domain = domain;
             Password = password;
-            PasswordIV = passwordIV;
-            DomainIV = domainIV;
         }
 
         public List<string> ToStrings()

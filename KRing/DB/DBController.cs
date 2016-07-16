@@ -81,7 +81,7 @@ namespace KRing.DB
                         securePassword.PopulateWithString(password);
 
                         /* create entry in DBController */
-                        DBEntry newEntry = new DBEntry(domain, securePassword, domainIV, passwordIV);
+                        DBEntry newEntry = new DBEntry(domain, securePassword);
                         Entries.Add(newEntry);
                         EntryCount++;
                     }
@@ -97,13 +97,7 @@ namespace KRing.DB
 
         public void AddEntry(DBEntryDTO newDTO)
         {
-            byte[] passwordSalt = Authenticator.GenerateSalt();
-            byte[] domainSalt = Authenticator.GenerateSalt();
-
-            DBEntry newEntry = new DBEntry(
-                newDTO.Domain, newDTO.Password, 
-                Convert.ToBase64String(domainSalt), 
-                Convert.ToBase64String(passwordSalt));
+            DBEntry newEntry = new DBEntry(newDTO.Domain, newDTO.Password);
 
             Entries.Add(newEntry);
             EntryCount++;
@@ -120,22 +114,22 @@ namespace KRing.DB
 
                 foreach (var entr in Entries)
                 {
-                    byte[] domainIV = Convert.FromBase64String(entr.DomainIV);
+                    byte[] domainIV = Authenticator.GenerateSalt();
                     byte[] domainData = Encoding.ASCII.GetBytes(entr.Domain);
                     string encryptedDomainB64 = Convert.ToBase64String(
                         CryptoWrapper.CBC_Encrypt(domainData, raw_key, domainIV));
 
                     sw.WriteLine(encryptedDomainB64);
-                    sw.WriteLine(entr.DomainIV);
+                    sw.WriteLine(Convert.ToBase64String(domainIV));
 
-                    byte[] passwordIV = Convert.FromBase64String(entr.PasswordIV);
+                    byte[] passwordIV = Authenticator.GenerateSalt();
                     string encryptedPasswordB64 = Convert.ToBase64String(
                         CryptoWrapper.CBC_Encrypt(
                             Encoding.ASCII.GetBytes(
                                 entr.Password.ConvertToUnsecureString()), raw_key, passwordIV));
 
                     sw.WriteLine(encryptedPasswordB64);
-                    sw.WriteLine(entr.PasswordIV);
+                    sw.WriteLine(Convert.ToBase64String(passwordIV));
                 }
             }
         }

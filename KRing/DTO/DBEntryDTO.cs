@@ -7,6 +7,9 @@ using System.Security;
 
 namespace KRing.DTO
 {
+    /// <summary>
+    /// Data Transfer Object. We simply transfer data between UI and Backend (where we add more properties and behaviour) 
+    /// </summary>
     public class DBEntryDTO
     {
         public string Domain { get; private set; }
