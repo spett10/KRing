@@ -70,7 +70,7 @@ namespace KRing
                         IsRunning = false;
                         currentSession.User.Logout();
                         UI.GoodbyeMessage(currentSession.User);
-                        DB.Write(currentSession.User.Password.ConvertToUnsecureString());
+                        DB.WriteDb(currentSession.User.Password.ConvertToUnsecureString());
                         break;
 
                         /* TODO: check for duplicate before adding */

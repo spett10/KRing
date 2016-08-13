@@ -47,37 +47,26 @@ namespace KRing.DB
         {
             Entries = new List<DBEntry>();
             _iv = new byte[Authenticator.SaltByteSize];
-            int count = 0;
-            
-            using (StreamReader sr = new StreamReader(configPath))
-            {
-                var readCount = sr.ReadLine();
-                int.TryParse(readCount, out count);
-
-                if (count > 0)
-                {
-                    using (FileStream fs = new FileStream(metaPath, FileMode.Open))
-                    {
-                        fs.Read(_iv, 0, Authenticator.SaltByteSize);
-                    }
-                }
-                else _iv = Authenticator.GenerateSalt();
-            }
+            int count = SetupConfig();
 
             if (count > 0)
             {
                 FileStream fs = new FileStream(dbPath, FileMode.Open);
                 AesManaged aesManaged = new AesManaged();
-                CryptoStream cs = new CryptoStream(fs, aesManaged.CreateDecryptor(_insecureHardcodedKey, _iv), CryptoStreamMode.Read);
+                CryptoStream cs = new CryptoStream(
+                                    fs, 
+                                    aesManaged.CreateDecryptor(
+                                        _insecureHardcodedKey, 
+                                        _iv), 
+                                    CryptoStreamMode.Read);
+
                 StreamReader streamReader = new StreamReader(cs);
 
                 for(int i = 0; i < count; i++)
                 {
                     var domain = streamReader.ReadLine();
                     var password = streamReader.ReadLine();
-
-                    Console.WriteLine("domain: {0}, password: {1}", domain, password);
-
+                    
                     SecureString securePassword = new SecureString();
                     securePassword.PopulateWithString(password);
                     
@@ -105,22 +94,21 @@ namespace KRing.DB
             EntryCount++;
         }
 
-        public void Write(string password)
+        public void WriteDb(string password)
         {
-            using (StreamWriter configWriter = new StreamWriter(configPath))
-            {
-                configWriter.WriteLine(EntryCount);
-            }
+            WriteCount();
 
-            using (FileStream fs = new FileStream(metaPath, FileMode.Create))
-            {
-                _iv = Authenticator.GenerateSalt();
-                fs.Write(_iv, 0, Authenticator.SaltByteSize);
-            }
+            WriteIV();
 
             FileStream fileStream = new FileStream(dbPath, FileMode.Create);
             AesManaged aesManaged = new AesManaged();
-            CryptoStream cs = new CryptoStream(fileStream, aesManaged.CreateEncryptor(_insecureHardcodedKey, _iv), CryptoStreamMode.Write);
+            CryptoStream cs = new CryptoStream(
+                                fileStream, 
+                                aesManaged.CreateEncryptor(
+                                    _insecureHardcodedKey,
+                                    _iv), 
+                                CryptoStreamMode.Write);
+
             StreamWriter streamWriter = new StreamWriter(cs);
 
             foreach (var entr in Entries)
@@ -133,6 +121,50 @@ namespace KRing.DB
             cs.Close();
             aesManaged.Dispose();
             fileStream.Close();
+        }
+
+        private int SetupConfig()
+        {
+            int count = 0;
+
+            using (StreamReader sr = new StreamReader(configPath))
+            {
+                var readCount = sr.ReadLine();
+                int.TryParse(readCount, out count);
+
+                if (count > 0)
+                {
+                    SetupIV();
+                }
+                else _iv = Authenticator.GenerateSalt();
+            }
+
+            return count;
+        }
+
+        private void WriteIV()
+        {
+            using (FileStream fs = new FileStream(metaPath, FileMode.Create))
+            {
+                _iv = Authenticator.GenerateSalt();
+                fs.Write(_iv, 0, Authenticator.SaltByteSize);
+            }
+        }
+
+        private void WriteCount()
+        {
+            using (StreamWriter configWriter = new StreamWriter(configPath))
+            {
+                configWriter.WriteLine(EntryCount);
+            }
+        }
+
+        private void SetupIV()
+        {
+            using (FileStream fs = new FileStream(metaPath, FileMode.Open))
+            {
+                fs.Read(_iv, 0, Authenticator.SaltByteSize);
+            }
         }
     }
 }

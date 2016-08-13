@@ -13,9 +13,3 @@
 -implement installing new user / deleting user etc. 
 
 -use asyn file reading and await it finishing before user can do operations. 
-
-
-BUG: When we decrypt and store in DB, something goes wrong with decoding? I.e we get a lot of \n\n\n\n it seems, and the stringcompare on view passwords fails..
-Something is wrong with encoding, or padding, or something? Very fucky.. 
-	i think it happens when we "reencrypt", ie write back the same stuff we just read? Dont think it happens the first time..
-
