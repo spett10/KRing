@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using KRing.DTO;
 using System.Security.Cryptography;
 using System.Security;
@@ -18,10 +20,12 @@ namespace KRing.DB
         /// <summary>
         /// Singleton pattern, since we use the same file throughout, so we only want one accessing it at any time. 
         /// </summary>
-        private static DBController instance;
+        private static DBController _instance;
 
-        private readonly string DBPath = "..\\..\\Data\\db.txt";
-        private readonly string INSECURE_HARDCODED_KEY = "Yellow Submarine"; //Todo: Use userstored RSA key to encrypt a key for the DB stuff.. its shown on MSDN.
+        private readonly string configPath = "..\\..\\Data\\config.txt";
+        private readonly string dbPath = "..\\..\\Data\\db.txt";
+        private readonly byte[] insecure_hardcoded_key = Encoding.ASCII.GetBytes("Yellow Submarine"); //Todo: Use userstored RSA key to encrypt a key for the DB stuff.. its shown on MSDN.
+        private readonly byte[] iv = Encoding.ASCII.GetBytes("ABCEDFGHIJLKERTG");
 
         public List<DBEntry> Entries { get; private set; }
         public int EntryCount { get; private set; }
@@ -30,104 +34,90 @@ namespace KRing.DB
         {
             get
             {
-                if(instance == null)
+                if(_instance == null)
                 {
-                    instance = new DBController();
+                    _instance = new DBController();
                 }
 
-                return instance;
+                return _instance;
             }
         }
 
         private DBController()
         {
             Entries = new List<DBEntry>();
-            bool IsDBPopulated = false;
             int count = 0;
-            using (StreamReader db = new StreamReader(DBPath))
+            
+            using (StreamReader sr = new StreamReader(configPath))
             {
-                string storedCound = db.ReadLine();
-
-                IsDBPopulated = int.TryParse(storedCound, out count);
-
-                Console.WriteLine("count {0}", count.ToString());
-                if (count > 0)
-                {
-                    byte[] KEY = Encoding.ASCII.GetBytes(INSECURE_HARDCODED_KEY);
-                        
-                    for(int i = 0; i < count; i++)
-                    {
-                        /* Read properties for each entry */
-                        string domainBase64 = db.ReadLine();
-                        byte[] domainRaw = Convert.FromBase64String(domainBase64);
-
-                        string domainIV = db.ReadLine();
-
-                        string passwordBase64 = db.ReadLine();
-                        byte[] passwordRaw = Convert.FromBase64String(passwordBase64);
-
-                        string passwordIV = db.ReadLine();
-
-                        /* decrypt */
-                        byte[] domainPlain = CryptoWrapper.CBC_Decrypt(domainRaw, KEY, Convert.FromBase64String(domainIV));
-                        string domain = Encoding.UTF8.GetString(domainPlain);
-
-                        byte[] passwordPlain = CryptoWrapper.CBC_Decrypt(passwordRaw, KEY, Convert.FromBase64String(passwordIV));
-                        string password = Encoding.UTF8.GetString(passwordPlain);
-
-                        SecureString securePassword = new SecureString();
-                        securePassword.PopulateWithString(password);
-
-                        /* create entry in DBController */
-                        DBEntry newEntry = new DBEntry(domain, securePassword);
-                        Entries.Add(newEntry);
-                        EntryCount++;
-                    }
-                }
-                else
-                {
-                    EntryCount = 0;
-                }
+                var readCount = sr.ReadLine();
+                int.TryParse(readCount, out count);
             }
+
+            if (count > 0)
+            {
+                FileStream fs = new FileStream(dbPath, FileMode.Open);
+                AesManaged aesManaged = new AesManaged();
+                CryptoStream cs = new CryptoStream(fs, aesManaged.CreateDecryptor(insecure_hardcoded_key, iv), CryptoStreamMode.Read);
+                StreamReader streamReader = new StreamReader(cs);
+
+                for(int i = 0; i < count; i++)
+                {
+                    var domain = streamReader.ReadLine();
+                    var password = streamReader.ReadLine();
+
+                    Console.WriteLine("domain: {0}, password: {1}", domain, password);
+
+                    SecureString securePassword = new SecureString();
+                    securePassword.PopulateWithString(password);
+                    
+                    DBEntry newEntry = new DBEntry(domain, securePassword);
+                    Entries.Add(newEntry);
+                    EntryCount++;
+                }
+
+                cs.Close();
+                streamReader.Close();
+                aesManaged.Dispose();
+                fs.Close();
+
+            }
+            else
+            {
+                    EntryCount = 0;
+            }
+            
         }
         
         public void AddEntry(DBEntryDTO newDTO)
         {
             DBEntry newEntry = new DBEntry(newDTO.Domain, newDTO.Password);
-
             Entries.Add(newEntry);
             EntryCount++;
         }
 
         public void Write(string password)
         {
-
-            byte[] raw_key = Encoding.ASCII.GetBytes(INSECURE_HARDCODED_KEY);
-
-            using (StreamWriter sw = new StreamWriter(DBPath, false))
+            using (StreamWriter countWriter = new StreamWriter(configPath))
             {
-                sw.WriteLine(EntryCount);
-
-                foreach (var entr in Entries)
-                {
-                    byte[] domainIV = Authenticator.GenerateSalt();
-                    byte[] domainData = Encoding.UTF8.GetBytes(entr.Domain);
-                    byte[] domainEncrypted = CryptoWrapper.CBC_Encrypt(domainData, raw_key, domainIV);
-                    string encryptedDomainB64 = Convert.ToBase64String(domainEncrypted);
-
-                    sw.WriteLine(encryptedDomainB64);
-                    sw.WriteLine(Convert.ToBase64String(domainIV));
-
-                    byte[] passwordIV = Authenticator.GenerateSalt();
-                    string encryptedPasswordB64 = Convert.ToBase64String(
-                        CryptoWrapper.CBC_Encrypt(
-                            Encoding.UTF8.GetBytes(
-                                entr.Password.ConvertToUnsecureString()), raw_key, passwordIV));
-
-                    sw.WriteLine(encryptedPasswordB64);
-                    sw.WriteLine(Convert.ToBase64String(passwordIV));
-                }
+                countWriter.WriteLine(EntryCount);
             }
+
+            FileStream fileStream = new FileStream(dbPath, FileMode.Create);
+            AesManaged aesManaged = new AesManaged();
+            CryptoStream cs = new CryptoStream(fileStream, aesManaged.CreateEncryptor(insecure_hardcoded_key, iv), CryptoStreamMode.Write);
+            StreamWriter streamWriter = new StreamWriter(cs);
+
+            foreach (var entr in Entries)
+            {
+                streamWriter.WriteLine(entr.Domain);
+                streamWriter.WriteLine(entr.Password.ConvertToUnsecureString());
+            }
+
+            streamWriter.Close();
+            cs.Close();
+            aesManaged.Dispose();
+            fileStream.Close();
         }
     }
 }

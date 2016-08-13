@@ -64,6 +64,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="Data\config.txt" />
     <Content Include="Data\db.txt" />
     <Content Include="Data\profile.txt" />
     <Content Include="Data\todo.txt" />

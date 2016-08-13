@@ -17,9 +17,7 @@ namespace UnitTests
             var password = Encoding.ASCII.GetBytes("Yellow Submarine");
             var expected = "Super Secret Message";
             var plaintext = Encoding.ASCII.GetBytes(expected);
-
             var IV = Authenticator.GenerateSalt();
-
 
             //Write
             RijndaelManaged rmEncryptor = new RijndaelManaged();
@@ -60,15 +58,13 @@ namespace UnitTests
             var password = Encoding.ASCII.GetBytes("Yellow Submarine");
             var expected = "Super Secret Message";
             var plaintext = Encoding.ASCII.GetBytes(expected);
-
             var IV = Authenticator.GenerateSalt();
 
-
             //Write Encrypted Text
-            RijndaelManaged rmEncryptor = new RijndaelManaged();
+            AesManaged aesEncryptor = new AesManaged();
             FileStream fileStreamWrite = new FileStream("..\\..\\testlog.txt", FileMode.Create);
 
-            CryptoStream encryptStream = new CryptoStream(fileStreamWrite, rmEncryptor.CreateEncryptor(password, IV), CryptoStreamMode.Write);
+            CryptoStream encryptStream = new CryptoStream(fileStreamWrite, aesEncryptor.CreateEncryptor(password, IV), CryptoStreamMode.Write);
 
             StreamWriter streamWriter = new StreamWriter(encryptStream);
 
@@ -82,10 +78,10 @@ namespace UnitTests
 
             //Read IV
             FileStream fileStreamRead = new FileStream("..\\..\\testlog.txt", FileMode.Open);
-            RijndaelManaged rmDecryptor = new RijndaelManaged();
+            AesManaged aesDecryptor = new AesManaged();
             CryptoStream decryptStream = new CryptoStream(
                                             fileStreamRead, 
-                                            rmDecryptor.CreateDecryptor(
+                                            aesDecryptor.CreateDecryptor(
                                                 password, 
                                                 IV),
                                             CryptoStreamMode.Read);
