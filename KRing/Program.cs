@@ -87,15 +87,15 @@ namespace KRing
             
         }
 
-        public static void HandleViewPassword(IUserInterface UI, DBController DB)
+        public static void HandleViewPassword(IUserInterface ui, DBController db)
         {
             bool correctDomainGiven = false;
 
             string domain = String.Empty;
 
-            UI.MessageToUser("Stored Domains:");
+            ui.MessageToUser("Stored Domains:");
 
-            foreach(var entr in DB.Entries)
+            foreach(var entr in db.Entries)
             {
                 Console.WriteLine(entr.Domain);
             }
@@ -103,16 +103,15 @@ namespace KRing
 
             while(!correctDomainGiven)
             {
-                domain = UI.RequestUserInput("Please Enter Domain to get corresponding Password");
-                Console.WriteLine("trying to find {0}",domain);
-                correctDomainGiven = DB.Entries.Any(e => e.Domain.ToString().Equals(domain, StringComparison.OrdinalIgnoreCase));
+                domain = ui.RequestUserInput("Please Enter Domain to get corresponding Password");
+                correctDomainGiven = db.Entries.Any(e => e.Domain.ToString().Equals(domain, StringComparison.OrdinalIgnoreCase));
 
-                if (!correctDomainGiven) UI.MessageToUser("That Domain Does not exist amongst stored passwords");
+                if (!correctDomainGiven) ui.MessageToUser("That Domain Does not exist amongst stored passwords");
             }
 
-            var Entry = DB.Entries.Where(e => e.Domain == domain).Select(e => e.Password).First();
+            var Entry = db.Entries.Where(e => e.Domain == domain).Select(e => e.Password).First();
 
-            UI.MessageToUser("Password for domain " + domain + " is " + Entry.ConvertToUnsecureString());
+            ui.MessageToUser("Password for domain " + domain + " is:\n\n " + Entry.ConvertToUnsecureString());
 
         }
 

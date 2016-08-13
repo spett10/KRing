@@ -48,7 +48,7 @@ namespace KRing.DB
             {
                 string storedCound = db.ReadLine();
 
-                IsDBPopulated = Int32.TryParse(storedCound, out count);
+                IsDBPopulated = int.TryParse(storedCound, out count);
 
                 Console.WriteLine("count {0}", count.ToString());
                 if (count > 0)

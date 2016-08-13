@@ -1,20 +1,18 @@
-﻿-Add keyderivation to encryption/decryption instead of using user password/hardcoded password.
--Use IV for each entry added to DB, not one IV for all of them? 
+﻿-Add keyderivation to encryption/decryption instead of using user password/hardcoded password. (perhaps use PK RSA key to encrypt symmetric key and store it?)
 -dont store user in dB, make a DB for each user?  
--remove DTO, since they are equal now.
--DBcontroller.write should check amount of entries before attempting write? 
+-We should check for duplicates when user adds domain (only one password per domain?)
+-make UI for password retrieval nicer (rite now its ugly)
+-we need error handling. When writing to and from DB we should try / catch it all so we dont crash each time if user disturbs database
 
--use CryptoWrapper in DBController to encrypt and decrypt:
-	-take data and encrypt it
-	-then convert to base64 so we dont loose data
-	-Then write it to a file
+-implement update
+-implement delete
 
-	conversely
-	-read lines ass base64 stirng
-	-then decrypt it. 
-	-then convert to ascii. 
+-implement more users / i.e more users in profile, or more profile files one ofr each user?
+	-similarly one db for each perhaps?
 
--use mapping when reading and creating entries on startup?
+-implement installing new user / deleting user etc. 
 
--Use IV for EACH SINGLE PROPERTY ENCRYPTED! If you use the same iv you can see if domain and
-password are equal (we need semantic security)
+BUG: When we decrypt and store in DB, something goes wrong with decoding? I.e we get a lot of \n\n\n\n it seems, and the stringcompare on view passwords fails..
+Something is wrong with encoding, or padding, or something? Very fucky.. 
+	i think it happens when we "reencrypt", ie write back the same stuff we just read? Dont think it happens the first time..
+
