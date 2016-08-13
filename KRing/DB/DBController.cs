@@ -21,11 +21,11 @@ namespace KRing.DB
         /// Singleton pattern, since we use the same file throughout, so we only want one accessing it at any time. 
         /// </summary>
         private static DBController _instance;
-
+        private readonly string metaPath = "..\\..\\Data\\meta.txt";
         private readonly string configPath = "..\\..\\Data\\config.txt";
         private readonly string dbPath = "..\\..\\Data\\db.txt";
-        private readonly byte[] insecure_hardcoded_key = Encoding.ASCII.GetBytes("Yellow Submarine"); //Todo: Use userstored RSA key to encrypt a key for the DB stuff.. its shown on MSDN.
-        private readonly byte[] iv = Encoding.ASCII.GetBytes("ABCEDFGHIJLKERTG");
+        private readonly byte[] _insecureHardcodedKey = Encoding.ASCII.GetBytes("Yellow Submarine");
+        private byte[] _iv;
 
         public List<DBEntry> Entries { get; private set; }
         public int EntryCount { get; private set; }
@@ -46,19 +46,29 @@ namespace KRing.DB
         private DBController()
         {
             Entries = new List<DBEntry>();
+            _iv = new byte[Authenticator.SaltByteSize];
             int count = 0;
             
             using (StreamReader sr = new StreamReader(configPath))
             {
                 var readCount = sr.ReadLine();
                 int.TryParse(readCount, out count);
+
+                if (count > 0)
+                {
+                    using (FileStream fs = new FileStream(metaPath, FileMode.Open))
+                    {
+                        fs.Read(_iv, 0, Authenticator.SaltByteSize);
+                    }
+                }
+                else _iv = Authenticator.GenerateSalt();
             }
 
             if (count > 0)
             {
                 FileStream fs = new FileStream(dbPath, FileMode.Open);
                 AesManaged aesManaged = new AesManaged();
-                CryptoStream cs = new CryptoStream(fs, aesManaged.CreateDecryptor(insecure_hardcoded_key, iv), CryptoStreamMode.Read);
+                CryptoStream cs = new CryptoStream(fs, aesManaged.CreateDecryptor(_insecureHardcodedKey, _iv), CryptoStreamMode.Read);
                 StreamReader streamReader = new StreamReader(cs);
 
                 for(int i = 0; i < count; i++)
@@ -80,7 +90,6 @@ namespace KRing.DB
                 streamReader.Close();
                 aesManaged.Dispose();
                 fs.Close();
-
             }
             else
             {
@@ -98,14 +107,20 @@ namespace KRing.DB
 
         public void Write(string password)
         {
-            using (StreamWriter countWriter = new StreamWriter(configPath))
+            using (StreamWriter configWriter = new StreamWriter(configPath))
             {
-                countWriter.WriteLine(EntryCount);
+                configWriter.WriteLine(EntryCount);
+            }
+
+            using (FileStream fs = new FileStream(metaPath, FileMode.Create))
+            {
+                _iv = Authenticator.GenerateSalt();
+                fs.Write(_iv, 0, Authenticator.SaltByteSize);
             }
 
             FileStream fileStream = new FileStream(dbPath, FileMode.Create);
             AesManaged aesManaged = new AesManaged();
-            CryptoStream cs = new CryptoStream(fileStream, aesManaged.CreateEncryptor(insecure_hardcoded_key, iv), CryptoStreamMode.Write);
+            CryptoStream cs = new CryptoStream(fileStream, aesManaged.CreateEncryptor(_insecureHardcodedKey, _iv), CryptoStreamMode.Write);
             StreamWriter streamWriter = new StreamWriter(cs);
 
             foreach (var entr in Entries)
