@@ -3,6 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using KRing;
+using KRing.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests

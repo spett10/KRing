@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Security;
-using KRing.Interfaces;
 using KRing.DTO;
+using KRing.Interfaces;
 
-namespace KRing
+namespace KRing.Core
 {
     /* Todo: flyt al text over i en shallow static class? */
     public class ConsoleLineInterface : IUserInterface

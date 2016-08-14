@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Security;
-using KRing.Interfaces;
-using KRing.DTO;
+using KRing.Data;
 using KRing.DB;
+using KRing.DTO;
+using KRing.Extensions;
+using KRing.Interfaces;
 
-namespace KRing
+namespace KRing.Core
 {
     class Program
     {

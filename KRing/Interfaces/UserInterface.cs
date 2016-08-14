@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Security;
 using KRing;
+using KRing.Core;
 using KRing.DTO;
 
 namespace KRing.Interfaces

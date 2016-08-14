@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Security;
 using System.Runtime.InteropServices;
+using System.Security;
 
-namespace KRing
+namespace KRing.Extensions
 {
     public static class SecureStringExtension
     {

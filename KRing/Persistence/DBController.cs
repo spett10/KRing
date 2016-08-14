@@ -9,6 +9,8 @@ using System.Runtime.InteropServices;
 using KRing.DTO;
 using System.Security.Cryptography;
 using System.Security;
+using KRing.Data;
+using KRing.Extensions;
 
 namespace KRing.DB
 {

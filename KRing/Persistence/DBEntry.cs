@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using KRing.DTO;
 using System.Security;
 using System.ComponentModel;
+using KRing.Extensions;
 
 namespace KRing.DB
 {
