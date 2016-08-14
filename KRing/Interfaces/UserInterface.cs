@@ -30,6 +30,8 @@ namespace KRing.Interfaces
 
         void LoginTimeoutMessage();
 
+        bool YesNoQuestionToUser(string question);
+
         ActionType MainMenu();
 
     }

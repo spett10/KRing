@@ -18,7 +18,7 @@ namespace UnitTests
             var password = Encoding.ASCII.GetBytes("Yellow Submarine");
             var expected = "Super Secret Message";
             var plaintext = Encoding.ASCII.GetBytes(expected);
-            var IV = Authenticator.GenerateSalt();
+            var IV = CryptoHashing.GenerateSalt();
 
             //Write
             RijndaelManaged rmEncryptor = new RijndaelManaged();
@@ -59,7 +59,7 @@ namespace UnitTests
             var password = Encoding.ASCII.GetBytes("Yellow Submarine");
             var expected = "Super Secret Message";
             var plaintext = Encoding.ASCII.GetBytes(expected);
-            var IV = Authenticator.GenerateSalt();
+            var IV = CryptoHashing.GenerateSalt();
 
             //Write Encrypted Text
             AesManaged aesEncryptor = new AesManaged();

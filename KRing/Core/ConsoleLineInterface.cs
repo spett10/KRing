@@ -13,6 +13,36 @@ namespace KRing.Core
 
         }
 
+        public bool YesNoQuestionToUser(string question)
+        {
+            bool IsAnswerYes = false;
+            bool correctFormat = false;
+
+            Console.WriteLine(question);
+
+            while (!correctFormat)
+            {
+                ConsoleKeyInfo nextKey = Console.ReadKey(true);
+
+                if (nextKey.Key == ConsoleKey.Y)
+                {
+                    IsAnswerYes = true;
+                    correctFormat = true;
+                }
+                else if (nextKey.Key == ConsoleKey.N)
+                {
+                    IsAnswerYes = false;
+                    correctFormat = true;
+                }
+                else
+                {
+                    Console.WriteLine("You must answer yes (Y) or no (N)");
+                }
+            }
+
+            return IsAnswerYes;
+        }
+
         public void StartupMessage()
         {
             Console.WriteLine("Welcome To KRing");
@@ -102,6 +132,7 @@ namespace KRing.Core
             Console.WriteLine("U: Update Password");
             Console.WriteLine("D: Delete Password");
             Console.WriteLine("L: Logout");
+            Console.WriteLine("X: Delete User And Stored Passwords");
             Console.WriteLine("\n");
 
             bool awaitingCommand = true;
@@ -130,6 +161,10 @@ namespace KRing.Core
                         break;
                     case ConsoleKey.L:
                         NewCommand = ActionType.Logout;
+                        awaitingCommand = false;
+                        break;
+                    case ConsoleKey.X:
+                        NewCommand = ActionType.DeleteUser;
                         awaitingCommand = false;
                         break;
                     default:

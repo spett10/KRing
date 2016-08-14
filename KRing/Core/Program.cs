@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Security;
+using System.Text;
+using System.Threading;
 using KRing.DB;
 using KRing.DTO;
 using KRing.Extensions;
@@ -17,6 +19,7 @@ namespace KRing.Core
         private static Session _currentSession;
         private static DBController _dbController;
         private static IUserInterface _ui;
+        private static Authenticator _authenticator;
 
         static void Main(string[] args)
         {
@@ -28,50 +31,50 @@ namespace KRing.Core
             _usedLoginAttempts = 0;
             _isLoggedIn = false;
             _isRunning = false;
-           
+            
             /* ew, fix this TODO */
             _currentSession = new Session(new User("Guest", false, new SecureString(),
-                                    new Cookie(Authenticator.GenerateSalt(),
-                                                Authenticator.GenerateSalt(),
-                                                Authenticator.GenerateSalt())));
+                                    new Cookie(CryptoHashing.GenerateSalt(),
+                                                CryptoHashing.GenerateSalt(),
+                                                CryptoHashing.GenerateSalt())));
+
+            /* new user or returning user? */
+            bool doesProfileExist = true;
+            _dbController = DBController.Instance;
+            _authenticator = new Authenticator();
+
+            try
+            {
+                _authenticator.LoadProfile();
+            }
+            catch (Exception)
+            {
+                doesProfileExist = false;
+            }
+
 
             /* Login Loop */
-            while (!_isLoggedIn)
+            if (!doesProfileExist)
             {
-                string username = _ui.RequestUserInput("Please Enter Username:");
+                HandleNewUser();
+            }
 
-                SecureString password = _ui.RequestPassword("Please Enter Your Password");
-
-                try
-                {
-                    _currentSession = Authenticator.LogIn(username, password);
-                }
-                catch (Exception e)
-                {
-                    _ui.MessageToUser(e.Message);
-                    _usedLoginAttempts++;
-
-                    if (_usedLoginAttempts >= _maxLoginAttempts)
-                    {
-                        _ui.LoginTimeoutMessage();
-                        password.Dispose();
-                        return;
-                    }
-                }
-                
-
-                if (_currentSession.User.IsLoggedIn)
-                {
-                    _ui.WelcomeMessage(_currentSession.User);
-                    _isLoggedIn = true;
-                }
-                password.Clear();
+            try
+            {
+                LoginLoop();
+            }
+            catch (Exception)
+            {
+                return;
             }
 
             /* User Logged In */
-            _dbController = DBController.Instance;
-            _isRunning = true;
-            
+            if (_isLoggedIn)
+            {
+                _isRunning = true;
+                if(doesProfileExist) _dbController.LoadDb();
+            }
+
             while (_isRunning)
             {
                 ActionType nextAction = _ui.MainMenu();
@@ -97,6 +100,10 @@ namespace KRing.Core
                     case ActionType.AddPassword:
                         HandleAddPassword();
                         break;
+
+                    case ActionType.DeleteUser:
+                        HandleDeleteUser();
+                        break;
                 }
 
             }
@@ -106,8 +113,97 @@ namespace KRing.Core
             
         }
 
+        private static void LoginLoop()
+        {
+            _ui.MessageToUser("\nPlease Log In");
+
+            while (!_isLoggedIn)
+            {
+                string username = _ui.RequestUserInput("\nPlease Enter Username:");
+
+                SecureString password = _ui.RequestPassword("Please Enter Your Password");
+
+                try
+                {
+                    _currentSession = _authenticator.LogIn(username, password);
+                }
+                catch (Exception e)
+                {
+                    _ui.MessageToUser(e.Message);
+                    _usedLoginAttempts++;
+
+                    if (_usedLoginAttempts >= _maxLoginAttempts)
+                    {
+                        _ui.LoginTimeoutMessage();
+                        password.Dispose();
+                        throw new UnauthorizedAccessException("All login attempts used");
+                    }
+                }
+
+
+                if (_currentSession.User.IsLoggedIn)
+                {
+                    _ui.WelcomeMessage(_currentSession.User);
+                    _isLoggedIn = true;
+                }
+                password.Clear();
+            }
+        }
+
+        private static void HandleDeleteUser()
+        {
+            bool areYouSure = _ui.YesNoQuestionToUser("Are you sure you want to delete user and all stored information?");
+
+            if (areYouSure)
+            {
+                _authenticator.DeleteProfile();
+                _dbController.DeleteDb();
+                _isRunning = false;
+                _ui.MessageToUser("Everything deleted. Goodbye.");
+                Thread.Sleep(2000);
+            }
+        }
+
+        private static void HandleNewUser()
+        {
+            _ui.MessageToUser("Creating new user for you!");
+            var newUserName = _ui.RequestUserInput("Please enter your username");
+
+            bool consistentPasswordInput = false;
+            
+            SecureString password = new SecureString();
+
+            while (!consistentPasswordInput)
+            {
+                password = _ui.RequestPassword("\nPlease enter your desired password");
+                var passwordRepeated = _ui.RequestPassword("\nPlease re-enter your desired password");
+
+                consistentPasswordInput =
+                    password.ConvertToUnsecureString()
+                        .Equals(passwordRepeated.ConvertToUnsecureString(), StringComparison.OrdinalIgnoreCase);
+
+                if(!consistentPasswordInput) _ui.MessageToUser("\nPasswords were not consistent. Please try again");
+            }
+
+            var saltForPassword = CryptoHashing.GenerateSalt();
+            var saltedPassword = CryptoHashing.GenerateSaltedHash(password.ConvertToUnsecureString(), saltForPassword);
+            var saltForKey = CryptoHashing.GenerateSalt();
+            
+            var cookie = new Cookie(saltedPassword, saltForPassword, saltForKey);
+            var newUser = new User(newUserName, false, password, cookie);
+
+            _authenticator.NewProfile(newUser);
+            _dbController.DeleteDb();
+        }
+
         private static void HandleDeletePassword()
         {
+            if (_dbController.EntryCount <= 0)
+            {
+                _ui.MessageToUser("You have no passwords stored\n");
+                return;
+            }
+
             ShowAllDomainsToUser();
 
             var correctDomainGiven = false;
@@ -148,6 +244,12 @@ namespace KRing.Core
 
         private static void HandleUpdatePassword()
         {
+            if (_dbController.EntryCount <= 0)
+            {
+                _ui.MessageToUser("You have no passwords stored\n");
+                return;
+            }
+
             ShowAllDomainsToUser();
 
             var correctDomainGiven = false;
@@ -177,6 +279,12 @@ namespace KRing.Core
 
         private static void HandleViewPassword()
         {
+            if (_dbController.EntryCount <= 0)
+            {
+                _ui.MessageToUser("You have no passwords stored\n");
+                return;
+            }
+
             bool correctDomainGiven = false;
             string domain = String.Empty;
 

@@ -6,13 +6,13 @@ namespace KRing.Core
     {
         public string UserName { get; private set; }
         public bool IsLoggedIn { get; private set; }
-        public SecureString Password { get; private set; }
+        public SecureString Password { get; set; }
         public Cookie Cookie { get; private set; }
 
-        public User(string Name, bool LoggedIn, SecureString password, Cookie cookie)
+        public User(string name, bool loggedIn, SecureString password, Cookie cookie)
         {
-            UserName = Name;
-            IsLoggedIn = LoggedIn;
+            UserName = name;
+            IsLoggedIn = loggedIn;
             Password = password;
             Cookie = cookie;
         }

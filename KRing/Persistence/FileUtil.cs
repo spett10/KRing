@@ -10,5 +10,16 @@ namespace KRing.Persistence
             allLines[allLines.Length - 1] = newText;
             File.WriteAllLines(filePath, allLines);
         }
+
+        public static void FilePurge(string filepath, string toWrite)
+        {
+            using (FileStream fileStream = new FileStream(filepath, FileMode.Create))
+            {
+                using (StreamWriter streamWriter = new StreamWriter(fileStream))
+                {
+                    streamWriter.WriteLine(toWrite);
+                }
+            }
+        }
     }
 }

@@ -1,5 +1,4 @@
 ﻿-Add keyderivation to encryption/decryption instead of using user password/hardcoded password. (perhaps use PK RSA key to encrypt symmetric key and store it?)
--We should check for duplicates when user adds domain (only one password per domain?)
 -make UI for password retrieval nicer (rite now its ugly)
 -we need error handling. When writing to and from DB we should try / catch it all so we dont crash each time if user disturbs database
 
@@ -7,8 +6,8 @@
 -implement more users / i.e more users in profile, or more profile files one ofr each user?
 	-similarly one db for each perhaps?
 
--implement installing new user / deleting user etc. 
-
 -use asyn file reading and await it finishing before user can do operations. 
 
 -move all the file i/O from db controller to contained class (configurer or something?)
+
+-use more interfaces and refactor st. we can unit test the stuff.

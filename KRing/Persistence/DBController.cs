@@ -47,12 +47,16 @@ namespace KRing.DB
         private DBController()
         {
             Entries = new List<DBEntry>();
-            _iv = new byte[Authenticator.SaltByteSize];
+            EntryCount = 0;
+            _iv = new byte[CryptoHashing.SaltByteSize];
             _dataConfig = new DataConfig(
-                                "..\\..\\Data\\meta.txt", 
-                                "..\\..\\Data\\db.txt", 
-                                "..\\..\\Data\\config.txt");
+                               "..\\..\\Data\\meta.txt",
+                               "..\\..\\Data\\db.txt",
+                               "..\\..\\Data\\config.txt");
+        }
 
+        public void LoadDb()
+        {
             int count = SetupConfig();
 
             if (count > 0)
@@ -143,6 +147,14 @@ namespace KRing.DB
             return Entries.Where(e => e.Domain == domain).Select(e => e.Password).First();
         }
 
+        public void DeleteDb()
+        {
+            Entries.Clear();
+
+            FileUtil.FilePurge(_dataConfig.dbPath, "-");
+            FileUtil.FilePurge(_dataConfig.configPath, "0");
+        }
+
         public void WriteDb(string password)
         {
             WriteCount();
@@ -187,12 +199,12 @@ namespace KRing.DB
                     {
                         SetupIV();
                     }
-                    else _iv = Authenticator.GenerateSalt();
+                    else _iv = CryptoHashing.GenerateSalt();
                 }
                 else
                 {
                     count = 0;
-                    _iv = Authenticator.GenerateSalt();
+                    _iv = CryptoHashing.GenerateSalt();
                 }
             }
 
@@ -203,8 +215,8 @@ namespace KRing.DB
         {
             using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Create))
             {
-                _iv = Authenticator.GenerateSalt();
-                fs.Write(_iv, 0, Authenticator.SaltByteSize);
+                _iv = CryptoHashing.GenerateSalt();
+                fs.Write(_iv, 0, CryptoHashing.SaltByteSize);
             }
         }
 
@@ -220,7 +232,7 @@ namespace KRing.DB
         {
             using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Open))
             {
-                fs.Read(_iv, 0, Authenticator.SaltByteSize);
+                fs.Read(_iv, 0, CryptoHashing.SaltByteSize);
             }
         }
     }
