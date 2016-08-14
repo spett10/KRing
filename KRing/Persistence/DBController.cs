@@ -179,13 +179,21 @@ namespace KRing.DB
             using (StreamReader sr = new StreamReader(_dataConfig.configPath))
             {
                 var readCount = sr.ReadLine();
-                int.TryParse(readCount, out count);
-
-                if (count > 0)
+                if (readCount != null)
                 {
-                    SetupIV();
+                    int.TryParse(readCount, out count);
+
+                    if (count > 0)
+                    {
+                        SetupIV();
+                    }
+                    else _iv = Authenticator.GenerateSalt();
                 }
-                else _iv = Authenticator.GenerateSalt();
+                else
+                {
+                    count = 0;
+                    _iv = Authenticator.GenerateSalt();
+                }
             }
 
             return count;

@@ -46,6 +46,7 @@
     <Compile Include="Core\ActionType.cs" />
     <Compile Include="Core\Authenticator.cs" />
     <Compile Include="Core\ConsoleLineInterface.cs" />
+    <Compile Include="Core\Cookie.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="Core\Session.cs" />
     <Compile Include="Core\User.cs" />

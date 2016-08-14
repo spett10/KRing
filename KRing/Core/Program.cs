@@ -28,8 +28,12 @@ namespace KRing.Core
             _usedLoginAttempts = 0;
             _isLoggedIn = false;
             _isRunning = false;
-            
-            _currentSession = new Session(new User("Guest", false, new SecureString()));
+           
+            /* ew, fix this TODO */
+            _currentSession = new Session(new User("Guest", false, new SecureString(),
+                                    new Cookie(Authenticator.GenerateSalt(),
+                                                Authenticator.GenerateSalt(),
+                                                Authenticator.GenerateSalt())));
 
             /* Login Loop */
             while (!_isLoggedIn)
@@ -37,16 +41,14 @@ namespace KRing.Core
                 string username = _ui.RequestUserInput("Please Enter Username:");
 
                 SecureString password = _ui.RequestPassword("Please Enter Your Password");
-                _currentSession = Authenticator.LogIn(username, password);
 
-                if (_currentSession.User.IsLoggedIn)
+                try
                 {
-                    _ui.WelcomeMessage(_currentSession.User);
-                    _isLoggedIn = true;
+                    _currentSession = Authenticator.LogIn(username, password);
                 }
-                else
+                catch (Exception e)
                 {
-                    _ui.BadLogin();
+                    _ui.MessageToUser(e.Message);
                     _usedLoginAttempts++;
 
                     if (_usedLoginAttempts >= _maxLoginAttempts)
@@ -54,7 +56,14 @@ namespace KRing.Core
                         _ui.LoginTimeoutMessage();
                         password.Dispose();
                         return;
-                    }   
+                    }
+                }
+                
+
+                if (_currentSession.User.IsLoggedIn)
+                {
+                    _ui.WelcomeMessage(_currentSession.User);
+                    _isLoggedIn = true;
                 }
                 password.Clear();
             }

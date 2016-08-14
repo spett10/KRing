@@ -20,7 +20,7 @@ namespace KRing.Core
 
         public void MessageToUser(string msg)
         {
-            Console.WriteLine(msg);
+            Console.WriteLine("\n" + msg);
         }
 
         public void WelcomeMessage(User User)
@@ -78,10 +78,7 @@ namespace KRing.Core
         public string RequestUserInput(string msg)
         {
             Console.WriteLine(msg);
-
-            string EnteredUserInput = Console.ReadLine();
-
-            return EnteredUserInput;
+            return Console.ReadLine();
         }
 
         public void BadLogin()
@@ -107,33 +104,33 @@ namespace KRing.Core
             Console.WriteLine("L: Logout");
             Console.WriteLine("\n");
 
-            bool AwaitingCommand = true;
+            bool awaitingCommand = true;
             ActionType NewCommand = ActionType.AddPassword; //Dummy.
 
-            while (AwaitingCommand)
+            while (awaitingCommand)
             {
                 var key = Console.ReadKey(true);
                 switch (key.Key)
                 {
                     case ConsoleKey.V:
                         NewCommand = ActionType.ViewPassword;
-                        AwaitingCommand = false;
+                        awaitingCommand = false;
                         break;
                     case ConsoleKey.A:
                         NewCommand = ActionType.AddPassword;
-                        AwaitingCommand = false;
+                        awaitingCommand = false;
                         break;
                     case ConsoleKey.U:
                         NewCommand = ActionType.UpdatePassword;
-                        AwaitingCommand = false;
+                        awaitingCommand = false;
                         break;
                     case ConsoleKey.D:
                         NewCommand = ActionType.DeletePassword;
-                        AwaitingCommand = false;
+                        awaitingCommand = false;
                         break;
                     case ConsoleKey.L:
                         NewCommand = ActionType.Logout;
-                        AwaitingCommand = false;
+                        awaitingCommand = false;
                         break;
                     default:
                         Console.WriteLine("Command Not Recognized. Try Again");
