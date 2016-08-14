@@ -9,23 +9,22 @@ using System.Runtime.InteropServices;
 using KRing.DTO;
 using System.Security.Cryptography;
 using System.Security;
-using KRing.Data;
+using KRing.Core;
 using KRing.Extensions;
+using KRing.Persistence;
 
 namespace KRing.DB
 {
     /* We cant salt and store these passwords, since its just data, we are not trying to log a user in, we are trying to give them */
     /* Their specific decrypted data (which happens to be passwords) on demand once they are logged in */
-    /* TODO: all strings, perhaps not username, in the below, should be encrypted. But we want I/O to work first */
+    /* TODO: use repository for file access, DB shouldnt access raw files? */
     public class DBController
     {
         /// <summary>
         /// Singleton pattern, since we use the same file throughout, so we only want one accessing it at any time. 
         /// </summary>
         private static DBController _instance;
-        private readonly string metaPath = "..\\..\\Data\\meta.txt";
-        private readonly string configPath = "..\\..\\Data\\config.txt";
-        private readonly string dbPath = "..\\..\\Data\\db.txt";
+        private readonly DataConfig _dataConfig;
         private readonly byte[] _insecureHardcodedKey = Encoding.ASCII.GetBytes("Yellow Submarine");
         private byte[] _iv;
 
@@ -49,11 +48,16 @@ namespace KRing.DB
         {
             Entries = new List<DBEntry>();
             _iv = new byte[Authenticator.SaltByteSize];
+            _dataConfig = new DataConfig(
+                                "..\\..\\Data\\meta.txt", 
+                                "..\\..\\Data\\db.txt", 
+                                "..\\..\\Data\\config.txt");
+
             int count = SetupConfig();
 
             if (count > 0)
             {
-                FileStream fs = new FileStream(dbPath, FileMode.Open);
+                FileStream fs = new FileStream(_dataConfig.dbPath, FileMode.Open);
                 AesManaged aesManaged = new AesManaged();
                 CryptoStream cs = new CryptoStream(
                                     fs, 
@@ -88,17 +92,28 @@ namespace KRing.DB
             }
             
         }
-        
-        public void AddEntry(DBEntryDTO newDTO)
+
+        public void DeleteEntryFromDomain(string domain)
+        {
+            var entry = Entries.SingleOrDefault(e => e.Domain.Equals(domain));
+            if (entry != null)
+            {
+                Entries.Remove(entry);
+                EntryCount--;
+            }
+            
+        }
+
+        public void AddEntry(DBEntryDTO newDto)
         {
             bool duplicateExists = Entries.Exists(
                                             e => e.
                                             Domain.
-                                            Equals(newDTO.Domain, StringComparison.OrdinalIgnoreCase));
+                                            Equals(newDto.Domain, StringComparison.OrdinalIgnoreCase));
 
             if (!duplicateExists)
             {
-                DBEntry newEntry = new DBEntry(newDTO.Domain, newDTO.Password);
+                DBEntry newEntry = new DBEntry(newDto.Domain, newDto.Password);
                 Entries.Add(newEntry);
                 EntryCount++;
             }
@@ -134,7 +149,7 @@ namespace KRing.DB
 
             WriteIV();
 
-            FileStream fileStream = new FileStream(dbPath, FileMode.Create);
+            FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create);
             AesManaged aesManaged = new AesManaged();
             CryptoStream cs = new CryptoStream(
                                 fileStream, 
@@ -161,7 +176,7 @@ namespace KRing.DB
         {
             int count = 0;
 
-            using (StreamReader sr = new StreamReader(configPath))
+            using (StreamReader sr = new StreamReader(_dataConfig.configPath))
             {
                 var readCount = sr.ReadLine();
                 int.TryParse(readCount, out count);
@@ -178,7 +193,7 @@ namespace KRing.DB
 
         private void WriteIV()
         {
-            using (FileStream fs = new FileStream(metaPath, FileMode.Create))
+            using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Create))
             {
                 _iv = Authenticator.GenerateSalt();
                 fs.Write(_iv, 0, Authenticator.SaltByteSize);
@@ -187,7 +202,7 @@ namespace KRing.DB
 
         private void WriteCount()
         {
-            using (StreamWriter configWriter = new StreamWriter(configPath))
+            using (StreamWriter configWriter = new StreamWriter(_dataConfig.configPath))
             {
                 configWriter.WriteLine(EntryCount);
             }
@@ -195,7 +210,7 @@ namespace KRing.DB
 
         private void SetupIV()
         {
-            using (FileStream fs = new FileStream(metaPath, FileMode.Open))
+            using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Open))
             {
                 fs.Read(_iv, 0, Authenticator.SaltByteSize);
             }

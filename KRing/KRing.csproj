@@ -44,12 +44,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\ActionType.cs" />
+    <Compile Include="Core\Authenticator.cs" />
     <Compile Include="Core\ConsoleLineInterface.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="Core\Session.cs" />
     <Compile Include="Core\User.cs" />
-    <Compile Include="Data\Authenticator.cs" />
     <Compile Include="Persistence\Converter.cs" />
+    <Compile Include="Persistence\DataConfig.cs" />
     <Compile Include="Persistence\DBController.cs" />
     <Compile Include="DTO\DBEntryDTO.cs" />
     <Compile Include="Extensions\SecureStringExtension.cs" />

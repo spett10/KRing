@@ -3,10 +3,9 @@ using System.IO;
 using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
-using KRing.Core;
 using KRing.Extensions;
 
-namespace KRing.Data
+namespace KRing.Core
 {
     public static class Authenticator
     {

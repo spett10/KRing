@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Security;
-using KRing.Data;
 using KRing.DB;
 using KRing.DTO;
 using KRing.Extensions;
@@ -70,6 +69,10 @@ namespace KRing.Core
 
                 switch (nextAction)
                 {
+                    case ActionType.DeletePassword:
+                        HandleDeletePassword();
+                        break;
+
                     case ActionType.ViewPassword:
                         HandleViewPassword();
                         break;
@@ -93,6 +96,25 @@ namespace KRing.Core
             return;
             
         }
+
+        private static void HandleDeletePassword()
+        {
+            ShowAllDomainsToUser();
+
+            var correctDomainGiven = false;
+            var domain = string.Empty;
+
+            while (!correctDomainGiven)
+            {
+                domain = _ui.RequestUserInput("Please Enter Domain to Delete");
+                correctDomainGiven = _dbController.ExistsEntry(domain);
+
+                if(!correctDomainGiven) _ui.MessageToUser("That domain does not exist amongst stored passwords");
+            }
+
+            _dbController.DeleteEntryFromDomain(domain);
+        }
+
 
         private static void HandleAddPassword()
         {
