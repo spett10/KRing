@@ -11,39 +11,48 @@ namespace KRing.Core
 {
     class Program
     {
+        private static int _maxLoginAttempts;
+        private static int _usedLoginAttempts;
+        private static bool _isLoggedIn;
+        private static bool _isRunning;
+        private static Session _currentSession;
+        private static DBController _dbController;
+        private static IUserInterface _ui;
+
         static void Main(string[] args)
         {
-            IUserInterface UI = new ConsoleLineInterface();
+            /* Setup */
+            _ui = new ConsoleLineInterface();
+            _ui.StartupMessage();
+
+            _maxLoginAttempts = 3;
+            _usedLoginAttempts = 0;
+            _isLoggedIn = false;
+            _isRunning = false;
             
-            UI.StartupMessage();
-
-            int MaxLoginAttempts = 3;
-            int attempts = 0;
-            bool LoggedIn = false;
-
-            Session currentSession = new Session(new User("Guest", false, new SecureString()));
+            _currentSession = new Session(new User("Guest", false, new SecureString()));
 
             /* Login Loop */
-            while (!LoggedIn)
+            while (!_isLoggedIn)
             {
-                string username = UI.RequestUserInput("Please Enter Username:");
+                string username = _ui.RequestUserInput("Please Enter Username:");
 
-                SecureString password = UI.RequestPassword("Please Enter Your Password");
-                currentSession = Authenticator.LogIn(username, password);
+                SecureString password = _ui.RequestPassword("Please Enter Your Password");
+                _currentSession = Authenticator.LogIn(username, password);
 
-                if (currentSession.User.IsLoggedIn)
+                if (_currentSession.User.IsLoggedIn)
                 {
-                    UI.WelcomeMessage(currentSession.User);
-                    LoggedIn = true;
+                    _ui.WelcomeMessage(_currentSession.User);
+                    _isLoggedIn = true;
                 }
                 else
                 {
-                    UI.BadLogin();
-                    attempts++;
+                    _ui.BadLogin();
+                    _usedLoginAttempts++;
 
-                    if (attempts >= MaxLoginAttempts)
+                    if (_usedLoginAttempts >= _maxLoginAttempts)
                     {
-                        UI.LoginTimeoutMessage();
+                        _ui.LoginTimeoutMessage();
                         password.Dispose();
                         return;
                     }   
@@ -52,30 +61,29 @@ namespace KRing.Core
             }
 
             /* User Logged In */
-            DBController DB = DBController.Instance;
-            bool IsRunning = true;
+            _dbController = DBController.Instance;
+            _isRunning = true;
             
-            while (IsRunning)
+            while (_isRunning)
             {
-                ActionType nextAction = UI.MainMenu();
+                ActionType nextAction = _ui.MainMenu();
 
                 switch (nextAction)
                 {
                     case ActionType.ViewPassword:
-                        HandleViewPassword(UI, DB);
+                        HandleViewPassword();
+                        break;
+
+                    case ActionType.UpdatePassword:
+                        HandleUpdatePassword();
                         break;
 
                     case ActionType.Logout:
-                        IsRunning = false;
-                        currentSession.User.Logout();
-                        UI.GoodbyeMessage(currentSession.User);
-                        DB.WriteDb(currentSession.User.Password.ConvertToUnsecureString());
+                        HandleLogout();
                         break;
-
-                        /* TODO: check for duplicate before adding */
+                        
                     case ActionType.AddPassword:
-                        DBEntryDTO newEntry = UI.RequestNewEntryInformation(currentSession.User);
-                        DB.AddEntry(newEntry);
+                        HandleAddPassword();
                         break;
                 }
 
@@ -86,31 +94,74 @@ namespace KRing.Core
             
         }
 
-        public static void HandleViewPassword(IUserInterface ui, DBController db)
+        private static void HandleAddPassword()
         {
-            bool correctDomainGiven = false;
+            DBEntryDTO newEntry = _ui.RequestNewEntryInformation(_currentSession.User);
+            try
+            {
+                _dbController.AddEntry(newEntry);
+            }
+            catch (ArgumentException e)
+            {
+                _ui.MessageToUser("\n" + e.Message);
+            }
+        }
 
-            string domain = String.Empty;
+        private static void HandleLogout()
+        {
+            _isRunning = false;
+            _currentSession.User.Logout();
+            _ui.GoodbyeMessage(_currentSession.User);
+            _dbController.WriteDb(_currentSession.User.Password.ConvertToUnsecureString());
+        }
 
-            ui.MessageToUser("Stored Domains:");
+        private static void HandleUpdatePassword()
+        {
+            ShowAllDomainsToUser();
 
-            foreach(var entr in db.Entries)
+            var correctDomainGiven = false;
+            var domain = String.Empty;
+
+            while (!correctDomainGiven)
+            {
+                domain = _ui.RequestUserInput("Please Enter Domain to Update");
+                correctDomainGiven = _dbController.ExistsEntry(domain);
+
+                if (!correctDomainGiven) _ui.MessageToUser("That Domain Does not exist amongst stored passwords");
+            }
+
+            var newPassword = _ui.RequestPassword("Please enter new password for the domain " + domain);
+            _dbController.UpdateEntry(new DBEntryDTO(domain, newPassword));
+        }
+
+        private static void ShowAllDomainsToUser()
+        {
+            _ui.MessageToUser("Stored Domains:");
+
+            foreach (var entr in _dbController.Entries)
             {
                 Console.WriteLine(entr.Domain);
             }
+        }
 
+        private static void HandleViewPassword()
+        {
+            bool correctDomainGiven = false;
+            string domain = String.Empty;
+
+            ShowAllDomainsToUser();
 
             while(!correctDomainGiven)
             {
-                domain = ui.RequestUserInput("Please Enter Domain to get corresponding Password");
-                correctDomainGiven = db.Entries.Any(e => e.Domain.ToString().Equals(domain, StringComparison.OrdinalIgnoreCase));
+                domain = _ui.RequestUserInput("Please Enter Domain to get corresponding Password");
+                correctDomainGiven = _dbController.ExistsEntry(domain);
 
-                if (!correctDomainGiven) ui.MessageToUser("That Domain Does not exist amongst stored passwords");
+                if (!correctDomainGiven) _ui.MessageToUser("That Domain Does not exist amongst stored passwords");
             }
+            
+            var entry = _dbController.GetPassword(domain);
 
-            var Entry = db.Entries.Where(e => e.Domain == domain).Select(e => e.Password).First();
-
-            ui.MessageToUser("Password for domain " + domain + " is:\n\n " + Entry.ConvertToUnsecureString());
+            _ui.MessageToUser("Password for domain " + domain + " is:\n\n " + entry.ConvertToUnsecureString());
 
         }
 

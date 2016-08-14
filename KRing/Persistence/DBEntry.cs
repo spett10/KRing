@@ -15,7 +15,7 @@ namespace KRing.DB
     public class DBEntry
     {
         public string Domain { get; private set; }
-        public SecureString Password { get; private set; }
+        public SecureString Password { get; set; }
 
         public DBEntry(string domain, SecureString password)
         {

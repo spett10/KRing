@@ -4,7 +4,6 @@
 -make UI for password retrieval nicer (rite now its ugly)
 -we need error handling. When writing to and from DB we should try / catch it all so we dont crash each time if user disturbs database
 
--implement update
 -implement delete
 
 -implement more users / i.e more users in profile, or more profile files one ofr each user?

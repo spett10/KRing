@@ -43,19 +43,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActionType.cs" />
-    <Compile Include="Authenticator.cs" />
-    <Compile Include="Converter.cs" />
-    <Compile Include="DB\DBController.cs" />
+    <Compile Include="Core\ActionType.cs" />
+    <Compile Include="Core\ConsoleLineInterface.cs" />
+    <Compile Include="Core\Program.cs" />
+    <Compile Include="Core\Session.cs" />
+    <Compile Include="Core\User.cs" />
+    <Compile Include="Data\Authenticator.cs" />
+    <Compile Include="Persistence\Converter.cs" />
+    <Compile Include="Persistence\DBController.cs" />
     <Compile Include="DTO\DBEntryDTO.cs" />
-    <Compile Include="FileUtil.cs" />
+    <Compile Include="Extensions\SecureStringExtension.cs" />
     <Compile Include="Interfaces\UserInterface.cs" />
-    <Compile Include="DB\DBEntry.cs" />
-    <Compile Include="SecureStringExtension.cs" />
-    <Compile Include="Session.cs" />
-    <Compile Include="User.cs" />
-    <Compile Include="ConsoleLineInterface.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Persistence\DBEntry.cs" />
+    <Compile Include="Persistence\FileUtil.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

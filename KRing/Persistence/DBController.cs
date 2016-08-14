@@ -91,9 +91,41 @@ namespace KRing.DB
         
         public void AddEntry(DBEntryDTO newDTO)
         {
-            DBEntry newEntry = new DBEntry(newDTO.Domain, newDTO.Password);
-            Entries.Add(newEntry);
-            EntryCount++;
+            bool duplicateExists = Entries.Exists(
+                                            e => e.
+                                            Domain.
+                                            Equals(newDTO.Domain, StringComparison.OrdinalIgnoreCase));
+
+            if (!duplicateExists)
+            {
+                DBEntry newEntry = new DBEntry(newDTO.Domain, newDTO.Password);
+                Entries.Add(newEntry);
+                EntryCount++;
+            }
+            else
+            {
+                throw new ArgumentException("Error: Domain Already Exists");
+            }
+        }
+
+        public void UpdateEntry(DBEntryDTO updatedEntry)
+        {
+            var entry =
+                Entries.FirstOrDefault(e => e.Domain.Equals(updatedEntry.Domain, StringComparison.OrdinalIgnoreCase));
+            if (entry != null) entry.Password = updatedEntry.Password;
+        }
+
+        public bool ExistsEntry(string domain)
+        {
+            return Entries.Any(e => e.
+                               Domain.
+                               ToString().
+                               Equals(domain, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public SecureString GetPassword(string domain)
+        {
+            return Entries.Where(e => e.Domain == domain).Select(e => e.Password).First();
         }
 
         public void WriteDb(string password)
