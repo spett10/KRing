@@ -7,7 +7,7 @@ namespace UnitTests
     [TestClass]
     public class DBControllerTests
     {
-        private DBController _controller;
+        private DbController _controller;
 
         [TestMethod]
         public void TestMethod1()

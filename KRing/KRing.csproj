@@ -44,22 +44,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\ActionType.cs" />
-    <Compile Include="Core\ProfileController.cs" />
-    <Compile Include="Core\ConsoleLineInterface.cs" />
-    <Compile Include="Core\Cookie.cs" />
+    <Compile Include="Core\Controllers\ProfileController.cs" />
+    <Compile Include="Core\Model\Cookie.cs" />
+    <Compile Include="Core\Model\Session.cs" />
+    <Compile Include="Core\Model\User.cs" />
     <Compile Include="Core\CryptoHashing.cs" />
     <Compile Include="Core\Program.cs" />
-    <Compile Include="Core\Session.cs" />
-    <Compile Include="Core\User.cs" />
+    <Compile Include="Core\View\ConsoleLineInterface.cs" />
+    <Compile Include="Persistence\Controllers\DBController.cs" />
     <Compile Include="Persistence\Converter.cs" />
     <Compile Include="Persistence\DataConfig.cs" />
-    <Compile Include="Persistence\DBController.cs" />
     <Compile Include="DTO\DBEntryDTO.cs" />
     <Compile Include="Extensions\SecureStringExtension.cs" />
     <Compile Include="Interfaces\UserInterface.cs" />
-    <Compile Include="Persistence\DBEntry.cs" />
     <Compile Include="Persistence\FileUtil.cs" />
-    <Compile Include="Persistence\ProfileRepository.cs" />
+    <Compile Include="Persistence\Model\DBEntry.cs" />
+    <Compile Include="Persistence\Repositories\DBEntryRepository.cs" />
+    <Compile Include="Persistence\Repositories\ProfileRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -10,18 +10,18 @@ namespace KRing.DTO
     /// <summary>
     /// Data Transfer Object. We simply transfer data between UI and Backend (where we add more properties and behaviour) 
     /// </summary>
-    public class DBEntryDTO
+    public class DbEntryDto
     {
         public string Domain { get; private set; }
         public SecureString Password { get; private set; }
 
-        public DBEntryDTO(string domain, SecureString password)
+        public DbEntryDto(string domain, SecureString password)
         {
             Domain = domain;
             Password = password;
         }
 
-        ~DBEntryDTO()
+        ~DbEntryDto()
         {
             Password.Dispose(); //Remove secure string with password from memory. 
         }

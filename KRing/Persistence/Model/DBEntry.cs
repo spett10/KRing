@@ -4,7 +4,7 @@ using KRing.Extensions;
 
 namespace KRing.Persistence.Model
 {
-    /* Maybe this should be a private class of DBController? */
+    /* Maybe this should be a private class of DbController? */
     /* Noone else should know about this class as it stands.. */
     public class DBEntry
     {

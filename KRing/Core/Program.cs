@@ -3,10 +3,13 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading;
-using KRing.DB;
+using KRing.Core.Controllers;
+using KRing.Core.Model;
+using KRing.Core.View;
 using KRing.DTO;
 using KRing.Extensions;
 using KRing.Interfaces;
+using KRing.Persistence.Controllers;
 
 namespace KRing.Core
 {
@@ -17,30 +20,18 @@ namespace KRing.Core
         private static bool _isLoggedIn;
         private static bool _isRunning;
         private static Session _currentSession;
-        private static DBController _dbController;
+        private static DbController _dbController;
         private static IUserInterface _ui;
         private static ProfileController _profileController;
 
         static void Main(string[] args)
         {
             /* Setup */
-            _ui = new ConsoleLineInterface();
-            _ui.StartupMessage();
-
-            _maxLoginAttempts = 3;
-            _usedLoginAttempts = 0;
-            _isLoggedIn = false;
-            _isRunning = false;
-            
-            /* ew, fix this TODO */
-            _currentSession = new Session(new User("Guest", false, new SecureString(),
-                                    new Cookie(CryptoHashing.GenerateSalt(),
-                                                CryptoHashing.GenerateSalt(),
-                                                CryptoHashing.GenerateSalt())));
+            ProgramInit();
 
             /* new user or returning user? */
             bool doesProfileExist = true;
-            _dbController = DBController.Instance;
+            _dbController = DbController.Instance;
             _profileController = new ProfileController();
 
             try
@@ -72,9 +63,35 @@ namespace KRing.Core
             if (_isLoggedIn)
             {
                 _isRunning = true;
-                if(doesProfileExist) _dbController.LoadDb();
+                if(doesProfileExist) _dbController.LoadEntries();
             }
 
+            ProgramLoop();
+
+            /* Program Exit */
+            return;
+            
+        }
+
+        private static void ProgramInit()
+        {
+            _ui = new ConsoleLineInterface();
+            _ui.StartupMessage();
+
+            _maxLoginAttempts = 3;
+            _usedLoginAttempts = 0;
+            _isLoggedIn = false;
+            _isRunning = false;
+
+            /* ew, fix this TODO */
+            _currentSession = new Session(new User("Dummy", false, new SecureString(),
+                                    new Cookie(CryptoHashing.GenerateSalt(),
+                                                CryptoHashing.GenerateSalt(),
+                                                CryptoHashing.GenerateSalt())));
+        }
+
+        private static void ProgramLoop()
+        {
             while (_isRunning)
             {
                 ActionType nextAction = _ui.MainMenu();
@@ -96,7 +113,7 @@ namespace KRing.Core
                     case ActionType.Logout:
                         HandleLogout();
                         break;
-                        
+
                     case ActionType.AddPassword:
                         HandleAddPassword();
                         break;
@@ -105,12 +122,7 @@ namespace KRing.Core
                         HandleDeleteUser();
                         break;
                 }
-
             }
-
-            /* Program Exit */
-            return;
-            
         }
 
         private static void LoginLoop()
@@ -157,7 +169,7 @@ namespace KRing.Core
             if (areYouSure)
             {
                 _profileController.DeleteProfile();
-                _dbController.DeleteDb();
+                _dbController.DeleteAllEntries();
                 _isRunning = false;
                 _ui.MessageToUser("Everything deleted. Goodbye.");
                 Thread.Sleep(2000);
@@ -185,6 +197,7 @@ namespace KRing.Core
                 if(!consistentPasswordInput) _ui.MessageToUser("\nPasswords were not consistent. Please try again");
             }
 
+            /* move this into user as constructor ? */
             var saltForPassword = CryptoHashing.GenerateSalt();
             var saltedPassword = CryptoHashing.GenerateSaltedHash(password.ConvertToUnsecureString(), saltForPassword);
             var saltForKey = CryptoHashing.GenerateSalt();
@@ -193,7 +206,7 @@ namespace KRing.Core
             var newUser = new User(newUserName, false, password, cookie);
 
             _profileController.NewProfile(newUser);
-            _dbController.DeleteDb();
+            _dbController.DeleteAllEntries();
         }
 
         private static void HandleDeletePassword()
@@ -239,7 +252,7 @@ namespace KRing.Core
             _isRunning = false;
             _currentSession.User.Logout();
             _ui.GoodbyeMessage(_currentSession.User);
-            _dbController.WriteDb(_currentSession.User.Password.ConvertToUnsecureString());
+            _dbController.SaveAllEntries();
         }
 
         private static void HandleUpdatePassword()

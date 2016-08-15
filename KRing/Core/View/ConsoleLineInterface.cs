@@ -16,7 +16,7 @@ namespace KRing.Core.View
 
         public bool YesNoQuestionToUser(string question)
         {
-            bool IsAnswerYes = false;
+            bool isAnswerYes = false;
             bool correctFormat = false;
 
             Console.WriteLine(question);
@@ -27,12 +27,12 @@ namespace KRing.Core.View
 
                 if (nextKey.Key == ConsoleKey.Y)
                 {
-                    IsAnswerYes = true;
+                    isAnswerYes = true;
                     correctFormat = true;
                 }
                 else if (nextKey.Key == ConsoleKey.N)
                 {
-                    IsAnswerYes = false;
+                    isAnswerYes = false;
                     correctFormat = true;
                 }
                 else
@@ -41,7 +41,7 @@ namespace KRing.Core.View
                 }
             }
 
-            return IsAnswerYes;
+            return isAnswerYes;
         }
 
         public void StartupMessage()
@@ -98,12 +98,12 @@ namespace KRing.Core.View
             return password;
         }
 
-        public DBEntryDTO RequestNewEntryInformation(User user)
+        public DbEntryDto RequestNewEntryInformation(User user)
         {
             string domain = RequestUserInput("Please enter domain associated with password you want to store");
             SecureString password = RequestPassword("Please Enter the password to be stored");
 
-            return new DBEntryDTO(domain, password);
+            return new DbEntryDto(domain, password);
         }
 
         public string RequestUserInput(string msg)
