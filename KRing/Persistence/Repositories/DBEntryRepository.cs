@@ -36,8 +36,6 @@ namespace KRing.Persistence.Repositories
             _count = Config();
             _iv = new byte[CryptoHashing.SaltByteSize];
             SetupIv();
-            Debug.WriteLine("count is " + _count.ToString());
-            Debug.WriteLine("is empty is " + IsDbEmpty().ToString());
             _entries = !IsDbEmpty() ? LoadEntriesFromDb() : new List<DBEntry>();
         }
 
@@ -84,7 +82,7 @@ namespace KRing.Persistence.Repositories
             return _entries.Any(e => e.
                                Domain.
                                ToString().
-                               Equals(domain, StringComparison.OrdinalIgnoreCase));
+                               Equals(domain, StringComparison.CurrentCulture));
         }
 
         public void AddEntry(DbEntryDto newDto)
@@ -92,7 +90,7 @@ namespace KRing.Persistence.Repositories
             bool duplicateExists = _entries.Exists(
                                             e => e.
                                             Domain.
-                                            Equals(newDto.Domain, StringComparison.OrdinalIgnoreCase));
+                                            Equals(newDto.Domain, StringComparison.CurrentCulture));
 
             if (!duplicateExists)
             {

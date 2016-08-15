@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Security;
 using KRing.Core.Model;
+using KRing.Extensions;
+using KRing.Interfaces;
 using KRing.Persistence;
 using KRing.Persistence.Repositories;
 
@@ -11,6 +13,8 @@ namespace KRing.Core.Controllers
         public int UserCount { get; private set; }
         private readonly ProfileRepository _profileRepository;
         private User _user;
+        private readonly int _maxLoginAttempts = 3;
+        private int _usedLoginAttempts = 0;
 
         public ProfileController()
         {
@@ -18,7 +22,75 @@ namespace KRing.Core.Controllers
             _profileRepository = new ProfileRepository();
         }
 
-        public Session LogIn(string username, SecureString password)
+        public void NewProfile(IUserInterface ui)
+        {
+            ui.MessageToUser("Creating new user for you!");
+            var newUserName = ui.RequestUserInput("Please enter your username");
+
+            bool consistentPasswordInput = false;
+
+            SecureString password = new SecureString();
+
+            while (!consistentPasswordInput)
+            {
+                password = ui.RequestPassword("\nPlease enter your desired password");
+                var passwordRepeated = ui.RequestPassword("\nPlease re-enter your desired password");
+
+                consistentPasswordInput =
+                    password.ConvertToUnsecureString()
+                        .Equals(passwordRepeated.ConvertToUnsecureString(), StringComparison.OrdinalIgnoreCase);
+
+                if (!consistentPasswordInput) ui.MessageToUser("\nPasswords were not consistent. Please try again");
+            }
+            
+            var newUser = User.NewUserWithFreshSalt(newUserName, password);
+
+            UpdateProfile(newUser);
+        }
+
+        public Session LoginLoop(IUserInterface ui)
+        {
+            ui.MessageToUser("\nPlease Log In");
+
+            bool isLoggedIn = false;
+            Session newSession = Session.DummySession();
+
+            while (!isLoggedIn)
+            {
+                string username = ui.RequestUserInput("\nPlease Enter Username:");
+
+                SecureString password = ui.RequestPassword("Please Enter Your Password");
+
+                try
+                {
+                    newSession = LogIn(username, password);
+                }
+                catch (Exception e)
+                {
+                    ui.MessageToUser(e.Message);
+                    _usedLoginAttempts++;
+
+                    if (_usedLoginAttempts >= _maxLoginAttempts)
+                    {
+                        ui.LoginTimeoutMessage();
+                        password.Dispose();
+                        throw new UnauthorizedAccessException("All login attempts used");
+                    }
+                }
+
+
+                if (newSession.User.IsLoggedIn)
+                {
+                    ui.WelcomeMessage(newSession.User);
+                    isLoggedIn = true;
+                }
+                password.Clear();
+            }
+
+            return newSession;
+        }
+
+        private Session LogIn(string username, SecureString password)
         {
             bool isPasswordCorrect = false;
 
@@ -43,9 +115,9 @@ namespace KRing.Core.Controllers
             }
         }
 
-        public void NewProfile(User user)
+        private void UpdateProfile(User user)
         {
-            if(user == null) Console.WriteLine("User not good");
+            if(user == null) throw new ArgumentNullException();
 
             _profileRepository.WriteUser(user);
 

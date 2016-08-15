@@ -1,4 +1,5 @@
 ﻿using System.Security;
+using KRing.Extensions;
 
 namespace KRing.Core.Model
 {
@@ -15,6 +16,16 @@ namespace KRing.Core.Model
             IsLoggedIn = loggedIn;
             Password = password;
             Cookie = cookie;
+        }
+
+        public static User NewUserWithFreshSalt(string newUserName, SecureString password)
+        {
+            var saltForPassword = CryptoHashing.GenerateSalt();
+            var saltedPassword = CryptoHashing.GenerateSaltedHash(password.ConvertToUnsecureString(), saltForPassword);
+            var saltForKey = CryptoHashing.GenerateSalt();
+
+            var cookie = new Cookie(saltedPassword, saltForPassword, saltForKey);
+            return new User(newUserName, false, password, cookie);
         }
 
         public static User DummyUser()
