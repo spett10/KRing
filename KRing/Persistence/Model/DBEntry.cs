@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using KRing.DTO;
+﻿using System.Collections.Generic;
 using System.Security;
-using System.ComponentModel;
 using KRing.Extensions;
 
-namespace KRing.DB
+namespace KRing.Persistence.Model
 {
     /* Maybe this should be a private class of DBController? */
     /* Noone else should know about this class as it stands.. */

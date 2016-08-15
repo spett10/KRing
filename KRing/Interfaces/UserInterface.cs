@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Security;
 using KRing;
 using KRing.Core;
+using KRing.Core.Model;
 using KRing.DTO;
 
 namespace KRing.Interfaces

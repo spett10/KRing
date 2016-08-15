@@ -1,19 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using KRing.DTO;
-using System.Security.Cryptography;
+using System.Linq;
 using System.Security;
+using System.Security.Cryptography;
+using System.Text;
 using KRing.Core;
+using KRing.DTO;
 using KRing.Extensions;
-using KRing.Persistence;
+using KRing.Persistence.Model;
 
-namespace KRing.DB
+namespace KRing.Persistence.Controllers
 {
     /* We cant salt and store these passwords, since its just data, we are not trying to log a user in, we are trying to give them */
     /* Their specific decrypted data (which happens to be passwords) on demand once they are logged in */

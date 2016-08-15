@@ -1,6 +1,6 @@
 ﻿using System.Security;
 
-namespace KRing.Core
+namespace KRing.Core.Model
 {
     public class User
     {

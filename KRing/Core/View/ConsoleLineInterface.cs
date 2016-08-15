@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Security;
+using KRing.Core.Model;
 using KRing.DTO;
 using KRing.Interfaces;
 
-namespace KRing.Core
+namespace KRing.Core.View
 {
     /* Todo: flyt al text over i en shallow static class? */
     public class ConsoleLineInterface : IUserInterface

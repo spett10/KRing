@@ -19,7 +19,7 @@ namespace KRing.Core
         private static Session _currentSession;
         private static DBController _dbController;
         private static IUserInterface _ui;
-        private static Authenticator _authenticator;
+        private static ProfileController _profileController;
 
         static void Main(string[] args)
         {
@@ -41,11 +41,11 @@ namespace KRing.Core
             /* new user or returning user? */
             bool doesProfileExist = true;
             _dbController = DBController.Instance;
-            _authenticator = new Authenticator();
+            _profileController = new ProfileController();
 
             try
             {
-                _authenticator.LoadProfile();
+                _profileController.LoadProfile();
             }
             catch (Exception)
             {
@@ -125,7 +125,7 @@ namespace KRing.Core
 
                 try
                 {
-                    _currentSession = _authenticator.LogIn(username, password);
+                    _currentSession = _profileController.LogIn(username, password);
                 }
                 catch (Exception e)
                 {
@@ -152,11 +152,11 @@ namespace KRing.Core
 
         private static void HandleDeleteUser()
         {
-            bool areYouSure = _ui.YesNoQuestionToUser("Are you sure you want to delete user and all stored information?");
+            bool areYouSure = _ui.YesNoQuestionToUser("Are you sure you want to delete user and all stored information? (Y/N)");
 
             if (areYouSure)
             {
-                _authenticator.DeleteProfile();
+                _profileController.DeleteProfile();
                 _dbController.DeleteDb();
                 _isRunning = false;
                 _ui.MessageToUser("Everything deleted. Goodbye.");
@@ -192,7 +192,7 @@ namespace KRing.Core
             var cookie = new Cookie(saltedPassword, saltForPassword, saltForKey);
             var newUser = new User(newUserName, false, password, cookie);
 
-            _authenticator.NewProfile(newUser);
+            _profileController.NewProfile(newUser);
             _dbController.DeleteDb();
         }
 

@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\ActionType.cs" />
-    <Compile Include="Core\Authenticator.cs" />
+    <Compile Include="Core\ProfileController.cs" />
     <Compile Include="Core\ConsoleLineInterface.cs" />
     <Compile Include="Core\Cookie.cs" />
     <Compile Include="Core\CryptoHashing.cs" />
@@ -59,6 +59,7 @@
     <Compile Include="Interfaces\UserInterface.cs" />
     <Compile Include="Persistence\DBEntry.cs" />
     <Compile Include="Persistence\FileUtil.cs" />
+    <Compile Include="Persistence\ProfileRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

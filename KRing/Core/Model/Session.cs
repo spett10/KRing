@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KRing.Core
+namespace KRing.Core.Model
 {
     public class Session
     {

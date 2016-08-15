@@ -1,5 +1,5 @@
 ﻿using System;
-using KRing.DB;
+using KRing.Persistence.Controllers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests
