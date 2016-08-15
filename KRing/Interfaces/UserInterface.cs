@@ -23,7 +23,7 @@ namespace KRing.Interfaces
 
         SecureString RequestPassword(string msg);
 
-        DBEntryDTO RequestNewEntryInformation(User user);
+        DbEntryDto RequestNewEntryInformation(User user);
 
         string RequestUserInput(string msg);
 

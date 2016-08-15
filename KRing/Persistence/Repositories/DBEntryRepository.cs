@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -8,7 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using KRing.Core;
 using KRing.Core.Model;
+using KRing.DTO;
 using KRing.Extensions;
+using KRing.Interfaces;
 using KRing.Persistence.Model;
 
 namespace KRing.Persistence.Repositories
@@ -19,7 +22,10 @@ namespace KRing.Persistence.Repositories
         private readonly byte[] _insecureHardcodedKey = Encoding.ASCII.GetBytes("Yellow Submarine");
         private byte[] _iv;
         private readonly int _count;
-        
+        private readonly List<DBEntry> _entries;
+
+        public int EntryCount => _entries.Count;
+
         public DbEntryRepository()
         {
             _dataConfig = new DataConfig(
@@ -30,20 +36,87 @@ namespace KRing.Persistence.Repositories
             _count = Config();
             _iv = new byte[CryptoHashing.SaltByteSize];
             SetupIv();
+            Debug.WriteLine("count is " + _count.ToString());
+            Debug.WriteLine("is empty is " + IsDbEmpty().ToString());
+            _entries = !IsDbEmpty() ? LoadEntriesFromDb() : new List<DBEntry>();
+        }
+
+        public void DeleteEntry(string domain)
+        {
+            var entry = _entries.SingleOrDefault(e => e.Domain.Equals(domain));
+            if (entry != null)
+            {
+                _entries.Remove(entry);
+            }
+        }
+
+        public void UpdateEntry(DbEntryDto updatedEntry)
+        {
+            var entry =
+                _entries.FirstOrDefault(e => e.Domain.Equals(updatedEntry.Domain, StringComparison.OrdinalIgnoreCase));
+            if (entry != null) entry.Password = updatedEntry.Password;
+        }
+
+        public SecureString GetPasswordFromEntry(string domain)
+        {
+            return _entries.Where(e => e.Domain == domain).Select(e => e.Password).First();
+        }
+
+        public void DeleteAllEntries()
+        {
+            _entries.Clear();
+
+            DeleteDb();
+        }
+
+        public void ShowAllDomainsToUser(IUserInterface ui)
+        {
+            ui.MessageToUser("Stored Domains:");
+
+            foreach (var entr in _entries)
+            {
+                ui.MessageToUser(entr.Domain);
+            }
+        }
+
+        public bool ExistsEntry(string domain)
+        {
+            return _entries.Any(e => e.
+                               Domain.
+                               ToString().
+                               Equals(domain, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public void AddEntry(DbEntryDto newDto)
+        {
+            bool duplicateExists = _entries.Exists(
+                                            e => e.
+                                            Domain.
+                                            Equals(newDto.Domain, StringComparison.OrdinalIgnoreCase));
+
+            if (!duplicateExists)
+            {
+                DBEntry newEntry = new DBEntry(newDto.Domain, newDto.Password);
+                _entries.Add(newEntry);
+            }
+            else
+            {
+                throw new ArgumentException("Error: Domain Already Exists");
+            }
         }
 
         public bool IsDbEmpty()
         {
-            return _count > 0;
+            return _count <= 0;
         }
 
-        public void DeleteDb()
+        private void DeleteDb()
         {
             FileUtil.FilePurge(_dataConfig.dbPath, "-");
             FileUtil.FilePurge(_dataConfig.configPath, "0");
         }
 
-        public void UpdateConfig(int count)
+        private void UpdateConfig(int count)
         {
             using (StreamWriter configWriter = new StreamWriter(_dataConfig.configPath))
             {
@@ -51,9 +124,9 @@ namespace KRing.Persistence.Repositories
             }
         }
 
-        public void WriteEntriesToDb(List<DBEntry> entries)
+        public void WriteEntriesToDb()
         {
-            UpdateConfig(entries.Count);
+            UpdateConfig(_entries.Count);
 
             UpdateIv();
 
@@ -68,7 +141,7 @@ namespace KRing.Persistence.Repositories
 
             StreamWriter streamWriter = new StreamWriter(cs);
 
-            foreach (var entr in entries)
+            foreach (var entr in _entries)
             {
                 streamWriter.WriteLine(entr.Domain);
                 streamWriter.WriteLine(entr.Password.ConvertToUnsecureString());

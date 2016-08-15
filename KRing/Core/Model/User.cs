@@ -17,6 +17,14 @@ namespace KRing.Core.Model
             Cookie = cookie;
         }
 
+        public static User DummyUser()
+        {
+            return new User("Dummy", false, new SecureString(),
+                                    new Cookie(CryptoHashing.GenerateSalt(),
+                                                CryptoHashing.GenerateSalt(),
+                                                CryptoHashing.GenerateSalt()));
+        }
+
         public void Login()
         {
             this.IsLoggedIn = true;

@@ -6,8 +6,10 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using KRing.Core;
+using KRing.Core.Model;
 using KRing.DTO;
 using KRing.Extensions;
+using KRing.Interfaces;
 using KRing.Persistence.Model;
 using KRing.Persistence.Repositories;
 
@@ -20,8 +22,7 @@ namespace KRing.Persistence.Controllers
         /// </summary>
         private static DbController _instance;
         private static DbEntryRepository _dbEntryRepository;
-        public List<DBEntry> Entries { get; private set; }
-        public int EntryCount => Entries.Count;
+        public int EntryCount => _dbEntryRepository.EntryCount;
 
         public static DbController Instance
         {
@@ -39,72 +40,117 @@ namespace KRing.Persistence.Controllers
         private DbController()
         {
             _dbEntryRepository = new DbEntryRepository();
-            Entries = !_dbEntryRepository.IsDbEmpty() ? _dbEntryRepository.LoadEntriesFromDb() : new List<DBEntry>();
         }
 
-        public void LoadEntries()
+        public void AddPassword(IUserInterface ui, Session session)
         {
-            Entries = _dbEntryRepository.LoadEntriesFromDb();
-        }
-
-        public void DeleteEntryFromDomain(string domain)
-        {
-            var entry = Entries.SingleOrDefault(e => e.Domain.Equals(domain));
-            if (entry != null)
+            DbEntryDto newEntry = ui.RequestNewEntryInformation(session.User);
+            try
             {
-                Entries.Remove(entry);
+                _dbEntryRepository.AddEntry(newEntry);
             }
-            
+            catch (ArgumentException e)
+            {
+                ui.MessageToUser("\n" + e.Message);
+            }
         }
 
-        public void AddEntry(DbEntryDto newDto)
+        public void UpdatePassword(IUserInterface ui)
         {
-            bool duplicateExists = Entries.Exists(
-                                            e => e.
-                                            Domain.
-                                            Equals(newDto.Domain, StringComparison.OrdinalIgnoreCase));
-
-            if (!duplicateExists)
+            if (EntryCount <= 0)
             {
-                DBEntry newEntry = new DBEntry(newDto.Domain, newDto.Password);
-                Entries.Add(newEntry);
+                ui.MessageToUser("You have no passwords stored\n");
+                return;
+            }
+
+            _dbEntryRepository.ShowAllDomainsToUser(ui);
+
+            var correctDomainGiven = false;
+            var domain = String.Empty;
+
+            while (!correctDomainGiven)
+            {
+                domain = ui.RequestUserInput("Please Enter Domain to Update");
+                correctDomainGiven = _dbEntryRepository.ExistsEntry(domain);
+
+                if (!correctDomainGiven) ui.MessageToUser("That Domain Does not exist amongst stored passwords");
+            }
+
+            var newPassword = ui.RequestPassword("Please enter new password for the domain " + domain);
+            _dbEntryRepository.UpdateEntry(new DbEntryDto(domain, newPassword));
+        }
+
+        public void DeletePassword(IUserInterface ui)
+        {
+            if (EntryCount <= 0)
+            {
+                ui.MessageToUser("You have no passwords stored\n");
+                return;
+            }
+
+            _dbEntryRepository.ShowAllDomainsToUser(ui);
+
+            var correctDomainGiven = false;
+            var domain = string.Empty;
+
+            while (!correctDomainGiven)
+            {
+                domain = ui.RequestUserInput("Please Enter Domain to Delete");
+                correctDomainGiven = _dbEntryRepository.ExistsEntry(domain);
+
+                if (!correctDomainGiven) ui.MessageToUser("That domain does not exist amongst stored passwords");
+            }
+
+            _dbEntryRepository.DeleteEntry(domain);
+        }
+
+        public void ViewPassword(IUserInterface ui)
+        {
+            if (EntryCount <= 0)
+            {
+                ui.MessageToUser("You have no passwords stored\n");
+                return;
+            }
+
+            bool correctDomainGiven = false;
+            string domain = String.Empty;
+
+            _dbEntryRepository.ShowAllDomainsToUser(ui);
+
+            while (!correctDomainGiven)
+            {
+                domain = ui.RequestUserInput("Please Enter Domain to get corresponding Password");
+                correctDomainGiven = _dbEntryRepository.ExistsEntry(domain);
+
+                if (!correctDomainGiven) ui.MessageToUser("That Domain Does not exist amongst stored passwords");
+            }
+
+            var entry = _dbEntryRepository.GetPasswordFromEntry(domain);
+
+            ui.MessageToUser("Password for domain " + domain + " is:\n\n " + entry.ConvertToUnsecureString());
+        }
+
+        public void LoadDb()
+        {
+            if (!_dbEntryRepository.IsDbEmpty())
+            {
+                _dbEntryRepository.LoadEntriesFromDb();
             }
             else
             {
-                throw new ArgumentException("Error: Domain Already Exists");
+                throw new AppDomainUnloadedException("No Db entries to load");
             }
         }
 
-        public void UpdateEntry(DbEntryDto updatedEntry)
-        {
-            var entry =
-                Entries.FirstOrDefault(e => e.Domain.Equals(updatedEntry.Domain, StringComparison.OrdinalIgnoreCase));
-            if (entry != null) entry.Password = updatedEntry.Password;
-        }
-
-        public bool ExistsEntry(string domain)
-        {
-            return Entries.Any(e => e.
-                               Domain.
-                               ToString().
-                               Equals(domain, StringComparison.OrdinalIgnoreCase));
-        }
-
-        public SecureString GetPassword(string domain)
-        {
-            return Entries.Where(e => e.Domain == domain).Select(e => e.Password).First();
-        }
-
+        /* fjern alle nedenunder efter vi har flyttet logikken fra program over */
         public void DeleteAllEntries()
         {
-            Entries.Clear();
-
-            _dbEntryRepository.DeleteDb();
+            _dbEntryRepository.DeleteAllEntries();
         }
 
         public void SaveAllEntries()
         {
-            _dbEntryRepository.WriteEntriesToDb(Entries);
+            _dbEntryRepository.WriteEntriesToDb();
         }
     }
 }

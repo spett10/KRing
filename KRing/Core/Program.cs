@@ -63,7 +63,17 @@ namespace KRing.Core
             if (_isLoggedIn)
             {
                 _isRunning = true;
-                if(doesProfileExist) _dbController.LoadEntries();
+                if (doesProfileExist)
+                {
+                    try
+                    {
+                        _dbController.LoadDb();
+                    }
+                    catch (Exception)
+                    {
+                        _ui.MessageToUser("");
+                    }
+                }
             }
 
             ProgramLoop();
@@ -82,12 +92,7 @@ namespace KRing.Core
             _usedLoginAttempts = 0;
             _isLoggedIn = false;
             _isRunning = false;
-
-            /* ew, fix this TODO */
-            _currentSession = new Session(new User("Dummy", false, new SecureString(),
-                                    new Cookie(CryptoHashing.GenerateSalt(),
-                                                CryptoHashing.GenerateSalt(),
-                                                CryptoHashing.GenerateSalt())));
+            _currentSession = Session.DummySession();
         }
 
         private static void ProgramLoop()
@@ -211,40 +216,13 @@ namespace KRing.Core
 
         private static void HandleDeletePassword()
         {
-            if (_dbController.EntryCount <= 0)
-            {
-                _ui.MessageToUser("You have no passwords stored\n");
-                return;
-            }
-
-            ShowAllDomainsToUser();
-
-            var correctDomainGiven = false;
-            var domain = string.Empty;
-
-            while (!correctDomainGiven)
-            {
-                domain = _ui.RequestUserInput("Please Enter Domain to Delete");
-                correctDomainGiven = _dbController.ExistsEntry(domain);
-
-                if(!correctDomainGiven) _ui.MessageToUser("That domain does not exist amongst stored passwords");
-            }
-
-            _dbController.DeleteEntryFromDomain(domain);
+            _dbController.DeletePassword(_ui);
         }
 
 
         private static void HandleAddPassword()
         {
-            DBEntryDTO newEntry = _ui.RequestNewEntryInformation(_currentSession.User);
-            try
-            {
-                _dbController.AddEntry(newEntry);
-            }
-            catch (ArgumentException e)
-            {
-                _ui.MessageToUser("\n" + e.Message);
-            }
+            _dbController.AddPassword(_ui, _currentSession);
         }
 
         private static void HandleLogout()
@@ -257,63 +235,12 @@ namespace KRing.Core
 
         private static void HandleUpdatePassword()
         {
-            if (_dbController.EntryCount <= 0)
-            {
-                _ui.MessageToUser("You have no passwords stored\n");
-                return;
-            }
-
-            ShowAllDomainsToUser();
-
-            var correctDomainGiven = false;
-            var domain = String.Empty;
-
-            while (!correctDomainGiven)
-            {
-                domain = _ui.RequestUserInput("Please Enter Domain to Update");
-                correctDomainGiven = _dbController.ExistsEntry(domain);
-
-                if (!correctDomainGiven) _ui.MessageToUser("That Domain Does not exist amongst stored passwords");
-            }
-
-            var newPassword = _ui.RequestPassword("Please enter new password for the domain " + domain);
-            _dbController.UpdateEntry(new DBEntryDTO(domain, newPassword));
-        }
-
-        private static void ShowAllDomainsToUser()
-        {
-            _ui.MessageToUser("Stored Domains:");
-
-            foreach (var entr in _dbController.Entries)
-            {
-                Console.WriteLine(entr.Domain);
-            }
+            _dbController.UpdatePassword(_ui);
         }
 
         private static void HandleViewPassword()
         {
-            if (_dbController.EntryCount <= 0)
-            {
-                _ui.MessageToUser("You have no passwords stored\n");
-                return;
-            }
-
-            bool correctDomainGiven = false;
-            string domain = String.Empty;
-
-            ShowAllDomainsToUser();
-
-            while(!correctDomainGiven)
-            {
-                domain = _ui.RequestUserInput("Please Enter Domain to get corresponding Password");
-                correctDomainGiven = _dbController.ExistsEntry(domain);
-
-                if (!correctDomainGiven) _ui.MessageToUser("That Domain Does not exist amongst stored passwords");
-            }
-            
-            var entry = _dbController.GetPassword(domain);
-
-            _ui.MessageToUser("Password for domain " + domain + " is:\n\n " + entry.ConvertToUnsecureString());
+            _dbController.ViewPassword(_ui);
 
         }
 
