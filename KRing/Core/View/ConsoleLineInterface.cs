@@ -56,7 +56,7 @@ namespace KRing.Core.View
 
         public void WelcomeMessage(User User)
         {
-            if(User.IsLoggedIn) Console.WriteLine("\nWelcome {0}\n", User.UserName);
+            Console.WriteLine("\nWelcome {0}\n", User.UserName);
         }
 
         public void GoodbyeMessage(User User)

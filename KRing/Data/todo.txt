@@ -8,6 +8,5 @@
 
 -use asyn file reading and await it finishing before user can do operations. 
 
--move all the file i/O from db controller to contained class (configurer or something?)
 
 -use more interfaces and refactor st. we can unit test the stuff.

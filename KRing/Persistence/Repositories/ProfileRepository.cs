@@ -65,7 +65,6 @@ namespace KRing.Persistence.Repositories
                 var cookie = new Cookie(passwordSalted, salt, keySalt);
 
                 return new User(storedUser,
-                                false,
                                 securePassword, 
                                 cookie);
             }

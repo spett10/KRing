@@ -79,7 +79,7 @@ namespace KRing.Core.Controllers
                 }
 
 
-                if (newSession.User.IsLoggedIn)
+                if (newSession.IsLoggedIn)
                 {
                     ui.WelcomeMessage(newSession.User);
                     isLoggedIn = true;
@@ -105,9 +105,8 @@ namespace KRing.Core.Controllers
 
             if (allowLogin)
             {
-                _user.Login();
                 _user.Password = password;
-                return new Session(_user);
+                return new Session(_user, true);
             }
             else
             {

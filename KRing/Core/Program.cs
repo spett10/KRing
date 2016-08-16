@@ -57,7 +57,7 @@ namespace KRing.Core
             }
 
             /* User Logged In */
-            if (_currentSession.User.IsLoggedIn)
+            if (_currentSession.IsLoggedIn)
             {
                 _isRunning = true;
                 if (doesProfileExist)
@@ -163,7 +163,7 @@ namespace KRing.Core
         private static void HandleLogout()
         {
             _isRunning = false;
-            _currentSession.User.Logout();
+            _currentSession.IsLoggedIn = false;
             _ui.GoodbyeMessage(_currentSession.User);
             _dbController.SaveAllEntries();
         }
