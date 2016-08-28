@@ -4,7 +4,7 @@ KRing is a simple command line application to store the passwords associated wit
 
 ### Who is KRing for? ###
 
-This is a personal project for learning purposes. I do not recommend anyone to use the application for its intended purpose and expect it to be secure. If you use this application to encrypt your passwords and later find someone to have broken the application, I take no responsibility. Use at your own precaution. I simply needed the functionality and thus created the project for learning purposes. 
+This is a personal project for learning purposes. I do not recommend anyone to use the application for its intended purpose. Do not expect it to be secure, since it has not been penetration tested or peer reviewed by industry professionals. If you use this application, it is at your own risk, I take no responsibility. Use at your own precaution. 
 
 ### How does KRing store passwords? ###
 
