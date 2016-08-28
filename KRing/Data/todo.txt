@@ -1,4 +1,5 @@
-﻿-we need error handling. When writing to and from DB we should try / catch it all so we dont crash each time if user disturbs database
--use more interfaces and refactor st. we can unit test the stuff.
+﻿-use more interfaces and refactor st. we can unit test the stuff.
 -look into unit of work pattern, and transactionSco
 pe
+
+-add a readme

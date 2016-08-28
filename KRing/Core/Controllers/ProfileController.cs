@@ -154,9 +154,9 @@ namespace KRing.Core.Controllers
         {
             if(user == null) throw new ArgumentNullException();
 
-            _profileRepository.WriteUser(user);
+                _profileRepository.WriteUser(user);
 
-            _user = _profileRepository.ReadUser();
+                _user = _profileRepository.ReadUser();
         }
 
         public void DeleteProfile()
@@ -166,7 +166,14 @@ namespace KRing.Core.Controllers
 
         public void LoadProfile()
         {
-            _user = _profileRepository.ReadUser();
+            try
+            {
+                _user = _profileRepository.ReadUser();
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
         }
 
         

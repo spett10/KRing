@@ -38,8 +38,7 @@ namespace KRing.Core
             {
                 doesProfileExist = false;
             }
-
-
+            
             /* Login Loop */
             if (!doesProfileExist)
             {
