@@ -2,9 +2,9 @@
 
 KRing is a simple command line application to store the passwords associated with the domains you use, in an encrypted format. It is written in C#.
 
-### What is this repository for? ###
+### Who is KRing for? ###
 
-* This is a personal project for learning purposes. I do not recommend anyone to use the application for its intended purpose and expect it to be secure. If you use this application to encrypt your passwords and later find someone to have broken the application, I take no responsibility. Use at your own precaution. I simply needed the functionality and thus created the project for learning purposes. 
+This is a personal project for learning purposes. I do not recommend anyone to use the application for its intended purpose and expect it to be secure. If you use this application to encrypt your passwords and later find someone to have broken the application, I take no responsibility. Use at your own precaution. I simply needed the functionality and thus created the project for learning purposes. 
 
 ### How does KRing store passwords? ###
 
