@@ -35,7 +35,9 @@ The application can only have a single user at a time. It is possible to delete 
 
 ### Usage ###
 
-There are limited functionalities after you log in. 
+If you've successfully created a profile at the first run of the application, you will be promted for a username and the correct password. There is no username or password recovery, nor are there any hints.
+
+There are certain limited functionalities after you log in. 
 
 The main menu will present to you the following possible actions:
 
