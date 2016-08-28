@@ -26,7 +26,7 @@ i.e email@domain.com == password, then the resulting ciphertexts of the domain r
 * The passwords are decrypted at runtime upon request, using the SecureString class in C# for storage until such a request. This means that the plaintext password will only be in memory of your computer for a limited and minimal amount of time.
 
 ### Summary of set up ###
-When the application starts, if the profile.txt file is empty (or corrupted/changed since last use), the application interprets you as being a new user. You will be requested a username as well as a password. The password will be 
+When the application starts for the first time, the application interprets you as being a new user. You will be requested a username as well as a password. The password will be 
 tested for "strongness" and you must submit one that is strong enough. 
 
 The application can only have a single user at a time. It is possible to delete everything from within the application, which means that the next run of the application will attempt to create a new user.
