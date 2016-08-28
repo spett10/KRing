@@ -110,17 +110,33 @@ namespace KRing.Persistence.Controllers
 
             _dbEntryRepository.ShowAllDomainsToUser(ui);
 
+            int entryCount = _dbEntryRepository.EntryCount;
+            int requestedDomain = 0;
+
             while (!correctDomainGiven)
             {
-                domain = ui.RequestUserInput("Please Enter Domain to get corresponding Password");
-                correctDomainGiven = _dbEntryRepository.ExistsEntry(domain);
+                domain = ui.RequestUserInput("Please Enter index of Domain to get corresponding Password");
 
-                if (!correctDomainGiven) ui.MessageToUser("That Domain Does not exist amongst stored passwords");
+                
+                Int32.TryParse(domain, out requestedDomain);
+
+                correctDomainGiven = requestedDomain <= entryCount;
+
+                if (!correctDomainGiven) ui.MessageToUser("That index does not exist, please try again");
             }
 
-            var entry = _dbEntryRepository.GetPasswordFromEntry(domain);
+            try
+            {
+                int zeroIndexedDomain = requestedDomain - 1;
+                var entry = _dbEntryRepository.GetPasswordFromCount(zeroIndexedDomain);
+                ui.MessageToUser("Password for domain " + domain + " is:\n\n " + entry.ConvertToUnsecureString());
+            }
+            catch(Exception)
+            {
+                ui.MessageToUser("Internal Error");
+            }
 
-            ui.MessageToUser("Password for domain " + domain + " is:\n\n " + entry.ConvertToUnsecureString());
+
         }
 
         public void LoadDb()

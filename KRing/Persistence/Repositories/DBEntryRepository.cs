@@ -80,9 +80,14 @@ namespace KRing.Persistence.Repositories
             if (entry != null) entry.Password = updatedEntry.Password;
         }
 
-        public SecureString GetPasswordFromEntry(string domain)
+        public SecureString GetPasswordFromDomain(string domain)
         {
             return _entries.Where(e => e.Domain == domain).Select(e => e.Password).First();
+        }
+
+        public SecureString GetPasswordFromCount(int count)
+        {
+            return _entries.ElementAt(count).Password;
         }
 
         public void DeleteAllEntries()
@@ -92,13 +97,17 @@ namespace KRing.Persistence.Repositories
             DeleteDb();
         }
 
+        /* This logic seems missplaced. Shouldnt we give the entries to UI? */
         public void ShowAllDomainsToUser(IUserInterface ui)
         {
             ui.MessageToUser("Stored Domains:");
 
+            int i = 0;
+
             foreach (var entr in _entries)
             {
-                ui.MessageToUser(entr.Domain);
+                i++;
+                ui.MessageToUser("("+i +"): " +entr.Domain);
             }
         }
 
