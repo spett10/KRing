@@ -21,7 +21,7 @@ In more detail:
 * When you exit the application, a new IV is derived and used for encryption. This means that for each run of the application, the encryption almost certainly (except with negligible probability) will produce a different encryption file than the previous run of the application, although the passwords stored might be the same. 
 
 * The semantically secure encryption also means that even if you are stupid enough to have a password equal to your domain,
-i.e email@domain.com == password, then the resulting ciphertexts will still be different. 
+i.e email@domain.com == password, then the resulting ciphertexts of the domain respectively the password will still be different. 
 
 * The passwords are decrypted at runtime upon request, using the SecureString class in C#. This means that the plaintext password will only be in memory of your computer a limited amount of time, though not at all time (this would be impossible).
 
