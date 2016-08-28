@@ -1,1 +1,5 @@
 KRing/Data/*
+KRing/Data/db.txt
+KRing/Data/config.txt
+KRing/Data/profile.txt
+KRing/Data/meta.txt
