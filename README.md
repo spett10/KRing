@@ -23,7 +23,7 @@ In more detail:
 * The semantically secure encryption also means that even if you are stupid enough to have a password equal to your domain,
 i.e email@domain.com == password, then the resulting ciphertexts of the domain respectively the password will still be different. 
 
-* The passwords are decrypted at runtime upon request, using the SecureString class in C#. This means that the plaintext password will only be in memory of your computer a limited amount of time, though not at all time (this would be impossible).
+* The passwords are decrypted at runtime upon request, using the SecureString class in C# for storage until such a request. This means that the plaintext password will only be in memory of your computer for a limited and minimal amount of time.
 
 ### Summary of set up ###
 When the application starts, if the profile.txt file is empty (or corrupted/changed since last use), the application interprets you as being a new user. You will be requested a username as well as a password. The password will be 
