@@ -1,4 +1,4 @@
-# README #
+# KRing #
 
 KRing is a simple command line application to store the passwords associated with the domains you use, in an encrypted format. It is written in C#.
 
@@ -54,11 +54,4 @@ The main menu will present to you the following possible actions:
 -X (delete user): Your profile and all stored passwords and domains are deleted. Cannot be undone.
 
 
--L (logout): logs you out. The application reencrypts all stored password from encrypted memory to an underlying database with semantically secure encryption. 
-
-
-
-
-
-
-
+-L (logout): logs you out. The application reencrypts all stored password from encrypted memory to an underlying database with semantically secure encryption.
