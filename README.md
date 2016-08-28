@@ -4,13 +4,14 @@ KRing is a simple command line application to store the passwords associated wit
 
 ### Who is KRing for? ###
 
-This is a personal project for learning purposes. I do not recommend anyone to use the application for its intended purpose and expect it to be secure. If you use this application to encrypt your passwords and later find someone to have broken the application, I take no responsibility. Use at your own precaution. I simply needed the functionality and thus created the project for learning purposes. 
+This is a personal project for learning purposes. I do not recommend anyone to use the application for its intended purpose. Do not expect it to be secure, since it has not been penetration tested or peer reviewed by industry professionals. If you use this application, it is at your own risk, I take no responsibility. Use at your own precaution. 
 
 ### How does KRing store passwords? ###
 
 In laymen, we encrypt them.
 
 In more detail:
+
 * Your profile for the application has a master password. This password is checked upon registration, to see whether its "strong". This simply means that we employ a heuristic to make sure the password is not trivial. Thus, it must be of a certain length with a certain amount of special characters and digits. This does not mean that your password is unbreakable, it merely means that any bruteforce attack or rainbow table attack will take longer than if the password was trivial or weak.
 
 * Your master password is not stored. Instead, we store a hash of your password, alongside the salt used for hashing it with the RFC2898 algorithm. This means we do not store your password, but we can still check at runtime whether you enter the correct password. (That is, the key used for decryption is only in memory at runtime, and is not hardcoded into the application, nor stored anywhere).
@@ -20,12 +21,12 @@ In more detail:
 * When you exit the application, a new IV is derived and used for encryption. This means that for each run of the application, the encryption almost certainly (except with negligible probability) will produce a different encryption file than the previous run of the application, although the passwords stored might be the same. 
 
 * The semantically secure encryption also means that even if you are stupid enough to have a password equal to your domain,
-i.e email@domain.com == password, then the resulting ciphertexts will still be different. 
+i.e email@domain.com == password, then the resulting ciphertexts of the domain respectively the password will still be different. 
 
-* The passwords are decrypted at runtime upon request, using the SecureString class in C#. This means that the plaintext password will only be in memory of your computer a limited amount of time, though not at all time (this would be impossible).
+* The passwords are decrypted at runtime upon request, using the SecureString class in C# for storage until such a request. This means that the plaintext password will only be in memory of your computer for a limited and minimal amount of time.
 
 ### Summary of set up ###
-When the application starts, if the profile.txt file is empty (or corrupted/changed since last use), the application interprets you as being a new user. You will be requested a username as well as a password. The password will be 
+When the application starts for the first time, the application interprets you as being a new user. You will be requested a username as well as a password. The password will be 
 tested for "strongness" and you must submit one that is strong enough. 
 
 The application can only have a single user at a time. It is possible to delete everything from within the application, which means that the next run of the application will attempt to create a new user.
@@ -34,7 +35,9 @@ The application can only have a single user at a time. It is possible to delete 
 
 ### Usage ###
 
-There are limited functionalities after you log in. 
+If you've successfully created a profile at the first run of the application, you will be promted for a username and the correct password. There is no username or password recovery, nor are there any hints.
+
+There are certain limited functionalities after you log in. 
 
 The main menu will present to you the following possible actions:
 
