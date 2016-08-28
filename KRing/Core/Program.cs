@@ -68,7 +68,7 @@ namespace KRing.Core
                     }
                     catch (Exception)
                     {
-                        _ui.MessageToUser("");
+                        _ui.MessageToUser("Internal Error, config files corrupted.");
                     }
                 }
                 else

@@ -1,7 +1,4 @@
 ﻿-we need error handling. When writing to and from DB we should try / catch it all so we dont crash each time if user disturbs database
--Make password checking for new user? (i.e must have special characters and whatnot. )
 -use more interfaces and refactor st. we can unit test the stuff.
--look into unit of work pattern, and transactionScope
-
-
--Async file access doesnt make sense since we dont have a UI thread in a console application. 
+-look into unit of work pattern, and transactionSco
+pe

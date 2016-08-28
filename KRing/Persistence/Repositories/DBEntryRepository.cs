@@ -189,37 +189,44 @@ namespace KRing.Persistence.Repositories
 
         public List<DBEntry> LoadEntriesFromDb()
         {
-            List<DBEntry> entries = new List<DBEntry>();
-
-            FileStream fs = new FileStream(_dataConfig.dbPath, FileMode.Open);
-            AesManaged aesManaged = new AesManaged();
-            CryptoStream cs = new CryptoStream(
-                                fs,
-                                aesManaged.CreateDecryptor(
-                                    _key,
-                                    _iv),
-                                CryptoStreamMode.Read);
-
-            StreamReader streamReader = new StreamReader(cs);
-
-            for (int i = 0; i < _count; i++)
+            try
             {
-                var domain = streamReader.ReadLine();
-                var password = streamReader.ReadLine();
+                List<DBEntry> entries = new List<DBEntry>();
 
-                SecureString securePassword = new SecureString();
-                securePassword.PopulateWithString(password);
+                FileStream fs = new FileStream(_dataConfig.dbPath, FileMode.Open);
+                AesManaged aesManaged = new AesManaged();
+                CryptoStream cs = new CryptoStream(
+                                    fs,
+                                    aesManaged.CreateDecryptor(
+                                        _key,
+                                        _iv),
+                                    CryptoStreamMode.Read);
 
-                DBEntry newEntry = new DBEntry(domain, securePassword);
-                entries.Add(newEntry);
+                StreamReader streamReader = new StreamReader(cs);
+
+                for (int i = 0; i < _count; i++)
+                {
+                    var domain = streamReader.ReadLine();
+                    var password = streamReader.ReadLine();
+
+                    SecureString securePassword = new SecureString();
+                    securePassword.PopulateWithString(password);
+
+                    DBEntry newEntry = new DBEntry(domain, securePassword);
+                    entries.Add(newEntry);
+                }
+
+                cs.Close();
+                streamReader.Close();
+                aesManaged.Dispose();
+                fs.Close();
+
+                return entries;
             }
-
-            cs.Close();
-            streamReader.Close();
-            aesManaged.Dispose();
-            fs.Close();
-
-            return entries;
+            catch(Exception)
+            {
+                throw new Exception("Could not decrypt DB");
+            }
         }
 
         private int Config()

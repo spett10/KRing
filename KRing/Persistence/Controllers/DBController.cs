@@ -141,14 +141,22 @@ namespace KRing.Persistence.Controllers
 
         public void LoadDb()
         {
-            if (!_dbEntryRepository.IsDbEmpty())
+            try
             {
-                _dbEntryRepository.LoadEntriesFromDb();
+                if (!_dbEntryRepository.IsDbEmpty())
+                {
+                    _dbEntryRepository.LoadEntriesFromDb();
+                }
+                else
+                {
+                    throw new AppDomainUnloadedException("No Db entries to load");
+                }
             }
-            else
+            catch(Exception e)
             {
-                throw new AppDomainUnloadedException("No Db entries to load");
+                throw e;
             }
+            
         }
 
         /* fjern alle nedenunder efter vi har flyttet logikken fra program over */
