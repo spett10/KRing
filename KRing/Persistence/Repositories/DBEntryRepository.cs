@@ -19,14 +19,35 @@ namespace KRing.Persistence.Repositories
     public class DbEntryRepository
     {
         private readonly DataConfig _dataConfig;
-        private readonly byte[] _insecureHardcodedKey = Encoding.ASCII.GetBytes("Yellow Submarine");
-        private byte[] _iv;
         private readonly int _count;
         private readonly List<DBEntry> _entries;
+        
+        private byte[] _iv;
+        private byte[] _key;
+        private readonly SecureString _password;
 
         public int EntryCount => _entries.Count;
 
-        public DbEntryRepository()
+        public DbEntryRepository(DataConfig dataConfig, SecureString password)
+        {
+            _dataConfig = dataConfig;
+
+            /* Does DB contain entries? Read config to figure out */
+            _count = Config();
+            _iv = new byte[CryptoHashing.SaltByteSize];
+
+            /* Is there an IV stored, or do we have a new user? */
+            SetupMeta();
+
+            /* Derive a key from the users password and the stored IV */
+            _password = password;
+            _key = DeriveKey(password);
+
+            /* If there are any stored encrypted entries, load them into memory */
+            _entries = !IsDbEmpty() ? LoadEntriesFromDb() : new List<DBEntry>();
+        }
+
+        public DbEntryRepository(SecureString password)
         {
             _dataConfig = new DataConfig(
                                "..\\..\\Data\\meta.txt",
@@ -35,7 +56,11 @@ namespace KRing.Persistence.Repositories
 
             _count = Config();
             _iv = new byte[CryptoHashing.SaltByteSize];
-            SetupIv();
+            SetupMeta();
+
+            _password = password;
+            _key = DeriveKey(password);
+            
             _entries = !IsDbEmpty() ? LoadEntriesFromDb() : new List<DBEntry>();
         }
 
@@ -125,15 +150,17 @@ namespace KRing.Persistence.Repositories
         public void WriteEntriesToDb()
         {
             UpdateConfig(_entries.Count);
-
-            UpdateIv();
-
+            
+            UpdateMeta();
+            
+            _key = DeriveKey(_password);
+            
             FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create);
             AesManaged aesManaged = new AesManaged();
             CryptoStream cs = new CryptoStream(
                                 fileStream,
                                 aesManaged.CreateEncryptor(
-                                    _insecureHardcodedKey,
+                                    _key,
                                     _iv),
                                 CryptoStreamMode.Write);
 
@@ -160,7 +187,7 @@ namespace KRing.Persistence.Repositories
             CryptoStream cs = new CryptoStream(
                                 fs,
                                 aesManaged.CreateDecryptor(
-                                    _insecureHardcodedKey,
+                                    _key,
                                     _iv),
                                 CryptoStreamMode.Read);
 
@@ -206,8 +233,9 @@ namespace KRing.Persistence.Repositories
             return count;
         }
 
+        
 
-        private void UpdateIv()
+        private void UpdateMeta()
         {
             using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Create))
             {
@@ -216,7 +244,7 @@ namespace KRing.Persistence.Repositories
             }
         }
 
-        private void SetupIv()
+        private void SetupMeta()
         {
             if (_count > 0)
             {
@@ -229,6 +257,11 @@ namespace KRing.Persistence.Repositories
             {
                 _iv = CryptoHashing.GenerateSalt();
             }
+        }
+
+        private byte[] DeriveKey(SecureString password)
+        {
+            return CryptoHashing.GenerateSaltedHash(password, _iv);
         }
     }
 }

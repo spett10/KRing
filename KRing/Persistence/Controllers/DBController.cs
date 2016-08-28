@@ -24,22 +24,15 @@ namespace KRing.Persistence.Controllers
         private static DbEntryRepository _dbEntryRepository;
         public int EntryCount => _dbEntryRepository.EntryCount;
 
-        public static DbController Instance
+        public static DbController Instance(SecureString password)
         {
-            get
-            {
-                if(_instance == null)
-                {
-                    _instance = new DbController();
-                }
-
-                return _instance;
-            }
+            return 
+                _instance ?? (_instance = new DbController(password));
         }
 
-        private DbController()
+        private DbController(SecureString password)
         {
-            _dbEntryRepository = new DbEntryRepository();
+            _dbEntryRepository = new DbEntryRepository(password);
         }
 
         public void AddPassword(IUserInterface ui, Session session)

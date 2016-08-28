@@ -28,7 +28,6 @@ namespace KRing.Core
 
             /* new user or returning user? */
             bool doesProfileExist = true;
-            _dbController = DbController.Instance;
             _profileController = new ProfileController();
 
             try
@@ -57,6 +56,7 @@ namespace KRing.Core
             }
 
             /* User Logged In */
+            _dbController = DbController.Instance(_currentSession.User.Password);
             if (_currentSession.IsLoggedIn)
             {
                 _isRunning = true;
@@ -93,7 +93,7 @@ namespace KRing.Core
         {
             while (_isRunning)
             {
-                ActionType nextAction = _ui.MainMenu();
+                var nextAction = _ui.MainMenu();
 
                 switch (nextAction)
                 {
@@ -120,6 +120,10 @@ namespace KRing.Core
                     case ActionType.DeleteUser:
                         HandleDeleteUser();
                         break;
+
+                    default:
+                        _ui.MessageToUser("Internal Error");
+                        break;
                 }
             }
         }
@@ -131,16 +135,15 @@ namespace KRing.Core
 
         private static void HandleDeleteUser()
         {
-            bool areYouSure = _ui.YesNoQuestionToUser("Are you sure you want to delete user and all stored information? (Y/N)");
+            var areYouSure = _ui.YesNoQuestionToUser("Are you sure you want to delete user and all stored information? (Y/N)");
 
-            if (areYouSure)
-            {
-                _profileController.DeleteProfile();
-                _dbController.DeleteAllEntries();
-                _isRunning = false;
-                _ui.MessageToUser("Everything deleted. Goodbye.");
-                Thread.Sleep(2000);
-            }
+            if (!areYouSure) return;
+
+            _profileController.DeleteProfile();
+            _dbController.DeleteAllEntries();
+            _isRunning = false;
+            _ui.MessageToUser("Everything deleted. Goodbye.");
+            Thread.Sleep(2000);
         }
 
         private static void HandleNewUser()

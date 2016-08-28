@@ -10,7 +10,6 @@ namespace KRing.Persistence.Repositories
     {
         private readonly string _profilePath;
 
-
         public ProfileRepository()
         {
             _profilePath = "..\\..\\Data\\profile.txt";
