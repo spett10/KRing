@@ -11,6 +11,7 @@ This is a personal project for learning purposes. I do not recommend anyone to u
 In laymen, we encrypt them.
 
 In more detail:
+
 * Your profile for the application has a master password. This password is checked upon registration, to see whether its "strong". This simply means that we employ a heuristic to make sure the password is not trivial. Thus, it must be of a certain length with a certain amount of special characters and digits. This does not mean that your password is unbreakable, it merely means that any bruteforce attack or rainbow table attack will take longer than if the password was trivial or weak.
 
 * Your master password is not stored. Instead, we store a hash of your password, alongside the salt used for hashing it with the RFC2898 algorithm. This means we do not store your password, but we can still check at runtime whether you enter the correct password. (That is, the key used for decryption is only in memory at runtime, and is not hardcoded into the application, nor stored anywhere).
