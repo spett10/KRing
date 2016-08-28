@@ -27,13 +27,51 @@ namespace KRing.Core.Controllers
             ui.MessageToUser("Creating new user for you!");
             var newUserName = ui.RequestUserInput("Please enter your username");
 
+            SecureString password = TryGetStrongPassword(ui);
+            
+            var newUser = User.NewUserWithFreshSalt(newUserName, password);
+
+            UpdateProfile(newUser);
+        }
+
+        private SecureString TryGetStrongPassword(IUserInterface ui)
+        {
             bool consistentPasswordInput = false;
+            bool passwordStrongEnough = false;
 
             SecureString password = new SecureString();
 
             while (!consistentPasswordInput)
             {
                 password = ui.RequestPassword("\nPlease enter your desired password");
+
+
+                while(!passwordStrongEnough)
+                {
+                    /* check strength of password */
+                    PasswordScore score = PasswordAdvisor.CheckStrength(password.ConvertToUnsecureString());
+
+                    switch (score)
+                    {
+                        case PasswordScore.Blank:
+                        case PasswordScore.VeryWeak:
+                        case PasswordScore.Weak:
+                            ui.MessageToUser("Your password is too weak due to lack of special characters, digits and/or upper/lower case variation (Score " + score.ToString() + "out of " + PasswordScore.VeryStrong.ToString());
+                            ui.MessageToUser("Recieved password" + password.ConvertToUnsecureString());
+                            passwordStrongEnough = false;
+                            break;
+                        case PasswordScore.Medium:
+                        case PasswordScore.Strong:
+                        case PasswordScore.VeryStrong:
+                            ui.MessageToUser("Your password is strong enough to be used! :)");
+                            passwordStrongEnough = true;
+                            break;
+                    }
+
+                    if (!passwordStrongEnough) password = ui.RequestPassword("\nPlease enter a stronger password");
+                }
+                
+
                 var passwordRepeated = ui.RequestPassword("\nPlease re-enter your desired password");
 
                 consistentPasswordInput =
@@ -42,10 +80,8 @@ namespace KRing.Core.Controllers
 
                 if (!consistentPasswordInput) ui.MessageToUser("\nPasswords were not consistent. Please try again");
             }
-            
-            var newUser = User.NewUserWithFreshSalt(newUserName, password);
 
-            UpdateProfile(newUser);
+            return password;
         }
 
         public Session LoginLoop(IUserInterface ui)

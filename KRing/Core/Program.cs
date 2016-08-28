@@ -71,6 +71,10 @@ namespace KRing.Core
                         _ui.MessageToUser("");
                     }
                 }
+                else
+                {
+                    _dbController.DeleteAllEntries();
+                }
             }
 
             /* Handle User Requests */
@@ -149,7 +153,6 @@ namespace KRing.Core
         private static void HandleNewUser()
         {
             _profileController.NewProfile(_ui);
-            _dbController.DeleteAllEntries();
         }
 
         private static void HandleDeletePassword()
