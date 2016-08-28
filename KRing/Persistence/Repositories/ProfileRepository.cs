@@ -3,6 +3,7 @@ using System.IO;
 using System.Security;
 using KRing.Core.Model;
 using KRing.Extensions;
+using System.Transactions;
 
 namespace KRing.Persistence.Repositories
 {
@@ -30,12 +31,17 @@ namespace KRing.Persistence.Repositories
             if(user == null)
                 throw new ArgumentNullException();
 
-            using (StreamWriter profileWriter = new StreamWriter(_profilePath))
+            using (TransactionScope scope = new TransactionScope())
             {
-                profileWriter.WriteLine(user.UserName);
-                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.PasswordSalted));
-                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.SaltForPassword));
-                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.KeySalt));
+                using (StreamWriter profileWriter = new StreamWriter(_profilePath))
+                {
+                    profileWriter.WriteLine(user.UserName);
+                    profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.PasswordSalted));
+                    profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.SaltForPassword));
+                    profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.KeySalt));
+                }
+
+                scope.Complete();
             }
         }
 

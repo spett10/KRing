@@ -1,5 +1,1 @@
 ﻿-use more interfaces and refactor st. we can unit test the stuff.
--look into unit of work pattern, and transactionSco
-pe
-
--add a readme

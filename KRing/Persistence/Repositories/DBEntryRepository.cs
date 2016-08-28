@@ -13,6 +13,7 @@ using KRing.DTO;
 using KRing.Extensions;
 using KRing.Interfaces;
 using KRing.Persistence.Model;
+using System.Transactions;
 
 namespace KRing.Persistence.Repositories
 {
@@ -158,33 +159,38 @@ namespace KRing.Persistence.Repositories
 
         public void WriteEntriesToDb()
         {
-            UpdateConfig(_entries.Count);
-            
-            UpdateMeta();
-            
-            _key = DeriveKey(_password);
-            
-            FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create);
-            AesManaged aesManaged = new AesManaged();
-            CryptoStream cs = new CryptoStream(
-                                fileStream,
-                                aesManaged.CreateEncryptor(
-                                    _key,
-                                    _iv),
-                                CryptoStreamMode.Write);
-
-            StreamWriter streamWriter = new StreamWriter(cs);
-
-            foreach (var entr in _entries)
+            using (TransactionScope scope = new TransactionScope())
             {
-                streamWriter.WriteLine(entr.Domain);
-                streamWriter.WriteLine(entr.Password.ConvertToUnsecureString());
-            }
+                UpdateConfig(_entries.Count);
 
-            streamWriter.Close();
-            cs.Close();
-            aesManaged.Dispose();
-            fileStream.Close();
+                UpdateMeta();
+
+                _key = DeriveKey(_password);
+
+                FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create);
+                AesManaged aesManaged = new AesManaged();
+                CryptoStream cs = new CryptoStream(
+                                    fileStream,
+                                    aesManaged.CreateEncryptor(
+                                        _key,
+                                        _iv),
+                                    CryptoStreamMode.Write);
+
+                StreamWriter streamWriter = new StreamWriter(cs);
+
+                foreach (var entr in _entries)
+                {
+                    streamWriter.WriteLine(entr.Domain);
+                    streamWriter.WriteLine(entr.Password.ConvertToUnsecureString());
+                }
+
+                streamWriter.Close();
+                cs.Close();
+                aesManaged.Dispose();
+                fileStream.Close();
+
+                scope.Complete();
+            }
         }
 
         public List<DBEntry> LoadEntriesFromDb()
@@ -248,8 +254,6 @@ namespace KRing.Persistence.Repositories
 
             return count;
         }
-
-        
 
         private void UpdateMeta()
         {
