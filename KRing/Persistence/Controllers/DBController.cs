@@ -158,8 +158,7 @@ namespace KRing.Persistence.Controllers
             }
             
         }
-
-        /* fjern alle nedenunder efter vi har flyttet logikken fra program over */
+        
         public void DeleteAllEntries()
         {
             _dbEntryRepository.DeleteAllEntries();

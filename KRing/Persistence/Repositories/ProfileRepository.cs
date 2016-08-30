@@ -4,6 +4,7 @@ using System.Security;
 using KRing.Core.Model;
 using KRing.Extensions;
 using System.Transactions;
+using System.Configuration;
 
 namespace KRing.Persistence.Repositories
 {
@@ -13,7 +14,8 @@ namespace KRing.Persistence.Repositories
 
         public ProfileRepository()
         {
-            _profilePath = "..\\..\\Data\\profile.txt";
+            var filename = ConfigurationManager.AppSettings["profilePath"];
+            _profilePath = filename;
         }
 
         public ProfileRepository(string profilePath)

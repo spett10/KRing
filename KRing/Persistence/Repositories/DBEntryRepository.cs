@@ -1,4 +1,10 @@
-﻿using System;
+﻿using KRing.Core;
+using KRing.Core.Model;
+using KRing.DTO;
+using KRing.Extensions;
+using KRing.Interfaces;
+using KRing.Persistence.Model;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -7,13 +13,9 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using KRing.Core;
-using KRing.Core.Model;
-using KRing.DTO;
-using KRing.Extensions;
-using KRing.Interfaces;
-using KRing.Persistence.Model;
 using System.Transactions;
+using System.Configuration;
+
 
 namespace KRing.Persistence.Repositories
 {
@@ -29,31 +31,12 @@ namespace KRing.Persistence.Repositories
 
         public int EntryCount => _entries.Count;
 
-        public DbEntryRepository(DataConfig dataConfig, SecureString password)
-        {
-            _dataConfig = dataConfig;
-
-            /* Does DB contain entries? Read config to figure out */
-            _count = Config();
-            _iv = new byte[CryptoHashing.SaltByteSize];
-
-            /* Is there an IV stored, or do we have a new user? */
-            SetupMeta();
-
-            /* Derive a key from the users password and the stored IV */
-            _password = password;
-            _key = DeriveKey(password);
-
-            /* If there are any stored encrypted entries, load them into memory */
-            _entries = !IsDbEmpty() ? LoadEntriesFromDb() : new List<DBEntry>();
-        }
-
         public DbEntryRepository(SecureString password)
         {
             _dataConfig = new DataConfig(
-                               "..\\..\\Data\\meta.txt",
-                               "..\\..\\Data\\db.txt",
-                               "..\\..\\Data\\config.txt");
+                               ConfigurationManager.AppSettings["metaPath"],
+                               ConfigurationManager.AppSettings["dbPath"],
+                               ConfigurationManager.AppSettings["configPath"]);
 
             _count = Config();
             _iv = new byte[CryptoHashing.SaltByteSize];
