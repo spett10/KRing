@@ -57,11 +57,25 @@ namespace KRing.Persistence.Repositories
             }
         }
 
+        public void DeleteEntry(int index)
+        {
+            var entry = _entries.ElementAt(index);
+            if (entry != null)
+            {
+                _entries.Remove(entry);
+            }
+        }
+
         public void UpdateEntry(DbEntryDto updatedEntry)
         {
             var entry =
                 _entries.FirstOrDefault(e => e.Domain.Equals(updatedEntry.Domain, StringComparison.OrdinalIgnoreCase));
             if (entry != null) entry.Password = updatedEntry.Password;
+        }
+
+        public DBEntry GetEntry(int index)
+        {
+            return _entries.ElementAt(index);
         }
 
         public SecureString GetPasswordFromDomain(string domain)

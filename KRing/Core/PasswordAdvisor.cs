@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+﻿using System.Text.RegularExpressions;
+using KRing.Interfaces;
+using System.Security;
+using KRing.Extensions;
 
 namespace KRing.Core
 {
@@ -34,6 +32,39 @@ namespace KRing.Core
             if (Regex.IsMatch(password, @"[!,@,#,$,%,^,&,*,?,_,~,-,£,(,)]", RegexOptions.ECMAScript)) { score++; }
             
             return (PasswordScore)score;
+        }
+
+        public static SecureString CheckPasswordWithUserInteraction(IUserInterface ui)
+        {
+            SecureString password = ui.RequestPassword("\nPlease enter a password");
+
+            bool passwordStrongEnough = false;
+
+            while (!passwordStrongEnough)
+            {
+                /* check strength of password */
+                PasswordScore score = PasswordAdvisor.CheckStrength(password.ConvertToUnsecureString());
+
+                switch (score)
+                {
+                    case PasswordScore.Blank:
+                    case PasswordScore.VeryWeak:
+                    case PasswordScore.Weak:
+                        ui.MessageToUser("Your password is too weak due to lack of special characters, digits and/or upper/lower case variation");
+                        passwordStrongEnough = false;
+                        break;
+                    case PasswordScore.Medium:
+                    case PasswordScore.Strong:
+                    case PasswordScore.VeryStrong:
+                        ui.MessageToUser("Your password is strong enough to be used! :)");
+                        passwordStrongEnough = true;
+                        break;
+                }
+
+                if (!passwordStrongEnough) password = ui.RequestPassword("\nPlease enter a stronger password");
+            }
+
+            return password;
         }
     }
 }

@@ -22,6 +22,7 @@ namespace KRing.Persistence.Controllers
         /// </summary>
         private static DbController _instance;
         private static DbEntryRepository _dbEntryRepository;
+
         public int EntryCount => _dbEntryRepository.EntryCount;
 
         public static DbController Instance(SecureString password)
@@ -56,21 +57,20 @@ namespace KRing.Persistence.Controllers
                 return;
             }
 
-            _dbEntryRepository.ShowAllDomainsToUser(ui);
+            int domain = GetIndexFromUser(ui);
 
-            var correctDomainGiven = false;
-            var domain = String.Empty;
+            var entry = _dbEntryRepository.GetEntry(domain);
+            
+            var newPassword = PasswordAdvisor.CheckPasswordWithUserInteraction(ui);
 
-            while (!correctDomainGiven)
+            try
             {
-                domain = ui.RequestUserInput("Please Enter Domain to Update");
-                correctDomainGiven = _dbEntryRepository.ExistsEntry(domain);
-
-                if (!correctDomainGiven) ui.MessageToUser("That Domain Does not exist amongst stored passwords");
+                _dbEntryRepository.UpdateEntry(new DbEntryDto(entry.Domain, newPassword));
             }
-
-            var newPassword = ui.RequestPassword("Please enter new password for the domain " + domain);
-            _dbEntryRepository.UpdateEntry(new DbEntryDto(domain, newPassword));
+            catch(Exception)
+            {
+                ui.MessageToUser("Internal Error");
+            }
         }
 
         public void DeletePassword(IUserInterface ui)
@@ -81,20 +81,16 @@ namespace KRing.Persistence.Controllers
                 return;
             }
 
-            _dbEntryRepository.ShowAllDomainsToUser(ui);
+            int domain = GetIndexFromUser(ui);
 
-            var correctDomainGiven = false;
-            var domain = string.Empty;
-
-            while (!correctDomainGiven)
-            {
-                domain = ui.RequestUserInput("Please Enter Domain to Delete");
-                correctDomainGiven = _dbEntryRepository.ExistsEntry(domain);
-
-                if (!correctDomainGiven) ui.MessageToUser("That domain does not exist amongst stored passwords");
+            try
+            { 
+                _dbEntryRepository.DeleteEntry(domain);
             }
-
-            _dbEntryRepository.DeleteEntry(domain);
+            catch(Exception)
+            {
+                ui.MessageToUser("Internal Error");
+            }
         }
 
         public void ViewPassword(IUserInterface ui)
@@ -105,38 +101,17 @@ namespace KRing.Persistence.Controllers
                 return;
             }
 
-            bool correctDomainGiven = false;
-            string domain = String.Empty;
-
-            _dbEntryRepository.ShowAllDomainsToUser(ui);
-
-            int entryCount = _dbEntryRepository.EntryCount;
-            int requestedDomain = 0;
-
-            while (!correctDomainGiven)
-            {
-                domain = ui.RequestUserInput("Please Enter index of Domain to get corresponding Password");
-
-                
-                Int32.TryParse(domain, out requestedDomain);
-
-                correctDomainGiven = requestedDomain <= entryCount;
-
-                if (!correctDomainGiven) ui.MessageToUser("That index does not exist, please try again");
-            }
+            int requestedDomain = GetIndexFromUser(ui);
 
             try
             {
-                int zeroIndexedDomain = requestedDomain - 1;
-                var entry = _dbEntryRepository.GetPasswordFromCount(zeroIndexedDomain);
-                ui.MessageToUser("Password for domain " + domain + " is:\n\n " + entry.ConvertToUnsecureString());
+                var entry = _dbEntryRepository.GetPasswordFromCount(requestedDomain);
+                ui.MessageToUser("Password for domain is:\n\n " + entry.ConvertToUnsecureString());
             }
             catch(Exception)
             {
                 ui.MessageToUser("Internal Error");
             }
-
-
         }
 
         public void LoadDb()
@@ -167,6 +142,30 @@ namespace KRing.Persistence.Controllers
         public void SaveAllEntries()
         {
             _dbEntryRepository.WriteEntriesToDb();
+        }
+
+        private int GetIndexFromUser(IUserInterface ui)
+        {
+            bool correctDomainGiven = false;
+            string domain = String.Empty;
+
+            _dbEntryRepository.ShowAllDomainsToUser(ui);
+
+            int entryCount = _dbEntryRepository.EntryCount;
+            int requestedDomain = 0;
+
+            while (!correctDomainGiven)
+            {
+                domain = ui.RequestUserInput("Please Enter index of Domain for the action");
+
+                Int32.TryParse(domain, out requestedDomain);
+
+                correctDomainGiven = requestedDomain <= entryCount;
+
+                if (!correctDomainGiven) ui.MessageToUser("That index does not exist, please try again");
+            }
+
+            return requestedDomain - 1; //zero index
         }
     }
 }
