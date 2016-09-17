@@ -3,6 +3,9 @@ using System.Security;
 using KRing.Core.Model;
 using KRing.DTO;
 using KRing.Interfaces;
+using KRing.Persistence.Model;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace KRing.Core.View
 {
@@ -120,6 +123,19 @@ namespace KRing.Core.View
         public void LoginTimeoutMessage()
         {
             Console.WriteLine("\nToo many wrong attempts. Exiting.");
+        }
+
+        public void ShowAllDomainsToUser(IEnumerable<DBEntry> entries)
+        {
+            MessageToUser("Stored Domains:");
+
+            int i = 0;
+
+            foreach (var entr in entries)
+            {
+                i++;
+                MessageToUser("(" + i + "): " + entr.Domain);
+            }
         }
 
 

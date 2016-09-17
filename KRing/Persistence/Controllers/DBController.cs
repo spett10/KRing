@@ -149,7 +149,7 @@ namespace KRing.Persistence.Controllers
             bool correctDomainGiven = false;
             string domain = String.Empty;
 
-            _dbEntryRepository.ShowAllDomainsToUser(ui);
+            ui.ShowAllDomainsToUser(_dbEntryRepository.GetEntries());
 
             int entryCount = _dbEntryRepository.EntryCount;
             int requestedDomain = 0;

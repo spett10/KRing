@@ -6,7 +6,14 @@ KRing/Data/meta.txt
 KRing/obj/Debug/
 KRing/obj/Debug
 KRing/obj/Debug/*
-KRing/Release/Data/*
+KRing/bin/Debug/Data/db.txt
+KRing/bin/Debug/Data/profile.txt
+KRing/bin/Debug/Data/meta.txt
+KRing/bin/Debug/Data/config.txt
+KRing/Release/Data/config.txt
+KRing/Release/Data/meta.txt
+KRing/Release/Data/profile.txt
+KRing/Release/Data/db.txt
 
 *.txt
 KRing/bin/Release/Data/db.txt

@@ -23,7 +23,7 @@ namespace KRing.Persistence.Repositories
     {
         private readonly DataConfig _dataConfig;
         private readonly int _count;
-        private readonly List<DBEntry> _entries;
+        private List<DBEntry> _entries;
         
         private byte[] _iv;
         private byte[] _key;
@@ -101,19 +101,10 @@ namespace KRing.Persistence.Repositories
 
             DeleteDb();
         }
-
-        /* This logic seems missplaced. Shouldnt we give the entries to UI? */
-        public void ShowAllDomainsToUser(IUserInterface ui)
+        
+        public List<DBEntry> GetEntries()
         {
-            ui.MessageToUser("Stored Domains:");
-
-            int i = 0;
-
-            foreach (var entr in _entries)
-            {
-                i++;
-                ui.MessageToUser("("+i +"): " +entr.Domain);
-            }
+            return _entries;
         }
 
         public bool ExistsEntry(string domain)
