@@ -25,6 +25,8 @@ i.e email@domain.com == password, then the resulting ciphertexts of the domain r
 
 * The passwords are decrypted at runtime upon request, using the SecureString class in C# for storage until such a request. This means that the plaintext password will only be in memory of your computer for a limited and minimal amount of time.
 
+This means that if other people get hold of your encrypted files from the application, as long as they do not have your master password they cannot interpret your stored, encrypted passwords. Further, we do not store your password anywhere, only a hash of it. We thus strongly recommend that you use a unique and very secure password for this application, and that you make a concentrated effort to remember it by heart and not write it down anywhere. 
+
 ### Summary of set up ###
 When the application starts for the first time, the application interprets you as being a new user. You will be requested a username as well as a password. The password will be 
 tested for "strongness" and you must submit one that is strong enough. 
