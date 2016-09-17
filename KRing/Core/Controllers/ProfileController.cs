@@ -142,9 +142,9 @@ namespace KRing.Core.Controllers
             {
                 _user = _profileRepository.ReadUser();
             }
-            catch(Exception e)
+            catch(Exception)
             {
-                throw e;
+                throw;
             }
         }
 

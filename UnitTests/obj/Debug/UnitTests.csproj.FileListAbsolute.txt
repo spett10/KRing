@@ -1,8 +1,9 @@
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\UnitTests.dll
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\UnitTests.pdb
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\KRing.exe
-C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\KRing.pdb
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\obj\Debug\UnitTests.csprojResolveAssemblyReference.cache
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\obj\Debug\UnitTests.dll
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\obj\Debug\UnitTests.pdb
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\UnitTests.dll.CodeAnalysisLog.xml
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\UnitTests.dll.lastcodeanalysissucceeded

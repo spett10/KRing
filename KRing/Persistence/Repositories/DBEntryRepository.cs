@@ -33,10 +33,17 @@ namespace KRing.Persistence.Repositories
 
         public DbEntryRepository(SecureString password)
         {
+#if DEBUG
+            _dataConfig = new DataConfig(
+                               ConfigurationManager.AppSettings["metaPathDebug"],
+                               ConfigurationManager.AppSettings["dbPathDebug"],
+                               ConfigurationManager.AppSettings["configPathDebug"]);
+#else
             _dataConfig = new DataConfig(
                                ConfigurationManager.AppSettings["metaPath"],
                                ConfigurationManager.AppSettings["dbPath"],
                                ConfigurationManager.AppSettings["configPath"]);
+#endif
 
             _count = Config();
             _iv = new byte[CryptoHashing.SaltByteSize];

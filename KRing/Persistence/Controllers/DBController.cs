@@ -127,9 +127,9 @@ namespace KRing.Persistence.Controllers
                     throw new AppDomainUnloadedException("No Db entries to load");
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
-                throw e;
+                throw;
             }
             
         }

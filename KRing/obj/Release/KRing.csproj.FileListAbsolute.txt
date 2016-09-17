@@ -1,0 +1,9 @@
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\KRing\bin\Release\KRing.exe.config
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\KRing\bin\Release\KRing.exe
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\KRing\bin\Release\KRing.pdb
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\KRing\obj\Release\KRing.exe
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\KRing\obj\Release\KRing.pdb
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\KRing\bin\Release\Data\profile.txt
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\KRing\bin\Release\Data\config.txt
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\KRing\bin\Release\Data\db.txt
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\KRing\bin\Release\Data\meta.txt
