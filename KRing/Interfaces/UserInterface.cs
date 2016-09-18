@@ -30,6 +30,8 @@ namespace KRing.Interfaces
 
         string RequestUserInput(string msg);
 
+        string RequestUsername();
+
         void BadLogin();
 
         void LoginTimeoutMessage();

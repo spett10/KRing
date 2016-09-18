@@ -5,10 +5,11 @@ using KRing.Core.Model;
 using KRing.Extensions;
 using System.Transactions;
 using System.Configuration;
+using KRing.Persistence.Interfaces;
 
 namespace KRing.Persistence.Repositories
 {
-    public class ProfileRepository
+    public class ProfileRepository : IProfileRepository
     {
         private readonly string _profilePath;
 

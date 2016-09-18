@@ -17,6 +17,11 @@ namespace KRing.Core.View
 
         }
 
+        public string RequestUsername()
+        {
+            return RequestUserInput("\nPlease Enter Username:");
+        }
+
         public bool YesNoQuestionToUser(string question)
         {
             bool isAnswerYes = false;

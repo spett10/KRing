@@ -16,7 +16,7 @@ namespace KRing.Core
     }
 
     /* Credit goes to: http://stackoverflow.com/questions/12899876/checking-strings-for-a-strong-enough-password */
-    class PasswordAdvisor
+    public class PasswordAdvisor
     {
         public static PasswordScore CheckStrength(string password)
         {

@@ -3,15 +3,16 @@ using System.Security;
 using KRing.Core.Model;
 using KRing.Extensions;
 using KRing.Interfaces;
-using KRing.Persistence;
 using KRing.Persistence.Repositories;
+using KRing.Persistence.Interfaces;
+using System.Diagnostics;
 
 namespace KRing.Core.Controllers
 {
     public class ProfileController
     {
         public int UserCount { get; private set; }
-        private readonly ProfileRepository _profileRepository;
+        private readonly IProfileRepository _profileRepository;
         private User _user;
         private readonly int _maxLoginAttempts = 3;
         private int _usedLoginAttempts = 0;
@@ -22,10 +23,16 @@ namespace KRing.Core.Controllers
             _profileRepository = new ProfileRepository();
         }
 
+        public ProfileController(IProfileRepository _rep)
+        {
+            UserCount = 1;
+            _profileRepository = _rep;
+        }
+
         public void NewProfile(IUserInterface ui)
         {
             ui.MessageToUser("Creating new user for you!");
-            var newUserName = ui.RequestUserInput("Please enter your username");
+            var newUserName = ui.RequestUsername();
 
             SecureString password = TryGetStrongPassword(ui);
             
@@ -58,6 +65,8 @@ namespace KRing.Core.Controllers
 
         public Session LoginLoop(IUserInterface ui)
         {
+            Debug.WriteLine("MADE IT HERE?");
+
             ui.MessageToUser("\nPlease Log In");
 
             bool isLoggedIn = false;
@@ -65,7 +74,7 @@ namespace KRing.Core.Controllers
 
             while (!isLoggedIn)
             {
-                string username = ui.RequestUserInput("\nPlease Enter Username:");
+                string username = ui.RequestUsername();
 
                 SecureString password = ui.RequestPassword("Please Enter Your Password");
 
@@ -100,12 +109,10 @@ namespace KRing.Core.Controllers
 
         private Session LogIn(string username, SecureString password)
         {
-            bool isPasswordCorrect = false;
-
             var storedSaltedPassword = _user.Cookie.PasswordSalted;
             var givenPasswordWhenSalted = CryptoHashing.GenerateSaltedHash(password, _user.Cookie.SaltForPassword);
 
-            isPasswordCorrect = CryptoHashing.CompareByteArrays(storedSaltedPassword, givenPasswordWhenSalted);
+            bool isPasswordCorrect = CryptoHashing.CompareByteArrays(storedSaltedPassword, givenPasswordWhenSalted);
 
             bool isCorrectUser = username.Equals(_user.UserName, StringComparison.Ordinal);
 
