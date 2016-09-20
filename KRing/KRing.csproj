@@ -64,7 +64,6 @@
     <Compile Include="Persistence\Model\DBEntry.cs" />
     <Compile Include="Persistence\Repositories\DBEntryRepository.cs" />
     <Compile Include="Persistence\Interfaces\IProfileRepository.cs" />
-    <Compile Include="Persistence\Repositories\MockingProfileRepository.cs" />
     <Compile Include="Persistence\Repositories\ProfileRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

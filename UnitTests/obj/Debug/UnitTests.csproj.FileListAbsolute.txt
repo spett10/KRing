@@ -5,5 +5,8 @@ C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\obj\Debug\UnitTests.csprojResolveAssemblyReference.cache
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\obj\Debug\UnitTests.dll
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\obj\Debug\UnitTests.pdb
-C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\UnitTests.dll.CodeAnalysisLog.xml
-C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\UnitTests.dll.lastcodeanalysissucceeded
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\Data\profile.txt
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\Data\config.txt
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\Data\db.txt
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\Data\meta.txt
+C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\UnitTests.dll.config

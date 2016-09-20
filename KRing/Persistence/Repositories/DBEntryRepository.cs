@@ -31,6 +31,11 @@ namespace KRing.Persistence.Repositories
 
         public int EntryCount => _entries.Count;
 
+        /// <summary>
+        /// If you create a new Repository object, and the underlying DB already exists
+        /// The password must be the same. Otherwise, the decryption will fail and an error must be thrown.
+        /// </summary>
+        /// <param name="password"></param>
         public DbEntryRepository(SecureString password)
         {
 #if DEBUG
