@@ -131,5 +131,105 @@ namespace UnitTests
             Assert.AreEqual(didAllExist, true);
         }
 
+        [TestMethod]
+        public void AddEntryThenDelete_ShouldNotExist()
+        {
+            var repository = new DbEntryRepository(_password);
+
+            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+
+            repository.DeleteEntry(_correctDomain);
+
+            var result = repository.ExistsEntry(_correctDomain);
+
+            Assert.AreEqual(result, false);
+        }
+
+        [TestMethod]
+        public void AddEntries_DeleteByIndex_ShouldSucceed()
+        {
+            var repository = new DbEntryRepository(_password);
+            string fake_domain = "other";
+
+            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+            repository.AddEntry(new DbEntryDto(fake_domain, _password));
+            repository.DeleteEntry(0);
+
+            var result = repository.ExistsEntry(_correctDomain);
+            Assert.AreEqual(result, false);
+
+            repository.DeleteEntry(0);
+            result = repository.ExistsEntry(fake_domain);
+            Assert.AreEqual(result, false);
+
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException), "domain does not exist to delete")]
+        public void AddEntry_DeleteTwice_ShouldFail()
+        {
+            var repository = new DbEntryRepository(_password);
+
+            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+
+            repository.DeleteEntry(_correctDomain);
+
+            //this should fail.
+            repository.DeleteEntry(_correctDomain);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void AddEntry_DeleteWrongIndex_ShouldFail()
+        {
+            var repository = new DbEntryRepository(_password);
+
+            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+
+            repository.DeleteEntry(10);
+        }
+
+        [TestMethod]
+        public void UpdateEntry_ExistsAlready_ShouldSuceed()
+        {
+            var repository = new DbEntryRepository(_password);
+
+            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+
+            var newPassword = new SecureString();
+            newPassword.PopulateWithString("TESTING");
+            var newDto = new DbEntryDto(_correctDomain, newPassword);
+
+            repository.UpdateEntry(newDto);
+
+            var updatedPassword = repository.GetPasswordFromDomain(_correctDomain);
+
+            Assert.AreEqual(updatedPassword.ConvertToUnsecureString(), newPassword.ConvertToUnsecureString());
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void UpdateEntry_EntryDoesNotExist_ShouldFail()
+        {
+            var repository = new DbEntryRepository(_password);
+
+            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+
+            var newDto = new DbEntryDto("UGGA BUGGA", _password);
+
+            repository.UpdateEntry(newDto);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void GetPasswordFromDomain_WrongDomain_ShouldReturnNull()
+        {
+            var repository = new DbEntryRepository(_password);
+
+            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+
+            var password = repository.GetPasswordFromDomain(_correctDomain + "not");
+        }
+
     }
 }

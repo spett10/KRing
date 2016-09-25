@@ -9,6 +9,7 @@ using KRing.Core.Model;
 using KRing.DTO;
 using KRing.Interfaces;
 using KRing.Persistence.Model;
+using KRing.Extensions;
 
 namespace UnitTests
 {
@@ -16,6 +17,7 @@ namespace UnitTests
     {
         private readonly string _username;
         private readonly SecureString _password;
+        public int IndexToAnswer { get; set; }
 
         public MockingUI()
         {
@@ -62,7 +64,7 @@ namespace UnitTests
 
         public DbEntryDto RequestNewEntryInformation(User user)
         {
-            throw new NotImplementedException();
+            return new DbEntryDto(_username, _password);
         }
 
         public SecureString RequestPassword(string msg)
@@ -72,12 +74,12 @@ namespace UnitTests
 
         public string RequestUserInput(string msg)
         {
-            throw new NotImplementedException();
+            return IndexToAnswer.ToString();
         }
 
         public void ShowAllDomainsToUser(IEnumerable<DBEntry> entries)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public void StartupMessage()

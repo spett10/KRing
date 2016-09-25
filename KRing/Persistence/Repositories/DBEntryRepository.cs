@@ -1,25 +1,21 @@
 ﻿using KRing.Core;
-using KRing.Core.Model;
 using KRing.DTO;
 using KRing.Extensions;
-using KRing.Interfaces;
 using KRing.Persistence.Model;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 using System.Configuration;
+using KRing.Persistence.Interfaces;
 
 
 namespace KRing.Persistence.Repositories
 {
-    public class DbEntryRepository
+    public class DbEntryRepository : IDbEntryRepository
     {
         private readonly DataConfig _dataConfig;
         private readonly int _count;
@@ -67,6 +63,8 @@ namespace KRing.Persistence.Repositories
             {
                 _entries.Remove(entry);
             }
+            else
+                throw new ArgumentException("domain does not exist to delete");
         }
 
         public void DeleteEntry(int index)
@@ -76,6 +74,8 @@ namespace KRing.Persistence.Repositories
             {
                 _entries.Remove(entry);
             }
+            else
+                throw new ArgumentException("domain does not exist to delete");
         }
 
         public void UpdateEntry(DbEntryDto updatedEntry)
@@ -83,6 +83,7 @@ namespace KRing.Persistence.Repositories
             var entry =
                 _entries.FirstOrDefault(e => e.Domain.Equals(updatedEntry.Domain, StringComparison.OrdinalIgnoreCase));
             if (entry != null) entry.Password = updatedEntry.Password;
+            else throw new ArgumentException("No such Domain");
         }
 
         public DBEntry GetEntry(int index)
@@ -141,21 +142,7 @@ namespace KRing.Persistence.Repositories
         public bool IsDbEmpty()
         {
             return _count <= 0;
-        }
-
-        private void DeleteDb()
-        {
-            FileUtil.FilePurge(_dataConfig.dbPath, "-");
-            FileUtil.FilePurge(_dataConfig.configPath, "0");
-        }
-
-        private void UpdateConfig(int count)
-        {
-            using (StreamWriter configWriter = new StreamWriter(_dataConfig.configPath))
-            {
-                configWriter.WriteLine(count);
-            }
-        }
+        } 
 
         public void WriteEntriesToDb()
         {
@@ -282,6 +269,20 @@ namespace KRing.Persistence.Repositories
         private byte[] DeriveKey(SecureString password)
         {
             return CryptoHashing.GenerateSaltedHash(password, _iv);
+        }
+
+        private void DeleteDb()
+        {
+            FileUtil.FilePurge(_dataConfig.dbPath, "-");
+            FileUtil.FilePurge(_dataConfig.configPath, "0");
+        }
+
+        private void UpdateConfig(int count)
+        {
+            using (StreamWriter configWriter = new StreamWriter(_dataConfig.configPath))
+            {
+                configWriter.WriteLine(count);
+            }
         }
     }
 }

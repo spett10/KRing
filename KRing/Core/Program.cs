@@ -10,6 +10,7 @@ using KRing.DTO;
 using KRing.Extensions;
 using KRing.Interfaces;
 using KRing.Persistence.Controllers;
+using KRing.Persistence.Repositories;
 
 namespace KRing.Core
 {
@@ -55,7 +56,7 @@ namespace KRing.Core
             }
 
             /* User Logged In */
-            _dbController = DbController.Instance(_currentSession.User.Password);
+            _dbController = new DbController(new DbEntryRepository(_currentSession.User.Password));
             if (_currentSession.IsLoggedIn)
             {
                 _isRunning = true;
@@ -162,7 +163,7 @@ namespace KRing.Core
 
         private static void HandleAddPassword()
         {
-            _dbController.AddPassword(_ui, _currentSession);
+            _dbController.AddPassword(_ui, _currentSession.User);
         }
 
         private static void HandleLogout()

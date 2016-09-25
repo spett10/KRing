@@ -65,8 +65,6 @@ namespace KRing.Core.Controllers
 
         public Session LoginLoop(IUserInterface ui)
         {
-            Debug.WriteLine("MADE IT HERE?");
-
             ui.MessageToUser("\nPlease Log In");
 
             bool isLoggedIn = false;

@@ -53,6 +53,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="EncryptionTests.cs" />
+    <Compile Include="Repositories\MockingDBEntryRepository.cs" />
     <Compile Include="Repositories\MockingProfileRepository.cs" />
     <Compile Include="PasswordAdvisorTests.cs" />
     <Compile Include="DBEntryRepositoryTests.cs" />

@@ -12,6 +12,7 @@ using KRing.Extensions;
 using KRing.Interfaces;
 using KRing.Persistence.Model;
 using KRing.Persistence.Repositories;
+using KRing.Persistence.Interfaces;
 
 namespace KRing.Persistence.Controllers
 { 
@@ -21,24 +22,18 @@ namespace KRing.Persistence.Controllers
         /// Singleton pattern, since we use the same file throughout, so we only want one accessing it at any time. 
         /// </summary>
         private static DbController _instance;
-        private static DbEntryRepository _dbEntryRepository;
+        private static IDbEntryRepository _dbEntryRepository;
 
         public int EntryCount => _dbEntryRepository.EntryCount;
 
-        public static DbController Instance(SecureString password)
+        public DbController(IDbEntryRepository dbEntryRepository)
         {
-            return 
-                _instance ?? (_instance = new DbController(password));
+            _dbEntryRepository = dbEntryRepository;
         }
 
-        private DbController(SecureString password)
+        public void AddPassword(IUserInterface ui, User user)
         {
-            _dbEntryRepository = new DbEntryRepository(password);
-        }
-
-        public void AddPassword(IUserInterface ui, Session session)
-        {
-            DbEntryDto newEntry = ui.RequestNewEntryInformation(session.User);
+            DbEntryDto newEntry = ui.RequestNewEntryInformation(user);
             try
             {
                 _dbEntryRepository.AddEntry(newEntry);
