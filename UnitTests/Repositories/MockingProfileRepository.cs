@@ -10,7 +10,7 @@ namespace UnitTests
 {
     public class MockingProfileRepository : IProfileRepository
     {
-        private User _correctUser;
+        public User _correctUser;
         
         public MockingProfileRepository()
         {

@@ -7,6 +7,7 @@ using KRing.Interfaces;
 using System.Security;
 using System.Diagnostics;
 using KRing.Extensions;
+using KRing.Core;
 
 namespace UnitTests
 {
@@ -14,8 +15,8 @@ namespace UnitTests
     public class ProfileControllerTests
     {
         /* make two UIs, one that returns correct one that returns incorrect password. */
-        IUserInterface _givesIncorrectPassword;
-        IUserInterface _givesCorrectPassword;
+        MockingUI _givesIncorrectPassword;
+        MockingUI _givesCorrectPassword;
 
         string strongPasswordString = "123VeryStrong118";
         SecureString strongPasswordSecureString = new SecureString();
@@ -40,12 +41,13 @@ namespace UnitTests
             profileCtrl.LoginLoop(_givesIncorrectPassword);
         }
 
-        /* todo: for some reason the below fails */
         [TestMethod]
-        public void GoodLingAttemptCorrectPassword()
+        public void GoodLoginAttemptCorrectPassword()
         {
-            var profileCtrl = new ProfileController(new MockingProfileRepository(correctUsername, strongPasswordSecureString));
+            var repository = new MockingProfileRepository(correctUsername, strongPasswordSecureString);
+            var profileCtrl = new ProfileController(repository);
 
+            profileCtrl.LoadProfile(); //TODO: why does the client have to call this? cant the profilecontroller do it on construction? Initalization is resource allocation and all that..
             var session = profileCtrl.LoginLoop(_givesCorrectPassword);
 
             Assert.AreEqual(session.IsLoggedIn, true);

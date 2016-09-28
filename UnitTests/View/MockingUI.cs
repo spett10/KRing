@@ -15,7 +15,7 @@ namespace UnitTests
 {
     class MockingUI : IUserInterface
     {
-        private readonly string _username;
+        public string _username;
         private readonly SecureString _password;
         public int IndexToAnswer { get; set; }
 
@@ -103,7 +103,7 @@ namespace UnitTests
 
         public void WelcomeMessage(User User)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         public bool YesNoQuestionToUser(string question)
