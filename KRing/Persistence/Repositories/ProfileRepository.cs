@@ -39,6 +39,9 @@ namespace KRing.Persistence.Repositories
             if(user == null)
                 throw new ArgumentNullException();
 
+            //Make sure we dont write two users
+            DeleteUser();
+
             using (TransactionScope scope = new TransactionScope())
             {
                 using (StreamWriter profileWriter = new StreamWriter(_profilePath))
