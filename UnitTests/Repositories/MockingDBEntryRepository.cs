@@ -17,6 +17,9 @@ namespace UnitTests.Repositories
         public bool _updateEntryCalled = false;
         public bool _deleteEntryCalled = false;
         public bool _viewEntryCalled = false;
+        public bool _loadCalled = false;
+        public bool _saveCalled = false;
+        public bool _deleteAllCalled = false;
 
         public MockingDBEntryRepository()
         {
@@ -39,22 +42,27 @@ namespace UnitTests.Repositories
 
         public void DeleteAllEntries()
         {
+            _deleteAllCalled = true;
             _entries.Clear();
         }
 
         public void DeleteEntry(int index)
         {
             _deleteEntryCalled = true;
+            var toDelete = _entries.ElementAt(index);
+            _entries.Remove(toDelete);
         }
 
         public void DeleteEntry(string domain)
         {
             _deleteEntryCalled = true;
+            var toDelete = _entries.SingleOrDefault(e => e.Domain == domain);
+            if (toDelete != null) _entries.Remove(toDelete);
         }
 
         public bool ExistsEntry(string domain)
         {
-            throw new NotImplementedException();
+            return _entries.Exists(e => e.Domain == domain);
         }
 
         public List<DBEntry> GetEntries()
@@ -80,12 +88,13 @@ namespace UnitTests.Repositories
 
         public bool IsDbEmpty()
         {
-            throw new NotImplementedException();
+            return !(_entries.Count > 0);
         }
 
         public List<DBEntry> LoadEntriesFromDb()
         {
-            throw new NotImplementedException();
+            _loadCalled = true;
+            return _entries;
         }
 
         public void UpdateEntry(DbEntryDto updatedEntry)
@@ -95,7 +104,8 @@ namespace UnitTests.Repositories
 
         public void WriteEntriesToDb()
         {
-            throw new NotImplementedException();
+            _saveCalled = true;
+            return;
         }
     }
 }

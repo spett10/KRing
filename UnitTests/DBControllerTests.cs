@@ -132,5 +132,67 @@ namespace UnitTests
 
             Assert.AreEqual(repository._viewEntryCalled, false);
         }
+
+        [TestMethod]
+        public void SaveEntries_ThenLoad_ShouldSucceed()
+        {
+            var repository = new MockingDBEntryRepository();
+
+            var controller = new DbController(repository);
+
+            var ui = new MockingUI(_username, _password);
+
+            var user = new User(_username, _password, _cookie);
+
+            controller.AddPassword(ui, user);
+            ui.IndexToAnswer = repository.EntryCount;
+
+            controller.SaveAllEntries();
+
+            Assert.AreEqual(repository._saveCalled, true);
+
+            controller.LoadDb();
+            Assert.AreEqual(controller.EntryCount, 1);
+            Assert.AreEqual(repository._loadCalled, true);
+
+            controller.DeletePassword(ui);
+            Assert.AreEqual(controller.EntryCount, 0);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public void SaveEmptyEntries_ShouldThrowError()
+        {
+            var repository = new MockingDBEntryRepository();
+
+            var controller = new DbController(repository);
+
+            controller.SaveAllEntries();
+        }
+
+        [TestMethod]
+        public void DeleteAllEntries_ShouldCallRepository_ShouldHaveZeroCount()
+        {
+            var repository = new MockingDBEntryRepository();
+
+            var controller = new DbController(repository);
+
+            var ui = new MockingUI(_username, _password);
+            ui.answerWithRandomPassword = true;
+
+            var user = new User(_username, _password, _cookie);
+            
+            controller.AddPassword(ui, user);
+            controller.AddPassword(ui, user);
+            controller.AddPassword(ui, user);
+            controller.AddPassword(ui, user);
+
+            Assert.AreEqual(controller.EntryCount, 4);
+
+            controller.DeleteAllEntries();
+
+            Assert.AreEqual(repository._deleteAllCalled, true);
+            Assert.AreEqual(controller.EntryCount, 0);
+        }
     }
 }

@@ -19,6 +19,8 @@ namespace UnitTests
         private readonly SecureString _password;
         public int IndexToAnswer { get; set; }
 
+        public bool answerWithRandomPassword = false;
+
         public MockingUI()
         {
             _username = "test";
@@ -64,7 +66,19 @@ namespace UnitTests
 
         public DbEntryDto RequestNewEntryInformation(User user)
         {
-            return new DbEntryDto(_username, _password);
+            if(answerWithRandomPassword)
+            {
+                var password = new SecureString();
+
+                //Make random password... 
+                //They should, with good prop. at least, be random enough that the password advisor that might check them, should call them good.
+                password.PopulateWithString(Convert.ToBase64String(CryptoHashing.GenerateSalt())); 
+                return new DbEntryDto(_username, password);
+            }
+            else
+            {
+                return new DbEntryDto(_username, _password);
+            }
         }
 
         public SecureString RequestPassword(string msg)

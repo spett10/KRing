@@ -171,7 +171,15 @@ namespace KRing.Core
             _isRunning = false;
             _currentSession.IsLoggedIn = false;
             _ui.GoodbyeMessage(_currentSession.User);
-            _dbController.SaveAllEntries();
+
+            try
+            {
+                _dbController.SaveAllEntries();
+            }
+            catch(Exception)
+            {
+                //No entries to save.. 
+            }
         }
 
         private static void HandleUpdatePassword()

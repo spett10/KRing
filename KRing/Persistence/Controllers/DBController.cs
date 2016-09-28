@@ -136,7 +136,13 @@ namespace KRing.Persistence.Controllers
 
         public void SaveAllEntries()
         {
-            _dbEntryRepository.WriteEntriesToDb();
+            if (EntryCount > 0)
+            {
+                _dbEntryRepository.WriteEntriesToDb();
+            } else
+            {
+                throw new Exception("No Entries To Save");
+            }
         }
 
         private int GetIndexFromUser(IUserInterface ui)
