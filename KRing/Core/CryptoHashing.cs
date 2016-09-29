@@ -6,6 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using KRing.Extensions;
+using Scrypt;
 
 namespace KRing.Core
 {
@@ -13,6 +14,18 @@ namespace KRing.Core
     {
         public static readonly int SaltByteSize = 16;
         private static readonly int iterations = 1000;
+
+        public static string ScryptHashPassword(SecureString password)
+        {
+            ScryptEncoder encoder = new ScryptEncoder();
+            return encoder.Encode(password.ConvertToUnsecureString());
+        }
+
+        public static bool ScryptCheckPassword(SecureString password, string hashedPassword)
+        {
+            ScryptEncoder encoder = new ScryptEncoder();
+            return encoder.Compare(password.ConvertToUnsecureString(), hashedPassword);
+        }
 
         public static byte[] GenerateSaltedHash(string plaintext, byte[] salt)
         {

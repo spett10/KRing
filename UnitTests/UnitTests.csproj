@@ -58,6 +58,7 @@
     <Compile Include="PasswordAdvisorTests.cs" />
     <Compile Include="DBEntryRepositoryTests.cs" />
     <Compile Include="ProfileRepositoryTests.cs" />
+    <Compile Include="CryptoHashingTests.cs" />
     <Compile Include="View\MockingUI.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DBControllerTests.cs" />
