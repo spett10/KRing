@@ -52,7 +52,7 @@ namespace UnitTests
 
             var user = new User(_username, _password, _cookie);
 
-            var pwd = new SecureString(); pwd.PopulateWithString("TESTING");
+            var pwd = new SecureString(); pwd.PopulateWithString("Very123Secure12312");
 
             var ui = new MockingUI(_username, pwd);
 

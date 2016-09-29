@@ -141,6 +141,11 @@ namespace KRing.Core.Controllers
             _profileRepository.DeleteUser();
         }
 
+        /// <summary>
+        /// The reason we dont call this in the constructor, is that it can fail. I like it more when a constructor cant fail,
+        /// even though the class is not actually initialized/usable before we load the user.
+        /// So even though we would like to "initialization is resource allocation" it up, ive chosen this approach instead.
+        /// </summary>
         public void LoadProfile()
         {
             try

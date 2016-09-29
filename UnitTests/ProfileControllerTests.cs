@@ -47,7 +47,7 @@ namespace UnitTests
             var repository = new MockingProfileRepository(correctUsername, strongPasswordSecureString);
             var profileCtrl = new ProfileController(repository);
 
-            profileCtrl.LoadProfile(); //TODO: why does the client have to call this? cant the profilecontroller do it on construction? Initalization is resource allocation and all that..
+            profileCtrl.LoadProfile();
             var session = profileCtrl.LoginLoop(_givesCorrectPassword);
 
             Assert.AreEqual(session.IsLoggedIn, true);
