@@ -34,6 +34,7 @@ namespace KRing.Persistence.Repositories
             FileUtil.FilePurge(_profilePath, "");
         }
 
+        /* TODO: encrypt the salted password */
         public void WriteUser(User user)
         {
             if(user == null)
@@ -47,8 +48,7 @@ namespace KRing.Persistence.Repositories
                 using (StreamWriter profileWriter = new StreamWriter(_profilePath))
                 {
                     profileWriter.WriteLine(user.UserName);
-                    profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.PasswordSalted));
-                    profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.SaltForPassword));
+                    profileWriter.WriteLine(user.Cookie.PasswordSalted);
                     profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.KeySalt));
                 }
 
@@ -65,24 +65,14 @@ namespace KRing.Persistence.Repositories
 
                 var storedPasswordSalted = profileReader.ReadLine();
                 if (storedPasswordSalted == null) { throw new ArgumentNullException("Empty Password for profile"); }
-                var passwordSalted = Convert.FromBase64String(storedPasswordSalted);
-
-                var storedSalt = profileReader.ReadLine();
-                if (storedSalt == null) { throw new ArgumentNullException("No salt for _user"); }
-                var salt = Convert.FromBase64String(storedSalt);
 
                 var storedKeySalt = profileReader.ReadLine();
                 if (storedKeySalt == null) { throw new ArgumentNullException("No salt for key"); }
                 var keySalt = Convert.FromBase64String(storedKeySalt);
 
-                var securePassword = new SecureString();
-                securePassword.PopulateWithString(storedPasswordSalted);
+                var cookie = new Cookie(storedPasswordSalted, keySalt);
 
-                var cookie = new Cookie(passwordSalted, salt, keySalt);
-
-                return new User(storedUser,
-                                securePassword, 
-                                cookie);
+                return new User(storedUser,cookie);
             }
         }
     }

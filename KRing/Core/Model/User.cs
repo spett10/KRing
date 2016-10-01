@@ -16,13 +16,19 @@ namespace KRing.Core.Model
             Cookie = cookie;
         }
 
+        public User(string name, Cookie cookie)
+        {
+            UserName = name;
+            Password = new SecureString();
+            Cookie = cookie;
+        }
+
         public static User NewUserWithFreshSalt(string newUserName, SecureString password)
         {
-            var saltForPassword = CryptoHashing.GenerateSalt();
-            var saltedPassword = CryptoHashing.GenerateSaltedHash(password.ConvertToUnsecureString(), saltForPassword);
+            var saltedPassword = CryptoHashing.ScryptHashPassword(password);
             var saltForKey = CryptoHashing.GenerateSalt();
 
-            var cookie = new Cookie(saltedPassword, saltForPassword, saltForKey);
+            var cookie = new Cookie(saltedPassword, saltForKey);
             return new User(newUserName, password, cookie);
         }
 
@@ -30,7 +36,6 @@ namespace KRing.Core.Model
         {
             return new User("Dummy", new SecureString(),
                                     new Cookie(CryptoHashing.GenerateSalt(),
-                                                CryptoHashing.GenerateSalt(),
                                                 CryptoHashing.GenerateSalt()));
         }
         

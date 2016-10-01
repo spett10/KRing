@@ -50,7 +50,7 @@ namespace UnitTests
             profileCtrl.LoadProfile();
             var session = profileCtrl.LoginLoop(_givesCorrectPassword);
 
-            Assert.AreEqual(session.IsLoggedIn, true);
+            Assert.IsTrue(session.IsLoggedIn);
         }
 
         [TestMethod]
@@ -59,6 +59,12 @@ namespace UnitTests
             var profileCtrl = new ProfileController(new MockingProfileRepository(correctUsername, strongPasswordSecureString));
 
             profileCtrl.NewProfile(_givesCorrectPassword);
+
+            //add loging stuff too to test 
+
+            var session = profileCtrl.LoginLoop(_givesCorrectPassword);
+
+            Assert.IsTrue(session.IsLoggedIn);
         }
     }
 }

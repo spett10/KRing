@@ -11,6 +11,7 @@ using KRing.Extensions;
 using KRing.Interfaces;
 using KRing.Persistence.Controllers;
 using KRing.Persistence.Repositories;
+using System.Collections.Generic;
 
 namespace KRing.Core
 {
@@ -21,14 +22,49 @@ namespace KRing.Core
         private static DbController _dbController;
         private static IUserInterface _ui;
         private static ProfileController _profileController;
+        private static bool _doesProfileExist = false;
+
+        private static List<Action> _actions = new List<Action> {
+                                                ProgramInit,
+                                                NewOrReturningUser,
+                                                LoginLoop,
+                                                TryToLoadDB,
+                                                ProgramLoop };
 
         static void Main(string[] args)
         {
-            /* Setup */
-            ProgramInit();
+            foreach(var programStep in _actions)
+            {
+                try
+                {
+                    programStep();
+                }
+                catch(Exception)
+                {
+                    return;
+                }
+            }
 
-            /* new user or returning user? */
-            bool doesProfileExist = true;
+            return;            
+        }
+
+        /// <summary>
+        /// Setup the UI and prepares state before login attempt
+        /// </summary>
+        private static void ProgramInit()
+        {
+            _ui = new ConsoleLineInterface();
+            _ui.StartupMessage();
+            _isRunning = false;
+            _currentSession = Session.DummySession();
+        }
+
+        /// <summary>
+        /// If no profile is stored, we handle the new user. Else, we load the profile of the existing user
+        /// </summary>
+        private static void NewOrReturningUser()
+        {
+            _doesProfileExist = true;
             _profileController = new ProfileController();
 
             try
@@ -37,30 +73,26 @@ namespace KRing.Core
             }
             catch (Exception)
             {
-                doesProfileExist = false;
+                _doesProfileExist = false;
             }
-            
-            /* Login Loop */
-            if (!doesProfileExist)
+
+            if (!_doesProfileExist)
             {
                 HandleNewUser();
             }
+        }
 
-            try
-            {
-                LoginLoop();
-            }
-            catch (Exception)
-            {
-                return;
-            }
-
-            /* User Logged In */
+        /// <summary>
+        /// If noone fiddled with the underlying encrypted files, this will suceed. If someone fiddled with them, we fail, since we cant decrypt.
+        /// If no profile is found, we purge the DB. We do that on a profile delete too, but we need to be sure that nothing is saved. 
+        /// </summary>
+        private static void TryToLoadDB()
+        {
             _dbController = new DbController(new DbEntryRepository(_currentSession.User.Password));
             if (_currentSession.IsLoggedIn)
             {
                 _isRunning = true;
-                if (doesProfileExist)
+                if (_doesProfileExist)
                 {
                     try
                     {
@@ -76,23 +108,11 @@ namespace KRing.Core
                     _dbController.DeleteAllEntries();
                 }
             }
-
-            /* Handle User Requests */
-            ProgramLoop();
-
-            /* Program Exit */
-            return;
-            
         }
 
-        private static void ProgramInit()
-        {
-            _ui = new ConsoleLineInterface();
-            _ui.StartupMessage();
-            _isRunning = false;
-            _currentSession = Session.DummySession();
-        }
-
+        /// <summary>
+        /// Presents the main menu to the user, and handles request by dispatching to the appropriate event handlers. 
+        /// </summary>
         private static void ProgramLoop()
         {
             while (_isRunning)
@@ -132,11 +152,17 @@ namespace KRing.Core
             }
         }
 
+        /// <summary>
+        /// Dispatches to the profile controller, checks the password etc.
+        /// </summary>
         private static void LoginLoop()
         {
             _currentSession = _profileController.LoginLoop(_ui);
         }
 
+        /// <summary>
+        /// Purge everything at the request of the user.
+        /// </summary>
         private static void HandleDeleteUser()
         {
             var areYouSure = _ui.YesNoQuestionToUser("Are you sure you want to delete user and all stored information? (Y/N)");

@@ -108,9 +108,9 @@ namespace KRing.Core.Controllers
         private Session LogIn(string username, SecureString password)
         {
             var storedSaltedPassword = _user.Cookie.PasswordSalted;
-            var givenPasswordWhenSalted = CryptoHashing.GenerateSaltedHash(password, _user.Cookie.SaltForPassword);
 
-            bool isPasswordCorrect = CryptoHashing.CompareByteArrays(storedSaltedPassword, givenPasswordWhenSalted);
+            //were do we get the password? Cos we load the wrong things actually.. 
+            bool isPasswordCorrect = CryptoHashing.ScryptCheckPassword(password, storedSaltedPassword);
 
             bool isCorrectUser = username.Equals(_user.UserName, StringComparison.Ordinal);
 

@@ -19,26 +19,23 @@ namespace UnitTests
 
             password.PopulateWithString("YELLOW SUBMARINE");
 
-            var saltForPassword = CryptoHashing.GenerateSalt();
-            var passwordSalted = CryptoHashing.GenerateSaltedHash(password, saltForPassword);
+            var passwordSalted = CryptoHashing.ScryptHashPassword(password);
             var saltForKey = CryptoHashing.GenerateSalt();
 
             _correctUser = new User("testuser",
                                     password,
-                                    new Cookie(passwordSalted, saltForPassword, saltForKey));
+                                    new Cookie(passwordSalted, saltForKey));
         }
 
         public MockingProfileRepository(string username, SecureString password)
         {
-            var saltForPassword = CryptoHashing.GenerateSalt();
-            var passwordSalted = CryptoHashing.GenerateSaltedHash(password, saltForPassword);
+            var passwordSalted = CryptoHashing.ScryptHashPassword(password);
             var saltForKey = CryptoHashing.GenerateSalt();
 
             _correctUser = new User(username,
                                     password,
-                                    new Cookie(passwordSalted, saltForPassword, saltForKey));
-
-            Debug.WriteLine("saltforpassword: " + Convert.ToBase64String(passwordSalted));
+                                    new Cookie(passwordSalted, saltForKey));
+            
         }
 
         public void DeleteUser()

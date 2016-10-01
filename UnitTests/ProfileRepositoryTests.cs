@@ -20,11 +20,10 @@ namespace UnitTests
             var password = new SecureString();
             password.PopulateWithString("Super Secure");
 
-            var salt = CryptoHashing.GenerateSalt();
-            var passwordSalted = CryptoHashing.GenerateSaltedHash(password, salt);
+            var passwordSalted = CryptoHashing.ScryptHashPassword(password);
             var keySalt = CryptoHashing.GenerateSalt();
 
-            var cookie = new Cookie(passwordSalted, salt, keySalt);
+            var cookie = new Cookie(passwordSalted, keySalt);
 
             _user = new User(username, password, cookie);
         }
@@ -38,18 +37,18 @@ namespace UnitTests
 
             var readUser = repository.ReadUser();
 
-            Assert.AreEqual(readUser.UserName, _user.UserName);
+            var password = new SecureString();
+            password.PopulateWithString("Super Secure");
 
-            Assert.AreEqual(Convert.ToBase64String(_user.Cookie.PasswordSalted), readUser.Password.ConvertToUnsecureString());
+            var isValidPassword = CryptoHashing.ScryptCheckPassword(password, readUser.Cookie.PasswordSalted); //think when we read the users password is not the password but the hashed password
+            Assert.IsTrue(isValidPassword);
+
+            Assert.AreEqual(readUser.UserName, _user.UserName);
 
             var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.KeySalt, _user.Cookie.KeySalt);
             Assert.AreEqual(keysaltIsEqual, true);
-
-            var passwordSaltedIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.PasswordSalted, _user.Cookie.PasswordSalted);
-            Assert.AreEqual(passwordSaltedIsEqual, true);
-
-            var saltForPasswordIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.SaltForPassword, _user.Cookie.SaltForPassword);
-            Assert.AreEqual(passwordSaltedIsEqual, true);
+            
+            Assert.AreEqual(_user.Cookie.PasswordSalted, readUser.Cookie.PasswordSalted);
         }
 
         [TestMethod]
@@ -99,7 +98,7 @@ namespace UnitTests
             var keySalt = CryptoHashing.GenerateSalt();
 
             
-            var otherCookie = new Cookie(passwordSalted, salt, keySalt);
+            var otherCookie = new Cookie(passwordSalted, keySalt);
             var otherUser = new User("Bob", _user.Password, _user.Cookie);
 
             repository.WriteUser(otherUser);
@@ -108,16 +107,12 @@ namespace UnitTests
 
             Assert.AreEqual(otherUser.UserName, readUser.UserName);
 
-            Assert.AreEqual(Convert.ToBase64String(otherUser.Cookie.PasswordSalted), readUser.Password.ConvertToUnsecureString());
+            Assert.AreEqual(otherUser.Cookie.PasswordSalted, readUser.Password.ConvertToUnsecureString()); //why do we do this this way? 
 
             var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.KeySalt, otherUser.Cookie.KeySalt);
             Assert.AreEqual(keysaltIsEqual, true);
 
-            var passwordSaltedIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.PasswordSalted, otherUser.Cookie.PasswordSalted);
-            Assert.AreEqual(passwordSaltedIsEqual, true);
-
-            var saltForPasswordIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.SaltForPassword, otherUser.Cookie.SaltForPassword);
-            Assert.AreEqual(passwordSaltedIsEqual, true);
+            Assert.AreEqual(readUser.Cookie.PasswordSalted, otherUser.Cookie.PasswordSalted);
         }
     }
 }

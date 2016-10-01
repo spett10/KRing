@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using KRing.Core;
 using KRing.Extensions;
 using System.Security;
+using System.Diagnostics;
 
 
 namespace UnitTests
@@ -30,7 +31,7 @@ namespace UnitTests
             password.PopulateWithString("UggaBuggaSuperSecret");
 
             string hashedPassword = CryptoHashing.ScryptHashPassword(password);
-
+            
             var wrongPassword = new SecureString();
             wrongPassword.PopulateWithString("UggaBuggaSuperSecret1");
 
