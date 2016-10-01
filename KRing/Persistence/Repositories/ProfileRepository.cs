@@ -48,7 +48,7 @@ namespace KRing.Persistence.Repositories
                 using (StreamWriter profileWriter = new StreamWriter(_profilePath))
                 {
                     profileWriter.WriteLine(user.UserName);
-                    profileWriter.WriteLine(user.Cookie.PasswordSalted);
+                    profileWriter.WriteLine(user.Cookie.HashedPassword);
                     profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.KeySalt));
                 }
 

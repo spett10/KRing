@@ -4,18 +4,18 @@ namespace KRing.Core.Model
 {
     public class Cookie
     {
-        public string PasswordSalted { get; set; }
+        public string HashedPassword { get; set; }
         public byte[] KeySalt { get; set; }
 
-        public Cookie(byte[] passwordSalted, byte[] keySalt)
+        public Cookie(byte[] hashedpassword, byte[] keySalt)
         {
-            PasswordSalted = Convert.ToBase64String(passwordSalted);
+            HashedPassword = Convert.ToBase64String(hashedpassword);
             KeySalt = keySalt;
         }
 
-        public Cookie(string passwordSalted, byte[] keySalt)
+        public Cookie(string hashedPassword, byte[] keySalt)
         {
-            PasswordSalted = passwordSalted;
+            HashedPassword = hashedPassword;
             KeySalt = keySalt;
         }
     }

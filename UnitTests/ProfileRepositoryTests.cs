@@ -40,7 +40,7 @@ namespace UnitTests
             var password = new SecureString();
             password.PopulateWithString("Super Secure");
 
-            var isValidPassword = CryptoHashing.ScryptCheckPassword(password, readUser.Cookie.PasswordSalted); //think when we read the users password is not the password but the hashed password
+            var isValidPassword = CryptoHashing.ScryptCheckPassword(password, readUser.Cookie.HashedPassword); //think when we read the users password is not the password but the hashed password
             Assert.IsTrue(isValidPassword);
 
             Assert.AreEqual(readUser.UserName, _user.UserName);
@@ -48,7 +48,7 @@ namespace UnitTests
             var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.KeySalt, _user.Cookie.KeySalt);
             Assert.AreEqual(keysaltIsEqual, true);
             
-            Assert.AreEqual(_user.Cookie.PasswordSalted, readUser.Cookie.PasswordSalted);
+            Assert.AreEqual(_user.Cookie.HashedPassword, readUser.Cookie.HashedPassword);
         }
 
         [TestMethod]
@@ -107,12 +107,12 @@ namespace UnitTests
 
             Assert.AreEqual(otherUser.UserName, readUser.UserName);
 
-            Assert.AreEqual(otherUser.Cookie.PasswordSalted, readUser.Cookie.PasswordSalted);
+            Assert.AreEqual(otherUser.Cookie.HashedPassword, readUser.Cookie.HashedPassword);
 
             var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.KeySalt, otherUser.Cookie.KeySalt);
             Assert.AreEqual(keysaltIsEqual, true);
 
-            Assert.AreEqual(readUser.Cookie.PasswordSalted, otherUser.Cookie.PasswordSalted);
+            Assert.AreEqual(readUser.Cookie.HashedPassword, otherUser.Cookie.HashedPassword);
         }
     }
 }

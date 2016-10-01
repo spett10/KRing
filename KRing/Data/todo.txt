@@ -1,11 +1,20 @@
-﻿-use more interfaces and refactor st. we can unit test the stuff.
+﻿-encrypt the hashed of the users password.
 
+-find a nicer way to build it (remove the iff that checks what files to access?)
+
+-rename all saltedpassword stuff to be hashed password
+
+FIX:
+
+-The #IFDEBUG in the constructores are kinda ugly. Find a better way to make sure the test files are used, and not production files? 
 
 POST MORTEM:
 
 -Our inversion of giving the UI to the controllers (and even the repository) got quite messy. I think it should be the other way - we hand over
 the data and objects to the UI, and then it generates an appropriate view to the user. 
+	-on the other hand, it is still testable, by mocking the ui and specifying what to return.
 
 On the other hand, it seems okay that the controllers manipulate the view as they do. I just dont like that htey have these hardcoded messages to the user in the controller.
 
 We could make a template system? But no reason to make it more complicated than it needs to be - its just a fuking command line interface after all. 
+Still, we could rap it all in a config file instead. Make standard messages to the user. 

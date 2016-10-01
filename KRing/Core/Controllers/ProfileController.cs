@@ -107,7 +107,7 @@ namespace KRing.Core.Controllers
 
         private Session LogIn(string username, SecureString password)
         {
-            var storedSaltedPassword = _user.Cookie.PasswordSalted;
+            var storedSaltedPassword = _user.Cookie.HashedPassword;
 
             //were do we get the password? Cos we load the wrong things actually.. 
             bool isPasswordCorrect = CryptoHashing.ScryptCheckPassword(password, storedSaltedPassword);
