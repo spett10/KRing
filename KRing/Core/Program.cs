@@ -6,7 +6,6 @@ using System.Threading;
 using KRing.Core.Controllers;
 using KRing.Core.Model;
 using KRing.Core.View;
-using KRing.DTO;
 using KRing.Extensions;
 using KRing.Interfaces;
 using KRing.Persistence.Controllers;

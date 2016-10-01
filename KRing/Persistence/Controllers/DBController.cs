@@ -7,7 +7,6 @@ using System.Security.Cryptography;
 using System.Text;
 using KRing.Core;
 using KRing.Core.Model;
-using KRing.DTO;
 using KRing.Extensions;
 using KRing.Interfaces;
 using KRing.Persistence.Model;
@@ -33,7 +32,7 @@ namespace KRing.Persistence.Controllers
 
         public void AddPassword(IUserInterface ui, User user)
         {
-            DbEntryDto newEntry = ui.RequestNewEntryInformation(user);
+            DBEntry newEntry = ui.RequestNewEntryInformation(user);
             try
             {
                 _dbEntryRepository.AddEntry(newEntry);
@@ -60,7 +59,7 @@ namespace KRing.Persistence.Controllers
 
             try
             {
-                _dbEntryRepository.UpdateEntry(new DbEntryDto(entry.Domain, newPassword));
+                _dbEntryRepository.UpdateEntry(new DBEntry(entry.Domain, newPassword));
             }
             catch(Exception)
             {

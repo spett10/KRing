@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Security;
-using KRing.DTO;
 using KRing.Persistence.Model;
 
 namespace KRing.Persistence.Interfaces
@@ -9,7 +8,7 @@ namespace KRing.Persistence.Interfaces
     {
         int EntryCount { get; }
 
-        void AddEntry(DbEntryDto newDto);
+        void AddEntry(DBEntry newDbEntry);
         void DeleteAllEntries();
         void DeleteEntry(string domain);
         void DeleteEntry(int index);
@@ -20,7 +19,7 @@ namespace KRing.Persistence.Interfaces
         SecureString GetPasswordFromDomain(string domain);
         bool IsDbEmpty();
         List<DBEntry> LoadEntriesFromDb();
-        void UpdateEntry(DbEntryDto updatedEntry);
+        void UpdateEntry(DBEntry updatedEntry);
         void WriteEntriesToDb();
     }
 }

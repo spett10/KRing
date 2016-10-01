@@ -76,7 +76,6 @@
     <Compile Include="Persistence\Controllers\DBController.cs" />
     <Compile Include="Persistence\Converter.cs" />
     <Compile Include="Persistence\DataConfig.cs" />
-    <Compile Include="DTO\DBEntryDTO.cs" />
     <Compile Include="Extensions\SecureStringExtension.cs" />
     <Compile Include="Interfaces\UserInterface.cs" />
     <Compile Include="Persistence\FileUtil.cs" />
@@ -121,6 +120,7 @@
     </Content>
     <Content Include="Data\todo.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

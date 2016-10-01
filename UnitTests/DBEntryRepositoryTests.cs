@@ -3,8 +3,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using KRing.Persistence.Repositories;
 using KRing.Extensions;
 using KRing.Interfaces;
+using KRing.Persistence.Model;
 using System.Security;
-using KRing.DTO;
 using UnitTests.Config;
 using System.Configuration;
 
@@ -43,7 +43,7 @@ namespace UnitTests
         {
             var repository = new DbEntryRepository(_password);
 
-            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+            repository.AddEntry(new DBEntry(_correctDomain, _password));
 
             var exists = repository.ExistsEntry(_correctDomain);
 
@@ -58,10 +58,10 @@ namespace UnitTests
         {
             var repository = new DbEntryRepository(_password);
 
-            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+            repository.AddEntry(new DBEntry(_correctDomain, _password));
 
             //duplicates are not allowed
-            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+            repository.AddEntry(new DBEntry(_correctDomain, _password));
         }
 
         [TestMethod]
@@ -69,7 +69,7 @@ namespace UnitTests
         {
             var repository = new DbEntryRepository(_password);
 
-            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+            repository.AddEntry(new DBEntry(_correctDomain, _password));
             repository.DeleteEntry(_correctDomain);
 
             var exists = repository.ExistsEntry(_correctDomain);
@@ -86,9 +86,9 @@ namespace UnitTests
             string domain2 = "FooBaz";
             string domain3 = "Testing";
 
-            repository.AddEntry(new DbEntryDto(domain1, _password));
-            repository.AddEntry(new DbEntryDto(domain2, _password));
-            repository.AddEntry(new DbEntryDto(domain3, _password));
+            repository.AddEntry(new DBEntry(domain1, _password));
+            repository.AddEntry(new DBEntry(domain2, _password));
+            repository.AddEntry(new DBEntry(domain3, _password));
 
             var countDuring = repository.EntryCount;
 
@@ -118,9 +118,9 @@ namespace UnitTests
             string domain2 = "FooBaz";
             string domain3 = "Testing";
 
-            repository.AddEntry(new DbEntryDto(domain1, _password));
-            repository.AddEntry(new DbEntryDto(domain2, _password));
-            repository.AddEntry(new DbEntryDto(domain3, _password));
+            repository.AddEntry(new DBEntry(domain1, _password));
+            repository.AddEntry(new DBEntry(domain2, _password));
+            repository.AddEntry(new DBEntry(domain3, _password));
 
             repository.WriteEntriesToDb();
 
@@ -146,7 +146,7 @@ namespace UnitTests
         {
             var repository = new DbEntryRepository(_password);
 
-            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+            repository.AddEntry(new DBEntry(_correctDomain, _password));
 
             repository.DeleteEntry(_correctDomain);
 
@@ -161,8 +161,8 @@ namespace UnitTests
             var repository = new DbEntryRepository(_password);
             string fake_domain = "other";
 
-            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
-            repository.AddEntry(new DbEntryDto(fake_domain, _password));
+            repository.AddEntry(new DBEntry(_correctDomain, _password));
+            repository.AddEntry(new DBEntry(fake_domain, _password));
             repository.DeleteEntry(0);
 
             var result = repository.ExistsEntry(_correctDomain);
@@ -180,7 +180,7 @@ namespace UnitTests
         {
             var repository = new DbEntryRepository(_password);
 
-            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+            repository.AddEntry(new DBEntry(_correctDomain, _password));
 
             repository.DeleteEntry(_correctDomain);
 
@@ -194,7 +194,7 @@ namespace UnitTests
         {
             var repository = new DbEntryRepository(_password);
 
-            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+            repository.AddEntry(new DBEntry(_correctDomain, _password));
 
             repository.DeleteEntry(10);
         }
@@ -204,11 +204,11 @@ namespace UnitTests
         {
             var repository = new DbEntryRepository(_password);
 
-            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+            repository.AddEntry(new DBEntry(_correctDomain, _password));
 
             var newPassword = new SecureString();
             newPassword.PopulateWithString("TESTING");
-            var newDto = new DbEntryDto(_correctDomain, newPassword);
+            var newDto = new DBEntry(_correctDomain, newPassword);
 
             repository.UpdateEntry(newDto);
 
@@ -223,9 +223,9 @@ namespace UnitTests
         {
             var repository = new DbEntryRepository(_password);
 
-            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+            repository.AddEntry(new DBEntry(_correctDomain, _password));
 
-            var newDto = new DbEntryDto("UGGA BUGGA", _password);
+            var newDto = new DBEntry("UGGA BUGGA", _password);
 
             repository.UpdateEntry(newDto);
         }
@@ -236,7 +236,7 @@ namespace UnitTests
         {
             var repository = new DbEntryRepository(_password);
 
-            repository.AddEntry(new DbEntryDto(_correctDomain, _password));
+            repository.AddEntry(new DBEntry(_correctDomain, _password));
 
             var password = repository.GetPasswordFromDomain(_correctDomain + "not");
         }

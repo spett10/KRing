@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using KRing.Core;
 using KRing.Core.Model;
-using KRing.DTO;
 using KRing.Interfaces;
 using KRing.Persistence.Model;
 using KRing.Extensions;
@@ -64,7 +63,7 @@ namespace UnitTests
             return;
         }
 
-        public DbEntryDto RequestNewEntryInformation(User user)
+        public DBEntry RequestNewEntryInformation(User user)
         {
             if(answerWithRandomPassword)
             {
@@ -73,11 +72,11 @@ namespace UnitTests
                 //Make random password... 
                 //They should, with good prop. at least, be random enough that the password advisor that might check them, should call them good.
                 password.PopulateWithString(Convert.ToBase64String(CryptoHashing.GenerateSalt())); 
-                return new DbEntryDto(_username, password);
+                return new DBEntry(_username, password);
             }
             else
             {
-                return new DbEntryDto(_username, _password);
+                return new DBEntry(_username, _password);
             }
         }
 

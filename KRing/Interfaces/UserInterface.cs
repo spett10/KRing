@@ -7,7 +7,6 @@ using System.Security;
 using KRing;
 using KRing.Core;
 using KRing.Core.Model;
-using KRing.DTO;
 using KRing.Persistence.Model;
 
 namespace KRing.Interfaces
@@ -26,7 +25,7 @@ namespace KRing.Interfaces
 
         SecureString RequestPassword(string msg);
 
-        DbEntryDto RequestNewEntryInformation(User user);
+        DBEntry RequestNewEntryInformation(User user);
 
         string RequestUserInput(string msg);
 

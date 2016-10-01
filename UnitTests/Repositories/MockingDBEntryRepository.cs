@@ -4,7 +4,6 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
-using KRing.DTO;
 using KRing.Persistence.Interfaces;
 using KRing.Persistence.Model;
 
@@ -34,7 +33,7 @@ namespace UnitTests.Repositories
             }
         }
 
-        public void AddEntry(DbEntryDto newDto)
+        public void AddEntry(DBEntry newDto)
         {
             _addEntryCalled = true;
             _entries.Add(new DBEntry(newDto.Domain, newDto.Password));
@@ -97,7 +96,7 @@ namespace UnitTests.Repositories
             return _entries;
         }
 
-        public void UpdateEntry(DbEntryDto updatedEntry)
+        public void UpdateEntry(DBEntry updatedEntry)
         {
             _updateEntryCalled = true;
         }

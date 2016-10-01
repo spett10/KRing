@@ -1,5 +1,4 @@
 ﻿using KRing.Core;
-using KRing.DTO;
 using KRing.Extensions;
 using KRing.Persistence.Model;
 using System;
@@ -109,7 +108,7 @@ namespace KRing.Persistence.Repositories
                 throw new ArgumentException("domain does not exist to delete");
         }
 
-        public void UpdateEntry(DbEntryDto updatedEntry)
+        public void UpdateEntry(DBEntry updatedEntry)
         {
             var entry =
                 _entries.FirstOrDefault(e => e.Domain.Equals(updatedEntry.Domain, StringComparison.OrdinalIgnoreCase));
@@ -152,17 +151,16 @@ namespace KRing.Persistence.Repositories
                                Equals(domain, StringComparison.CurrentCulture));
         }
 
-        public void AddEntry(DbEntryDto newDto)
+        public void AddEntry(DBEntry newDbEntry)
         {
             bool duplicateExists = _entries.Exists(
                                             e => e.
                                             Domain.
-                                            Equals(newDto.Domain, StringComparison.CurrentCulture));
+                                            Equals(newDbEntry.Domain, StringComparison.CurrentCulture));
 
             if (!duplicateExists)
             {
-                DBEntry newEntry = new DBEntry(newDto.Domain, newDto.Password);
-                _entries.Add(newEntry);
+                _entries.Add(newDbEntry);
             }
             else
             {

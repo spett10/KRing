@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security;
 using KRing.Core.Model;
-using KRing.DTO;
 using KRing.Interfaces;
 using KRing.Persistence.Model;
 using System.Collections;
@@ -106,12 +105,12 @@ namespace KRing.Core.View
             return password;
         }
 
-        public DbEntryDto RequestNewEntryInformation(User user)
+        public DBEntry RequestNewEntryInformation(User user)
         {
             string domain = RequestUserInput("Please enter domain associated with password you want to store");
             SecureString password = RequestPassword("Please Enter the password to be stored");
 
-            return new DbEntryDto(domain, password);
+            return new DBEntry(domain, password);
         }
 
         public string RequestUserInput(string msg)
