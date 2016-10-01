@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -52,6 +53,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Config\MockingDataConfig.cs" />
     <Compile Include="EncryptionTests.cs" />
     <Compile Include="Repositories\MockingDBEntryRepository.cs" />
     <Compile Include="Repositories\MockingProfileRepository.cs" />

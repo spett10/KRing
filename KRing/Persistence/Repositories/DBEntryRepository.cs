@@ -11,13 +11,14 @@ using System.Security.Cryptography;
 using System.Transactions;
 using System.Configuration;
 using KRing.Persistence.Interfaces;
+using KRing.Interfaces;
 
 
 namespace KRing.Persistence.Repositories
 {
     public class DbEntryRepository : IDbEntryRepository
     {
-        private readonly DataConfig _dataConfig;
+        private readonly IDataConfig _dataConfig;
         private readonly int _count;
         private List<DBEntry> _entries;
         
@@ -46,14 +47,44 @@ namespace KRing.Persistence.Repositories
                                ConfigurationManager.AppSettings["configPath"]);
 #endif
 
-            _count = Config();
+            _count = _dataConfig.GetStorageCount();
             _iv = new byte[CryptoHashing.SaltByteSize];
             SetupMeta();
 
             _password = password;
             _key = DeriveKey(password);
             
-            _entries = !IsDbEmpty() ? LoadEntriesFromDb() : new List<DBEntry>();
+            if(IsDbEmpty())
+            {
+                _entries = new List<DBEntry>();
+                DeleteAllEntries();
+            }
+            else
+            {
+                _entries = LoadEntriesFromDb();
+            }            
+        }
+
+        public DbEntryRepository(SecureString password, IDataConfig config)
+        {
+            _dataConfig = config;
+
+            _count = _dataConfig.GetStorageCount();
+            _iv = new byte[CryptoHashing.SaltByteSize];
+            SetupMeta();
+
+            _password = password;
+            _key = DeriveKey(password);
+
+            if (IsDbEmpty())
+            {
+                _entries = new List<DBEntry>();
+                DeleteAllEntries();
+            }
+            else
+            {
+                _entries = LoadEntriesFromDb();
+            }
         }
 
         public void DeleteEntry(string domain)
@@ -221,27 +252,7 @@ namespace KRing.Persistence.Repositories
                 throw new Exception("Could not decrypt DB");
             }
         }
-
-        private int Config()
-        {
-            int count = 0;
-
-            using (StreamReader sr = new StreamReader(_dataConfig.configPath))
-            {
-                var readCount = sr.ReadLine();
-                if (readCount != null)
-                {
-                    int.TryParse(readCount, out count);
-                }
-                else
-                {
-                    count = 0;
-                }
-            }
-
-            return count;
-        }
-
+        
         private void UpdateMeta()
         {
             using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Create))
@@ -274,15 +285,12 @@ namespace KRing.Persistence.Repositories
         private void DeleteDb()
         {
             FileUtil.FilePurge(_dataConfig.dbPath, "-");
-            FileUtil.FilePurge(_dataConfig.configPath, "0");
+            _dataConfig.ClearConfig();
         }
 
         private void UpdateConfig(int count)
         {
-            using (StreamWriter configWriter = new StreamWriter(_dataConfig.configPath))
-            {
-                configWriter.WriteLine(count);
-            }
+            _dataConfig.UpdateConfig(count);
         }
     }
 }

@@ -59,7 +59,7 @@ namespace KRing.Core.View
 
         public void MessageToUser(string msg)
         {
-            Console.WriteLine("\n" + msg);
+            Console.WriteLine(msg);
         }
 
         public void WelcomeMessage(User User)

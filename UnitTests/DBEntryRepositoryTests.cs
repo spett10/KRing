@@ -2,8 +2,11 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using KRing.Persistence.Repositories;
 using KRing.Extensions;
+using KRing.Interfaces;
 using System.Security;
 using KRing.DTO;
+using UnitTests.Config;
+using System.Configuration;
 
 namespace UnitTests
 {
@@ -12,6 +15,7 @@ namespace UnitTests
     {
         SecureString _password;
         string _correctDomain;
+        IDataConfig _config;
 
         [TestInitialize]
         public void TestInitialize()
@@ -20,6 +24,10 @@ namespace UnitTests
             _password.PopulateWithString("YELLOW SUBMARINE");
 
             _correctDomain = "test";
+
+            _config = new MockingDataConfig(ConfigurationManager.AppSettings["metaPathDebug"],
+                                            ConfigurationManager.AppSettings["dbPathDebug"],
+                                            ConfigurationManager.AppSettings["configPathDebug"]);
         }
 
         [TestMethod]
@@ -38,6 +46,8 @@ namespace UnitTests
             repository.AddEntry(new DbEntryDto(_correctDomain, _password));
 
             var exists = repository.ExistsEntry(_correctDomain);
+
+            repository.DeleteAllEntries();
 
             Assert.AreEqual(exists, true);
         }

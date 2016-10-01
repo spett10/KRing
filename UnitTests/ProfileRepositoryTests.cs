@@ -107,7 +107,7 @@ namespace UnitTests
 
             Assert.AreEqual(otherUser.UserName, readUser.UserName);
 
-            Assert.AreEqual(otherUser.Cookie.PasswordSalted, readUser.Password.ConvertToUnsecureString()); //why do we do this this way? 
+            Assert.AreEqual(otherUser.Cookie.PasswordSalted, readUser.Cookie.PasswordSalted);
 
             var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.KeySalt, otherUser.Cookie.KeySalt);
             Assert.AreEqual(keysaltIsEqual, true);
