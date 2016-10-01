@@ -20,7 +20,6 @@ namespace KRing.Persistence.Controllers
         /// <summary>
         /// Singleton pattern, since we use the same file throughout, so we only want one accessing it at any time. 
         /// </summary>
-        private static DbController _instance;
         private static IDbEntryRepository _dbEntryRepository;
 
         public int EntryCount => _dbEntryRepository.EntryCount;
