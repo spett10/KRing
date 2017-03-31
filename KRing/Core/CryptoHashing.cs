@@ -13,7 +13,7 @@ namespace KRing.Core
     public static class CryptoHashing
     {
         public static readonly int SaltByteSize = 16;
-        private static readonly int iterations = 10000;
+        private static readonly int iterations = 10000; //could we go further? like.. 20k? 30k? We only have to load them once. 
 
         public static string ScryptHashPassword(SecureString password)
         {

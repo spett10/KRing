@@ -88,7 +88,7 @@ namespace KRing.Core
             return (PasswordScore)score;
         }
 
-        public static SecureString CheckPasswordWithUserInteraction(IUserInterface ui)
+        public static SecureString CheckPasswordWithUserInteraction(IPasswordUI ui)
         {
             SecureString password = ui.RequestPassword("\nPlease enter a password");
 

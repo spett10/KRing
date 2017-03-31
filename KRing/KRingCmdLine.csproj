@@ -74,6 +74,7 @@
     <Compile Include="Core\PasswordAdvisor.cs" />
     <Compile Include="Core\Program.cs" />
     <Compile Include="Core\View\ConsoleLineInterface.cs" />
+    <Compile Include="Interfaces\IPasswordUI.cs" />
     <Compile Include="Persistence\Controllers\DBController.cs" />
     <Compile Include="Persistence\Converter.cs" />
     <Compile Include="Persistence\DataConfig.cs" />

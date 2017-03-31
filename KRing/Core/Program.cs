@@ -20,6 +20,7 @@ namespace KRing.Core
         private static Session _currentSession;
         private static DbController _dbController;
         private static IUserInterface _ui;
+        private static IPasswordUI _pswdUi;
         private static ProfileController _profileController;
         private static bool _doesProfileExist = false;
 
@@ -53,6 +54,7 @@ namespace KRing.Core
         private static void ProgramInit()
         {
             _ui = new ConsoleLineInterface();
+            _pswdUi = new ConsoleLineInterface();
             _ui.StartupMessage();
             _isRunning = false;
             _currentSession = Session.DummySession();
@@ -177,7 +179,7 @@ namespace KRing.Core
 
         private static void HandleNewUser()
         {
-            _profileController.NewProfile(_ui);
+            _profileController.NewProfile(_ui, _pswdUi);
         }
 
         private static void HandleDeletePassword()
@@ -209,7 +211,7 @@ namespace KRing.Core
 
         private static void HandleUpdatePassword()
         {
-            _dbController.UpdatePassword(_ui);
+            _dbController.UpdatePassword(_ui, _pswdUi);
         }
 
         private static void HandleViewPassword()

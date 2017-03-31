@@ -10,3 +10,4 @@ C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\Data\db.txt
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\Data\meta.txt
 C:\Users\Søren\Documents\Visual Studio 2015\Projects\KRing\UnitTests\bin\Debug\UnitTests.dll.config
+C:\Users\Søren\documents\visual studio 2015\Projects\KRing\UnitTests\bin\Debug\Scrypt.dll

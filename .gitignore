@@ -18,3 +18,4 @@ KRing/Release/Data/db.txt
 *.txt
 KRing/bin/Release/Data/db.txt
 *.txt
+*.tmp

@@ -60,7 +60,7 @@ namespace UnitTests
 
             ui.IndexToAnswer = repository.EntryCount;
 
-            controller.UpdatePassword(ui);
+            controller.UpdatePassword(ui, ui);
 
             Assert.AreEqual(repository._updateEntryCalled, true);
         }

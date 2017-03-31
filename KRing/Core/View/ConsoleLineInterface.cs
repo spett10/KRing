@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace KRing.Core.View
 {
     /* Todo: flyt al text over i en shallow static class? */
-    public class ConsoleLineInterface : IUserInterface
+    public class ConsoleLineInterface : IUserInterface, IPasswordUI
     {
         public ConsoleLineInterface()
         {

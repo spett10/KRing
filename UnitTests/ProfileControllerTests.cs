@@ -58,7 +58,7 @@ namespace UnitTests
         {
             var profileCtrl = new ProfileController(new MockingProfileRepository(correctUsername, strongPasswordSecureString));
 
-            profileCtrl.NewProfile(_givesCorrectPassword);
+            profileCtrl.NewProfile(_givesCorrectPassword, _givesCorrectPassword);
 
             //add loging stuff too to test 
 

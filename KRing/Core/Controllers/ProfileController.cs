@@ -29,19 +29,19 @@ namespace KRing.Core.Controllers
             _profileRepository = _rep;
         }
 
-        public void NewProfile(IUserInterface ui)
+        public void NewProfile(IUserInterface ui, IPasswordUI pswdUI)
         {
             ui.MessageToUser("Creating new user for you!");
             var newUserName = ui.RequestUsername();
 
-            SecureString password = TryGetStrongPassword(ui);
+            SecureString password = TryGetStrongPassword(pswdUI);
             
             var newUser = User.NewUserWithFreshSalt(newUserName, password);
 
             UpdateProfile(newUser);
         }
 
-        private SecureString TryGetStrongPassword(IUserInterface ui)
+        private SecureString TryGetStrongPassword(IPasswordUI ui)
         {
             bool consistentPasswordInput = false;
 

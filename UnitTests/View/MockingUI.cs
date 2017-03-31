@@ -12,7 +12,7 @@ using KRing.Extensions;
 
 namespace UnitTests
 {
-    class MockingUI : IUserInterface
+    class MockingUI : IUserInterface, IPasswordUI
     {
         public string _username;
         private readonly SecureString _password;

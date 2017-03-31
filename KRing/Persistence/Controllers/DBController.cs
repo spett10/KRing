@@ -42,7 +42,7 @@ namespace KRing.Persistence.Controllers
             }
         }
 
-        public void UpdatePassword(IUserInterface ui)
+        public void UpdatePassword(IUserInterface ui, IPasswordUI pswdUi)
         {
             if (EntryCount <= 0)
             {
@@ -54,7 +54,7 @@ namespace KRing.Persistence.Controllers
 
             var entry = _dbEntryRepository.GetEntry(domain);
             
-            var newPassword = PasswordAdvisor.CheckPasswordWithUserInteraction(ui);
+            var newPassword = PasswordAdvisor.CheckPasswordWithUserInteraction(pswdUi);
 
             try
             {
