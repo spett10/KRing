@@ -14,6 +14,7 @@ KRing/Release/Data/config.txt
 KRing/Release/Data/meta.txt
 KRing/Release/Data/profile.txt
 KRing/Release/Data/db.txt
+**/obj/Debug/*
 
 *.txt
 KRing/bin/Release/Data/db.txt
