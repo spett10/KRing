@@ -23,7 +23,6 @@ KRing/KRing/bin
 KRing/**/bin
 KRing/**/obj
 KRing/**/Data
-
 *.txt
 KRing/bin/Release/Data/db.txt
 *.txt
