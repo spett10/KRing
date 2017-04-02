@@ -35,7 +35,7 @@ namespace KRingForm.Forms
         {
             var plaintextPassword = passwordBox.Text;
 
-            if(plaintextPassword == null)
+            if(plaintextPassword == String.Empty)
             {
                 MessageBox.Show("Please enter new password", "Error");
             }

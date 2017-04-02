@@ -33,7 +33,7 @@ namespace KRingForm.Forms
             var domainName = domainBox.Text;
             var plaintextPassword = passwordBox.Text;
             
-            if(domainName == null || plaintextPassword == null)
+            if(domainName == String.Empty || plaintextPassword == String.Empty)
             {
                 MessageBox.Show("Please enter Domain and Password", "Error");
             }

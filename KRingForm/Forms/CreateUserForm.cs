@@ -39,6 +39,8 @@ namespace KRingForm
 
             /* Callback to set User */
             Program.SavedUser = user;
+
+            this.Close();
         }
     }
 }
