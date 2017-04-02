@@ -26,7 +26,6 @@ namespace KRingForm.Forms
             InitializeComponent();
             _passwordRep = repository;
             _callback = callback;
-
         }
 
         private void addButton_Click(object sender, EventArgs e)

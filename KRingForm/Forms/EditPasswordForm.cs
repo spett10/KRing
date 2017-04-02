@@ -45,8 +45,7 @@ namespace KRingForm.Forms
                 password.PopulateWithString(plaintextPassword);
 
                 var newEntry = new DBEntry(_editTarget, password);
-
-
+                
                 _passwordRep.UpdateEntry(newEntry);
 
                 _callback();

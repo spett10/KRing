@@ -115,7 +115,7 @@ namespace KRing.Persistence.Repositories
             if (entry != null) entry.Password = updatedEntry.Password;
             else throw new ArgumentException("No such Domain");
         }
-
+        
         public DBEntry GetEntry(int index)
         {
             return _entries.ElementAt(index);

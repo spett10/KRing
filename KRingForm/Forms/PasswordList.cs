@@ -2,6 +2,7 @@
 using KRing.Persistence.Interfaces;
 using KRing.Persistence.Repositories;
 using KRingForm.Forms;
+using KRing.Persistence.Model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -63,6 +64,8 @@ namespace KRingForm
         {
             var selectedDomain = GetCurrentDomain(_currentIndex);
 
+            var editForm = new EditPasswordForm(_passwordRep, UpdateList, selectedDomain);
+            editForm.Show();
         }
 
         private void deleteButton_Click(object sender, EventArgs e)
@@ -85,6 +88,23 @@ namespace KRingForm
         private List<string> GetListAsStrings()
         {
             return passwordListBox.Items.Cast<string>().ToList();
+        }
+
+        private void PasswordList_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void viewButton_Click(object sender, EventArgs e)
+        {
+            var selectedDomain = GetCurrentDomain(_currentIndex);
+
+            var password = _passwordRep.GetPasswordFromDomain(selectedDomain);
+
+            var entry = new DBEntry(selectedDomain, password);
+
+            var viewForm = new ViewForm(entry);
+            viewForm.Show();
         }
     }
 }
