@@ -37,9 +37,8 @@ namespace KRingForm
             /* Update Profile */
             profileRep.WriteUser(user);
 
-            /* Update Config */
-            var config = new ConfigRepository();
-            config.UserExists();            
+            /* Callback to set User */
+            Program.SavedUser = user;
         }
     }
 }

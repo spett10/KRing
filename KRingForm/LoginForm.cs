@@ -11,20 +11,23 @@ using System.Security;
 using KRing.Core;
 using KRing.Extensions;
 using KRing.Persistence.Repositories;
+using KRing.Core.Model;
+using static KRingForm.Program;
 
 namespace KRingForm
 {
     public partial class LoginForm : Form
     {
-        private KRing.Core.Model.User savedUser;
+        private User savedUser;
+        private readonly LoginCallback _callback;
+
         private const int maxLoginAttemps = 3;
         private int usedLoginAttempts = 0;
 
-        public LoginForm()
+        public LoginForm(User user, LoginCallback callback)
         {
-            var reader = new ProfileRepository();
-            savedUser = reader.ReadUser();
-
+            savedUser = user;
+            _callback = callback;
             InitializeComponent();
         }
 
@@ -46,6 +49,8 @@ namespace KRingForm
             else
             {
                 MessageBox.Show("Logged In");
+                _callback(true);
+                this.Close();
             }
 
 
@@ -63,6 +68,7 @@ namespace KRingForm
             if(usedLoginAttempts >= maxLoginAttemps)
             {
                 MessageBox.Show("All login attempts used.");
+                _callback(false);
                 this.Close();
             }
         }

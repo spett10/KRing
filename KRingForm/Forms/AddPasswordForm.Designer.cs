@@ -1,6 +1,6 @@
-﻿namespace KRingForm
+﻿namespace KRingForm.Forms
 {
-    partial class CreateUserForm
+    partial class AddPasswordForm
     {
         /// <summary>
         /// Required designer variable.
@@ -28,69 +28,67 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.usernameLabel = new System.Windows.Forms.Label();
-            this.usernameBox = new System.Windows.Forms.TextBox();
+            this.domainLabel = new System.Windows.Forms.Label();
+            this.domainBox = new System.Windows.Forms.TextBox();
             this.passwordLabel = new System.Windows.Forms.Label();
             this.passwordBox = new System.Windows.Forms.TextBox();
-            this.createButton = new System.Windows.Forms.Button();
+            this.addButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // usernameLabel
+            // domainLabel
             // 
-            this.usernameLabel.AutoSize = true;
-            this.usernameLabel.Location = new System.Drawing.Point(108, 39);
-            this.usernameLabel.Name = "usernameLabel";
-            this.usernameLabel.Size = new System.Drawing.Size(55, 13);
-            this.usernameLabel.TabIndex = 0;
-            this.usernameLabel.Text = "Username";
+            this.domainLabel.AutoSize = true;
+            this.domainLabel.Location = new System.Drawing.Point(99, 7);
+            this.domainLabel.Name = "domainLabel";
+            this.domainLabel.Size = new System.Drawing.Size(43, 13);
+            this.domainLabel.TabIndex = 0;
+            this.domainLabel.Text = "Domain";
             // 
-            // usernameBox
+            // domainBox
             // 
-            this.usernameBox.Location = new System.Drawing.Point(88, 55);
-            this.usernameBox.Name = "usernameBox";
-            this.usernameBox.Size = new System.Drawing.Size(100, 20);
-            this.usernameBox.TabIndex = 0;
+            this.domainBox.Location = new System.Drawing.Point(71, 23);
+            this.domainBox.Name = "domainBox";
+            this.domainBox.Size = new System.Drawing.Size(100, 20);
+            this.domainBox.TabIndex = 0;
             // 
             // passwordLabel
             // 
             this.passwordLabel.AutoSize = true;
-            this.passwordLabel.Location = new System.Drawing.Point(108, 96);
+            this.passwordLabel.Location = new System.Drawing.Point(99, 60);
             this.passwordLabel.Name = "passwordLabel";
             this.passwordLabel.Size = new System.Drawing.Size(53, 13);
-            this.passwordLabel.TabIndex = 2;
+            this.passwordLabel.TabIndex = 1;
             this.passwordLabel.Text = "Password";
             // 
             // passwordBox
             // 
-            this.passwordBox.Location = new System.Drawing.Point(88, 112);
+            this.passwordBox.Location = new System.Drawing.Point(71, 76);
             this.passwordBox.Name = "passwordBox";
-            this.passwordBox.PasswordChar = '*';
             this.passwordBox.Size = new System.Drawing.Size(100, 20);
             this.passwordBox.TabIndex = 1;
             // 
-            // createButton
+            // addButton
             // 
-            this.createButton.Location = new System.Drawing.Point(100, 154);
-            this.createButton.Name = "createButton";
-            this.createButton.Size = new System.Drawing.Size(75, 23);
-            this.createButton.TabIndex = 2;
-            this.createButton.Text = "Create";
-            this.createButton.UseVisualStyleBackColor = true;
-            this.createButton.Click += new System.EventHandler(this.createButton_Click);
+            this.addButton.Location = new System.Drawing.Point(86, 102);
+            this.addButton.Name = "addButton";
+            this.addButton.Size = new System.Drawing.Size(75, 23);
+            this.addButton.TabIndex = 2;
+            this.addButton.Text = "Add";
+            this.addButton.UseVisualStyleBackColor = true;
+            this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
-            // CreateUserForm
+            // AddPasswordForm
             // 
-            this.AcceptButton = this.createButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 261);
-            this.Controls.Add(this.createButton);
+            this.ClientSize = new System.Drawing.Size(254, 161);
+            this.Controls.Add(this.addButton);
             this.Controls.Add(this.passwordBox);
             this.Controls.Add(this.passwordLabel);
-            this.Controls.Add(this.usernameBox);
-            this.Controls.Add(this.usernameLabel);
-            this.Name = "CreateUserForm";
-            this.Text = "CreateUserForm";
+            this.Controls.Add(this.domainBox);
+            this.Controls.Add(this.domainLabel);
+            this.Name = "AddPasswordForm";
+            this.Text = "AddPasswordForm";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -98,10 +96,10 @@
 
         #endregion
 
-        private System.Windows.Forms.Label usernameLabel;
-        private System.Windows.Forms.TextBox usernameBox;
+        private System.Windows.Forms.Label domainLabel;
+        private System.Windows.Forms.TextBox domainBox;
         private System.Windows.Forms.Label passwordLabel;
         private System.Windows.Forms.TextBox passwordBox;
-        private System.Windows.Forms.Button createButton;
+        private System.Windows.Forms.Button addButton;
     }
 }

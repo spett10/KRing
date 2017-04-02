@@ -41,7 +41,7 @@
             this.passwordBox.Name = "passwordBox";
             this.passwordBox.PasswordChar = '*';
             this.passwordBox.Size = new System.Drawing.Size(100, 20);
-            this.passwordBox.TabIndex = 0;
+            this.passwordBox.TabIndex = 1;
             // 
             // passwordLabel
             // 
@@ -66,20 +66,21 @@
             this.usernameBox.Location = new System.Drawing.Point(184, 34);
             this.usernameBox.Name = "usernameBox";
             this.usernameBox.Size = new System.Drawing.Size(100, 20);
-            this.usernameBox.TabIndex = 3;
+            this.usernameBox.TabIndex = 0;
             // 
             // loginButton
             // 
             this.loginButton.Location = new System.Drawing.Point(195, 130);
             this.loginButton.Name = "loginButton";
             this.loginButton.Size = new System.Drawing.Size(75, 23);
-            this.loginButton.TabIndex = 4;
+            this.loginButton.TabIndex = 3;
             this.loginButton.Text = "Login";
             this.loginButton.UseVisualStyleBackColor = true;
             this.loginButton.Click += new System.EventHandler(this.loginButton_Click);
             // 
-            // Form1
+            // LoginForm
             // 
+            this.AcceptButton = this.loginButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(459, 226);
@@ -88,7 +89,7 @@
             this.Controls.Add(this.usernameLabel);
             this.Controls.Add(this.passwordLabel);
             this.Controls.Add(this.passwordBox);
-            this.Name = "Form1";
+            this.Name = "LoginForm";
             this.Text = "KRing";
             this.ResumeLayout(false);
             this.PerformLayout();
