@@ -31,7 +31,7 @@
             this.passwordListBox = new System.Windows.Forms.ListBox();
             this.listLabel = new System.Windows.Forms.Label();
             this.addButton = new System.Windows.Forms.Button();
-            this.updateButton = new System.Windows.Forms.Button();
+            this.editButton = new System.Windows.Forms.Button();
             this.deleteButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
@@ -63,14 +63,15 @@
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
-            // updateButton
+            // editButton
             // 
-            this.updateButton.Location = new System.Drawing.Point(196, 77);
-            this.updateButton.Name = "updateButton";
-            this.updateButton.Size = new System.Drawing.Size(75, 23);
-            this.updateButton.TabIndex = 3;
-            this.updateButton.Text = "Update";
-            this.updateButton.UseVisualStyleBackColor = true;
+            this.editButton.Location = new System.Drawing.Point(196, 77);
+            this.editButton.Name = "editButton";
+            this.editButton.Size = new System.Drawing.Size(75, 23);
+            this.editButton.TabIndex = 3;
+            this.editButton.Text = "Edit";
+            this.editButton.UseVisualStyleBackColor = true;
+            this.editButton.Click += new System.EventHandler(this.editButton_Click);
             // 
             // deleteButton
             // 
@@ -80,6 +81,7 @@
             this.deleteButton.TabIndex = 4;
             this.deleteButton.Text = "Delete";
             this.deleteButton.UseVisualStyleBackColor = true;
+            this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
             // 
             // PasswordList
             // 
@@ -87,7 +89,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 425);
             this.Controls.Add(this.deleteButton);
-            this.Controls.Add(this.updateButton);
+            this.Controls.Add(this.editButton);
             this.Controls.Add(this.addButton);
             this.Controls.Add(this.listLabel);
             this.Controls.Add(this.passwordListBox);
@@ -103,7 +105,7 @@
         private System.Windows.Forms.ListBox passwordListBox;
         private System.Windows.Forms.Label listLabel;
         private System.Windows.Forms.Button addButton;
-        private System.Windows.Forms.Button updateButton;
+        private System.Windows.Forms.Button editButton;
         private System.Windows.Forms.Button deleteButton;
     }
 }

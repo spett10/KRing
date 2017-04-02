@@ -21,6 +21,7 @@ namespace KRingForm
         private readonly User _user;
         private readonly IDbEntryRepository _passwordRep;
 
+        private int _currentIndex;
 
         public PasswordList(User user)
         {
@@ -49,7 +50,7 @@ namespace KRingForm
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
+            _currentIndex = passwordListBox.SelectedIndex;            
         }
 
         private void addButton_Click(object sender, EventArgs e)
@@ -58,6 +59,32 @@ namespace KRingForm
             addForm.Show();
         }
 
+        private void editButton_Click(object sender, EventArgs e)
+        {
+            var selectedDomain = GetCurrentDomain(_currentIndex);
 
+        }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            var selectedDomain = GetCurrentDomain(_currentIndex);
+        }
+
+        private string GetCurrentDomain(int index)
+        {
+            var list = GetListAsStrings();
+
+            if(index >= list.Count)
+            {
+                throw new ArgumentException("Index out of range");
+            }
+
+            return list.ElementAt(index);
+        }
+
+        private List<string> GetListAsStrings()
+        {
+            return passwordListBox.Items.Cast<string>().ToList();
+        }
     }
 }

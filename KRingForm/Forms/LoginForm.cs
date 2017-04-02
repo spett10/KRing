@@ -48,12 +48,9 @@ namespace KRingForm
             }
             else
             {
-                MessageBox.Show("Logged In");
                 _callback(true);
                 this.Close();
             }
-
-
         }
 
         private bool CheckUserName(string username)

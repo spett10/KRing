@@ -47,10 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CreateUserForm.cs">
+    <Compile Include="Forms\CreateUserForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CreateUserForm.Designer.cs">
+    <Compile Include="Forms\CreateUserForm.Designer.cs">
       <DependentUpon>CreateUserForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\AddPasswordForm.cs">
@@ -59,30 +59,30 @@
     <Compile Include="Forms\AddPasswordForm.Designer.cs">
       <DependentUpon>AddPasswordForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="LoginForm.cs">
+    <Compile Include="Forms\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LoginForm.Designer.cs">
+    <Compile Include="Forms\LoginForm.Designer.cs">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="PasswordList.cs">
+    <Compile Include="Forms\PasswordList.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PasswordList.Designer.cs">
+    <Compile Include="Forms\PasswordList.Designer.cs">
       <DependentUpon>PasswordList.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="CreateUserForm.resx">
+    <EmbeddedResource Include="Forms\CreateUserForm.resx">
       <DependentUpon>CreateUserForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\AddPasswordForm.resx">
       <DependentUpon>AddPasswordForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LoginForm.resx">
+    <EmbeddedResource Include="Forms\LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PasswordList.resx">
+    <EmbeddedResource Include="Forms\PasswordList.resx">
       <DependentUpon>PasswordList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
