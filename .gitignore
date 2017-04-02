@@ -16,9 +16,13 @@ KRing/Release/Data/profile.txt
 KRing/Release/Data/db.txt
 **/obj/Debug/*
 **/obj/*
+KRing/KRing/bin/
+KRing/**/bin/
+KRing/**/obj/
 KRing/KRing/bin
 KRing/**/bin
 KRing/**/obj
+KRing/**/Data
 
 *.txt
 KRing/bin/Release/Data/db.txt
