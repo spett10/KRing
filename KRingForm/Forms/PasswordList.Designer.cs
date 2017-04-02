@@ -107,7 +107,6 @@
             this.Controls.Add(this.passwordListBox);
             this.Name = "PasswordList";
             this.Text = "PasswordList";
-            this.Load += new System.EventHandler(this.PasswordList_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

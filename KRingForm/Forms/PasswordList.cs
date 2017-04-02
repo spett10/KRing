@@ -71,6 +71,9 @@ namespace KRingForm
         private void deleteButton_Click(object sender, EventArgs e)
         {
             var selectedDomain = GetCurrentDomain(_currentIndex);
+
+            var deleteForm = new DeletePasswordForm(_passwordRep, UpdateList, selectedDomain);
+            deleteForm.Show();
         }
 
         private string GetCurrentDomain(int index)
@@ -88,11 +91,6 @@ namespace KRingForm
         private List<string> GetListAsStrings()
         {
             return passwordListBox.Items.Cast<string>().ToList();
-        }
-
-        private void PasswordList_Load(object sender, EventArgs e)
-        {
-
         }
 
         private void viewButton_Click(object sender, EventArgs e)
