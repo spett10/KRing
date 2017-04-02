@@ -104,5 +104,10 @@ namespace KRingForm
             var viewForm = new ViewForm(entry);
             viewForm.Show();
         }
+
+        private void deleteUserButton_Click(object sender, EventArgs e)
+        {
+            //TODO
+        }
     }
 }

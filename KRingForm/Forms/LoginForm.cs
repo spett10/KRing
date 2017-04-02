@@ -36,21 +36,28 @@ namespace KRingForm
             var userName = usernameBox.Text;
             var password = passwordBox.Text;
 
-            var securePassword = new SecureString();
-            securePassword.PopulateWithString(password);
-
-            var correctUsername = CheckUserName(userName);
-            var correctPassword = CryptoHashing.ScryptCheckPassword(securePassword, savedUser.Cookie.HashedPassword);
-
-            if(!(correctPassword && correctPassword))
+            if(userName == string.Empty || password == string.Empty)
             {
-                HandleFailedLogon();
+                MessageBox.Show("Please input username and password", "Error");
             }
             else
             {
-                _callback(true);
-                this.Close();
-            }
+                var securePassword = new SecureString();
+                securePassword.PopulateWithString(password);
+
+                var correctUsername = CheckUserName(userName);
+                var correctPassword = CryptoHashing.ScryptCheckPassword(securePassword, savedUser.Cookie.HashedPassword);
+
+                if (!(correctPassword && correctPassword))
+                {
+                    HandleFailedLogon();
+                }
+                else
+                {
+                    _callback(true);
+                    this.Close();
+                }
+            }            
         }
 
         private bool CheckUserName(string username)
@@ -61,6 +68,8 @@ namespace KRingForm
         private void HandleFailedLogon()
         {
             usedLoginAttempts++;
+            MessageBox.Show("Wrong username and/or password", "Error");
+
 
             if(usedLoginAttempts >= maxLoginAttemps)
             {
