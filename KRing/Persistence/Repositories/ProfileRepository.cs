@@ -16,12 +16,13 @@ namespace KRing.Persistence.Repositories
         public ProfileRepository()
         {
 #if DEBUG
-            var filename = ConfigurationManager.AppSettings["profilePathDebug"];
+            var filename = ConfigurationManager.AppSettings["relativeprofilePathDebug"];
+            _profilePath = filename;
 #else
-            var filename = ConfigurationManager.AppSettings["profilePath"];
+            var filename = ConfigurationManager.AppSettings["relativeprofilePath"];
+            _profilePath = Environment.CurrentDirectory + filename;
 #endif
 
-            _profilePath = filename;
         }
 
         public ProfileRepository(string profilePath)

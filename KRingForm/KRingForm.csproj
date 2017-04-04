@@ -132,15 +132,35 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\config.txt" />
-    <Content Include="Data\db.txt" />
-    <Content Include="Data\profile.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <Content Include="Data\Debug\config.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\meta.txt" />
+    <Content Include="Data\Debug\db.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Debug\meta.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Debug\profile.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Release\config.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Release\db.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Release\meta.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Release\profile.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="todo.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -157,4 +177,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <!--<Target Name="AfterBuild">
+    <Delete Files="$(TargetDir)$(TargetFileName).config" />
+    <Copy SourceFiles="$(ProjectDir)\Config\App.$(Configuration).config" DestinationFiles="$(TargetDir)$(TargetFileName).config" />
+  </Target>-->
 </Project>

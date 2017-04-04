@@ -18,7 +18,6 @@ namespace KRingForm
 
         public static bool isLoggedIn;
         public static User SavedUser;
-        public static IDataConfig _config;
 
         /// <summary>
         /// The main entry point for the application.
@@ -29,16 +28,19 @@ namespace KRingForm
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-             _config = new DataConfig(ConfigurationManager.AppSettings["metaPathDebug"],
-                                     ConfigurationManager.AppSettings["dbPathDebug"],
-                                     ConfigurationManager.AppSettings["configPathDebug"]);
-
             isLoggedIn = false;
 
             /* Check if a user exists; If not, create new user, if it does, show logon format */
             if (!DoesUserExist())
             {
-                Application.Run(new CreateUserForm());
+                try
+                {
+                    Application.Run(new CreateUserForm());
+                }
+                catch(Exception e)
+                {
+                    MessageBox.Show("Error: " + e.Message, "Exception");
+                }
             }
 
             Application.Run(new LoginForm(SavedUser, loginCallback));
@@ -48,7 +50,6 @@ namespace KRingForm
                 Application.Run(new PasswordList(SavedUser));
 
             }
-
         }
 
         public static void loginCallback(bool isLoginSuccessful)

@@ -23,6 +23,9 @@ namespace KRing.Persistence.Repositories
         
         private byte[] _iv;
         private byte[] _key;
+
+        private readonly int _keyLength = 16;
+
         private readonly SecureString _password;
 
         public int EntryCount => _entries.Count;
@@ -36,14 +39,14 @@ namespace KRing.Persistence.Repositories
         {
 #if DEBUG
             _dataConfig = new DataConfig(
-                               ConfigurationManager.AppSettings["metaPathDebug"],
-                               ConfigurationManager.AppSettings["dbPathDebug"],
-                               ConfigurationManager.AppSettings["configPathDebug"]);
+                               ConfigurationManager.AppSettings["relativemetaPathDebug"],
+                               ConfigurationManager.AppSettings["relativedbPathDebug"],
+                               ConfigurationManager.AppSettings["relativeconfigPathDebug"]);
 #else
             _dataConfig = new DataConfig(
-                               ConfigurationManager.AppSettings["metaPath"],
-                               ConfigurationManager.AppSettings["dbPath"],
-                               ConfigurationManager.AppSettings["configPath"]);
+                               Environment.CurrentDirectory + ConfigurationManager.AppSettings["relativemetaPath"],
+                               Environment.CurrentDirectory + ConfigurationManager.AppSettings["relativedbPath"],
+                               Environment.CurrentDirectory + ConfigurationManager.AppSettings["relativeconfigPath"]);
 #endif
 
             _count = _dataConfig.GetStorageCount();
@@ -277,7 +280,7 @@ namespace KRing.Persistence.Repositories
 
         private byte[] DeriveKey(SecureString password)
         {
-            return CryptoHashing.GenerateSaltedHash(password, _iv);
+            return CryptoHashing.DeriveKeyFromPasswordAndSalt(password, _iv, _keyLength);
         }
 
         private void DeleteDb()

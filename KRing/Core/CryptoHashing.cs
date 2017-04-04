@@ -54,6 +54,19 @@ namespace KRing.Core
             }
         }
 
+        public static byte[] DeriveKeyFromPasswordAndSalt(SecureString plaintext, byte[] salt, int keyLength)
+        {
+            Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(plaintext.ConvertToUnsecureString(), salt, iterations);
+            try
+            {
+                return algorithm.GetBytes(keyLength);
+            }
+            finally
+            {
+                algorithm.Dispose();
+            }
+        }
+
         public static byte[] GenerateSalt(int size)
         {
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
