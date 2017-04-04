@@ -35,6 +35,7 @@
             this.deleteButton = new System.Windows.Forms.Button();
             this.viewButton = new System.Windows.Forms.Button();
             this.deleteUserButton = new System.Windows.Forms.Button();
+            this.saveButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // passwordListBox
@@ -105,11 +106,22 @@
             this.deleteUserButton.UseVisualStyleBackColor = true;
             this.deleteUserButton.Click += new System.EventHandler(this.deleteUserButton_Click);
             // 
+            // saveButton
+            // 
+            this.saveButton.Location = new System.Drawing.Point(196, 227);
+            this.saveButton.Name = "saveButton";
+            this.saveButton.Size = new System.Drawing.Size(75, 23);
+            this.saveButton.TabIndex = 6;
+            this.saveButton.Text = "Save";
+            this.saveButton.UseVisualStyleBackColor = true;
+            this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
+            // 
             // PasswordList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(319, 412);
+            this.Controls.Add(this.saveButton);
             this.Controls.Add(this.deleteUserButton);
             this.Controls.Add(this.viewButton);
             this.Controls.Add(this.deleteButton);
@@ -133,5 +145,6 @@
         private System.Windows.Forms.Button deleteButton;
         private System.Windows.Forms.Button viewButton;
         private System.Windows.Forms.Button deleteUserButton;
+        private System.Windows.Forms.Button saveButton;
     }
 }

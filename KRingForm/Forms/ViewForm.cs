@@ -33,6 +33,9 @@ namespace KRingForm.Forms
             this.domainBox.Text = entry.Domain;
             this.passwordBox.Text = entry.Password.ConvertToUnsecureString();
 
+            entry.Password = new System.Security.SecureString();
+            entry.Password.PopulateWithString(passwordBox.Text);
+
             warningTimer.Interval = (int)(_endTime - _startTime).TotalMilliseconds;
             warningTimer.Start();
         }

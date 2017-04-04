@@ -45,8 +45,6 @@ namespace KRingForm
             {
                 passwordListBox.Items.Add(pswd.Domain);
             }
-
-            _passwordRep.WriteEntriesToDb();
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -56,24 +54,48 @@ namespace KRingForm
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            var addForm = new AddPasswordForm(_passwordRep, UpdateList);
-            addForm.Show();
+            try
+            {
+                var addForm = new AddPasswordForm(_passwordRep, UpdateList);
+                addForm.Show();
+            }
+            catch(Exception)
+            {
+                HandleException();
+            }
+            
         }
 
         private void editButton_Click(object sender, EventArgs e)
         {
-            var selectedDomain = GetCurrentDomain(_currentIndex);
+            try
+            {
+                var selectedDomain = GetCurrentDomain(_currentIndex);
 
-            var editForm = new EditPasswordForm(_passwordRep, UpdateList, selectedDomain);
-            editForm.Show();
+                var editForm = new EditPasswordForm(_passwordRep, UpdateList, selectedDomain);
+                editForm.Show();
+            }
+            catch (Exception)
+            {
+                HandleException();
+            }
+
         }
 
         private void deleteButton_Click(object sender, EventArgs e)
         {
-            var selectedDomain = GetCurrentDomain(_currentIndex);
+            try
+            {
+                var selectedDomain = GetCurrentDomain(_currentIndex);
 
-            var deleteForm = new DeletePasswordForm(_passwordRep, UpdateList, selectedDomain);
-            deleteForm.Show();
+                var deleteForm = new DeletePasswordForm(_passwordRep, UpdateList, selectedDomain);
+                deleteForm.Show();
+            }
+            catch (Exception)
+            {
+                HandleException();
+            }
+
         }
 
         private string GetCurrentDomain(int index)
@@ -95,19 +117,40 @@ namespace KRingForm
 
         private void viewButton_Click(object sender, EventArgs e)
         {
-            var selectedDomain = GetCurrentDomain(_currentIndex);
+            try
+            {
+                var selectedDomain = GetCurrentDomain(_currentIndex);
 
-            var password = _passwordRep.GetPasswordFromDomain(selectedDomain);
+                var password = _passwordRep.GetPasswordFromDomain(selectedDomain);
 
-            var entry = new DBEntry(selectedDomain, password);
+                var entry = new DBEntry(selectedDomain, password);
 
-            var viewForm = new ViewForm(entry);
-            viewForm.Show();
+                var viewForm = new ViewForm(entry);
+                viewForm.Show();
+            }
+            catch (Exception)
+            {
+                HandleException();
+            }
+
         }
 
         private void deleteUserButton_Click(object sender, EventArgs e)
         {
             //TODO
+        }
+
+        /// <summary>
+        /// If something fails, make sure to write database.
+        /// </summary>
+        private void HandleException()
+        {
+            _passwordRep.WriteEntriesToDb();
+        }
+
+        private void saveButton_Click(object sender, EventArgs e)
+        {
+            _passwordRep.WriteEntriesToDb();
         }
     }
 }

@@ -47,7 +47,14 @@ namespace KRingForm
 
             if(isLoggedIn)
             {
-                Application.Run(new PasswordList(SavedUser));
+                try
+                {
+                    Application.Run(new PasswordList(SavedUser));
+                }
+                catch (Exception)
+                {
+
+                }
 
             }
         }
