@@ -43,18 +43,15 @@ namespace KRing.Persistence.Repositories
 
             //Make sure we dont write two users
             DeleteUser();
-
-            using (TransactionScope scope = new TransactionScope())
+            
+            using (StreamWriter profileWriter = new StreamWriter(_profilePath))
             {
-                using (StreamWriter profileWriter = new StreamWriter(_profilePath))
-                {
-                    profileWriter.WriteLine(user.UserName);
-                    profileWriter.WriteLine(user.Cookie.HashedPassword);
-                    profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.KeySalt));
-                }
-
-                scope.Complete();
+                profileWriter.WriteLine(user.UserName);
+                profileWriter.WriteLine(user.Cookie.HashedPassword);
+                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.KeySalt));
+                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.HashSalt));
             }
+
         }
 
         public User ReadUser()
@@ -71,7 +68,11 @@ namespace KRing.Persistence.Repositories
                 if (storedKeySalt == null) { throw new ArgumentNullException("No salt for key"); }
                 var keySalt = Convert.FromBase64String(storedKeySalt);
 
-                var cookie = new Cookie(storedPasswordSalted, keySalt);
+                var storedHashSalt = profileReader.ReadLine();
+                if (storedHashSalt == null) { throw new ArgumentNullException("No salt for password"); }
+                var hashSalt = Convert.FromBase64String(storedHashSalt);
+
+                var cookie = new Cookie(storedPasswordSalted, keySalt, hashSalt);
 
                 return new User(storedUser,cookie);
             }

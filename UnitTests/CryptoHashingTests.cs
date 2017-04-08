@@ -94,5 +94,16 @@ namespace UnitTests
 
             var decryptedRaw = Aes256AuthenticatedCipher.Decrypt(cipher, key, iv);
         }
+
+        [TestMethod]
+        public void Scrypt_SaltAndData_ShouldBeEqual()
+        {
+            var password = new SecureString();            
+            var salt = CryptoHashing.GenerateSalt(64);
+                        
+            var hashed = CryptoHashing.ScryptHashPassword(password, salt);
+
+            Assert.IsTrue(CryptoHashing.ScryptCheckPassword(password, salt, hashed));
+        }
     }
 }

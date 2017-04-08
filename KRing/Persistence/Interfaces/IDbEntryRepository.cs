@@ -22,5 +22,6 @@ namespace KRing.Persistence.Interfaces
         void UpdateEntry(DBEntry updatedEntry);
         void WriteEntriesToDb();
         bool DecryptionErrorOccured { get; }
+        bool EncryptionErrorOccured { get; }
     }
 }

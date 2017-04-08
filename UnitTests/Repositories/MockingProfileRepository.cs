@@ -21,20 +21,22 @@ namespace UnitTests
 
             var passwordSalted = CryptoHashing.ScryptHashPassword(password);
             var saltForKey = CryptoHashing.GenerateSalt();
+            var saltForHash = CryptoHashing.GenerateSalt();
 
             _correctUser = new User("testuser",
                                     password,
-                                    new Cookie(passwordSalted, saltForKey));
+                                    new Cookie(passwordSalted, saltForKey, saltForHash));
         }
 
         public MockingProfileRepository(string username, SecureString password)
         {
             var passwordSalted = CryptoHashing.ScryptHashPassword(password);
             var saltForKey = CryptoHashing.GenerateSalt();
+            var saltForHash = CryptoHashing.GenerateSalt();
 
             _correctUser = new User(username,
                                     password,
-                                    new Cookie(passwordSalted, saltForKey));
+                                    new Cookie(passwordSalted, saltForKey, saltForHash));
             
         }
 

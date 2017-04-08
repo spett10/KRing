@@ -33,6 +33,22 @@ namespace UnitTests.Repositories
             }
         }
 
+        public bool DecryptionErrorOccured
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public bool EncryptionErrorOccured
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         public void AddEntry(DBEntry newDto)
         {
             _addEntryCalled = true;

@@ -30,6 +30,18 @@ namespace KRing.Core
             return encoder.Compare(password.ConvertToUnsecureString(), hashedPassword);
         }
 
+        public static string ScryptHashPassword(SecureString password, byte[] salt)
+        {
+            ScryptEncoder encoder = new ScryptEncoder();
+            return encoder.Encode(Convert.ToBase64String(salt) + password.ConvertToUnsecureString());
+        }
+
+        public static bool ScryptCheckPassword(SecureString password, byte[] salt, string hashedPassword)
+        {
+            ScryptEncoder encoder = new ScryptEncoder();
+            return encoder.Compare(Convert.ToBase64String(salt) + password.ConvertToUnsecureString(), hashedPassword);
+        }
+
         public static byte[] GenerateSaltedHash(string plaintext, byte[] salt)
         {
             Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(plaintext, salt, iterations);

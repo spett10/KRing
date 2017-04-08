@@ -22,8 +22,9 @@ namespace UnitTests
 
             var passwordSalted = CryptoHashing.ScryptHashPassword(password);
             var keySalt = CryptoHashing.GenerateSalt();
+            var hashSalt = CryptoHashing.GenerateSalt();
 
-            var cookie = new Cookie(passwordSalted, keySalt);
+            var cookie = new Cookie(passwordSalted, keySalt, hashSalt);
 
             _user = new User(username, password, cookie);
         }
@@ -96,9 +97,9 @@ namespace UnitTests
             var salt = CryptoHashing.GenerateSalt();
             var passwordSalted = CryptoHashing.GenerateSaltedHash(_user.Password, salt);
             var keySalt = CryptoHashing.GenerateSalt();
-
+            var hashSalt = CryptoHashing.GenerateSalt();
             
-            var otherCookie = new Cookie(passwordSalted, keySalt);
+            var otherCookie = new Cookie(passwordSalted, keySalt, hashSalt);
             var otherUser = new User("Bob", _user.Password, _user.Cookie);
 
             repository.WriteUser(otherUser);

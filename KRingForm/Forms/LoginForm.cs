@@ -47,7 +47,7 @@ namespace KRingForm
 
                 var correctUsername = CheckUserName(userName);
 
-                var correctPassword = CryptoHashing.ScryptCheckPassword(securePassword, savedUser.Cookie.HashedPassword);
+                var correctPassword = CryptoHashing.ScryptCheckPassword(securePassword, savedUser.Cookie.HashSalt, savedUser.Cookie.HashedPassword);
 
                 if (!(correctPassword && correctPassword))
                 {

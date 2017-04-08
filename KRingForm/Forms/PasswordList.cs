@@ -156,6 +156,11 @@ namespace KRingForm
         private void saveButton_Click(object sender, EventArgs e)
         {
             _passwordRep.WriteEntriesToDb();
+
+            if(_passwordRep.EncryptionErrorOccured)
+            {
+                MessageBox.Show("One or more passwords could not be encrypted - their data has been lost");
+            }
         }
     }
 }
