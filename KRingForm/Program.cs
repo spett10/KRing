@@ -43,19 +43,27 @@ namespace KRingForm
                 }
             }
 
-            Application.Run(new LoginForm(SavedUser, loginCallback));
+            /* Try to loging */
+            try
+            {
+                Application.Run(new LoginForm(SavedUser, loginCallback));
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show("Error: " + e.Message);
+            }            
 
+            /* Run the passwordlist if successful login */
             if(isLoggedIn)
             {
                 try
                 {
                     Application.Run(new PasswordList(SavedUser));
                 }
-                catch (Exception)
+                    catch (Exception e)
                 {
-
+                    MessageBox.Show("Error: " + e.Message);
                 }
-
             }
         }
 

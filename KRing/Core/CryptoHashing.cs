@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using KRing.Extensions;
 using Scrypt;
+using Security.Cryptography;
+using System.IO;
+using KRing.Persistence.Model;
 
 namespace KRing.Core
 {
@@ -91,6 +94,95 @@ namespace KRing.Core
         public static bool CompareByteArrays(byte[] array1, byte[] array2)
         {
             return array1.Length == array2.Length && !array1.Where((t, i) => t != array2[i]).Any();
+        }
+
+
+    }
+
+    public class Aes256AuthenticatedCipher
+    {
+        private string domainBase64;
+        private string domainTagBase64;
+
+        public struct AuthenticatedCiphertext
+        {
+            public byte[] ciphertext;
+            public byte[] tag;
+
+            public AuthenticatedCiphertext(byte[] ciphertext, byte[] tag)
+            {
+                this.ciphertext = ciphertext;
+                this.tag = tag;
+            }
+
+            public AuthenticatedCiphertext(string ciphertext, string tag)
+            {
+                this.ciphertext = Convert.FromBase64String(ciphertext);
+                this.tag = Convert.FromBase64String(tag);
+            }
+
+            public string GetCipherAsBase64()
+            {
+                return Convert.ToBase64String(ciphertext);
+            }
+
+            public string GetTagAsBase64()
+            {
+                return Convert.ToBase64String(tag);
+            }
+        }
+
+        public static AuthenticatedCiphertext Encrypt(byte[] plaintext, byte[] key, byte[] iv)
+        {
+            if (iv.Length != 12) throw new ArgumentException(nameof(iv) + " must be 12 bytes long");
+            if (key.Length != 32) throw new ArgumentException(nameof(key) + " must be 32 bytes long");
+
+            using (AuthenticatedAesCng aes = new AuthenticatedAesCng())
+            {
+                aes.CngMode = CngChainingMode.Gcm;
+
+                aes.Key = key;
+                aes.IV = iv;
+
+                using (MemoryStream ms = new MemoryStream())
+                using(IAuthenticatedCryptoTransform encrypt = aes.CreateAuthenticatedEncryptor())
+                using(CryptoStream cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write))
+                {
+                    cs.Write(plaintext, 0, plaintext.Length);
+                    cs.FlushFinalBlock();
+                    var tag = encrypt.GetTag();
+                    var cipher = ms.ToArray();
+
+                    return new AuthenticatedCiphertext(cipher, tag);
+                }
+            }
+        }
+
+        public static byte[] Decrypt(AuthenticatedCiphertext ciphertext, byte[] key, byte[] iv)
+        {
+            if (iv.Length != 12) throw new ArgumentException(nameof(iv) + " must be 12 bytes long");
+            if (key.Length != 32) throw new ArgumentException(nameof(key) + " must be 32 bytes long");
+
+            using (AuthenticatedAesCng aes = new AuthenticatedAesCng())
+            {
+                aes.CngMode = CngChainingMode.Gcm;
+
+                aes.Key = key;
+                aes.IV = iv;
+                aes.Tag = ciphertext.tag;
+
+                using (MemoryStream ms = new MemoryStream())
+                using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Write))
+                {
+                    cs.Write(ciphertext.ciphertext, 0, ciphertext.ciphertext.Length);
+
+                    //If the authentication tag does not match, we'll fail here with a 
+                    //CryptographicException, and the ciphertext will not be decrypted
+                    cs.FlushFinalBlock();
+
+                    return ms.ToArray();
+                }
+            }
         }
     }
 }

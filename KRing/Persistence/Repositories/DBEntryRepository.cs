@@ -11,7 +11,8 @@ using System.Transactions;
 using System.Configuration;
 using KRing.Persistence.Interfaces;
 using KRing.Interfaces;
-
+using Security.Cryptography;
+using System.Text;
 
 namespace KRing.Persistence.Repositories
 {
@@ -24,7 +25,8 @@ namespace KRing.Persistence.Repositories
         private byte[] _iv;
         private byte[] _key;
 
-        private readonly int _keyLength = 16;
+        private readonly int _keyLength = 32;
+        private readonly int _ivLength = 12;
 
         private readonly SecureString _password;
 
@@ -50,7 +52,7 @@ namespace KRing.Persistence.Repositories
 #endif
 
             _count = _dataConfig.GetStorageCount();
-            _iv = new byte[CryptoHashing.SaltByteSize];
+            _iv = new byte[_ivLength];
             SetupMeta();
 
             _password = password;
@@ -72,7 +74,7 @@ namespace KRing.Persistence.Repositories
             _dataConfig = config;
 
             _count = _dataConfig.GetStorageCount();
-            _iv = new byte[CryptoHashing.SaltByteSize];
+            _iv = new byte[_ivLength];
             SetupMeta();
 
             _password = password;
@@ -178,38 +180,37 @@ namespace KRing.Persistence.Repositories
 
         public void WriteEntriesToDb()
         {
-            using (TransactionScope scope = new TransactionScope())
+            UpdateMeta();
+
+            _key = DeriveKey(_password);
+
+            FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create);
+
+            using (StreamWriter streamWriter = new StreamWriter(fileStream))
             {
-                UpdateConfig(_entries.Count);
-
-                UpdateMeta();
-
-                _key = DeriveKey(_password);
-
-                FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create);
-                AesManaged aesManaged = new AesManaged();
-                CryptoStream cs = new CryptoStream(
-                                    fileStream,
-                                    aesManaged.CreateEncryptor(
-                                        _key,
-                                        _iv),
-                                    CryptoStreamMode.Write);
-
-                StreamWriter streamWriter = new StreamWriter(cs);
-
                 foreach (var entr in _entries)
                 {
-                    streamWriter.WriteLine(entr.Domain);
-                    streamWriter.WriteLine(entr.Password.ConvertToUnsecureString());
+                    /* Concatenate data and encrypt */
+                    var rawDomain = Encoding.UTF8.GetBytes(entr.Domain);
+                    var rawPass = Encoding.UTF8.GetBytes(entr.Password.ConvertToUnsecureString());
+
+                    var domainCipher = Aes256AuthenticatedCipher.Encrypt(rawDomain, _key, _iv);
+                    var passCipher = Aes256AuthenticatedCipher.Encrypt(rawPass, _key, _iv);
+
+                    /* write domain, tag */
+                    streamWriter.WriteLine(domainCipher.GetCipherAsBase64());
+                    streamWriter.WriteLine(domainCipher.GetTagAsBase64());
+
+                    /* write password, tag */
+                    streamWriter.WriteLine(passCipher.GetCipherAsBase64());
+                    streamWriter.WriteLine(passCipher.GetTagAsBase64());
                 }
-
-                streamWriter.Close();
-                cs.Close();
-                aesManaged.Dispose();
-                fileStream.Close();
-
-                scope.Complete();
             }
+
+            fileStream.Close();
+
+            UpdateConfig(_entries.Count);
+
         }
 
         public List<DBEntry> LoadEntriesFromDb()
@@ -219,38 +220,41 @@ namespace KRing.Persistence.Repositories
                 List<DBEntry> entries = new List<DBEntry>();
 
                 FileStream fs = new FileStream(_dataConfig.dbPath, FileMode.Open);
-                AesManaged aesManaged = new AesManaged();
-                CryptoStream cs = new CryptoStream(
-                                    fs,
-                                    aesManaged.CreateDecryptor(
-                                        _key,
-                                        _iv),
-                                    CryptoStreamMode.Read);
 
-                StreamReader streamReader = new StreamReader(cs);
+                StreamReader streamReader = new StreamReader(fs);
 
                 for (int i = 0; i < _count; i++)
                 {
-                    var domain = streamReader.ReadLine();
-                    var password = streamReader.ReadLine();
+                    /* READ */
+                    var domainBase64 = streamReader.ReadLine();
+                    var domainTagBase64 = streamReader.ReadLine();
 
+                    var domainCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTagBase64);
+
+                    var passwordBase64 = streamReader.ReadLine();
+                    var passwordTag = streamReader.ReadLine();
+
+                    var passwordCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(passwordBase64, passwordTag);
+
+                    /* DECRYPT */
+                    var domain = Aes256AuthenticatedCipher.Decrypt(domainCipher, _key, _iv);
+                    var password = Aes256AuthenticatedCipher.Decrypt(passwordCipher, _key, _iv);
+
+                    /* CREATE DBENTRY */
                     SecureString securePassword = new SecureString();
-                    securePassword.PopulateWithString(password);
+                    securePassword.PopulateWithString(Encoding.UTF8.GetString(password));
 
-                    DBEntry newEntry = new DBEntry(domain, securePassword);
+                    DBEntry newEntry = new DBEntry(Encoding.UTF8.GetString(domain), securePassword);
                     entries.Add(newEntry);
                 }
 
-                cs.Close();
-                streamReader.Close();
-                aesManaged.Dispose();
                 fs.Close();
 
                 return entries;
             }
             catch(Exception)
             {
-                throw new Exception("Could not decrypt DB");
+                throw new Exception("Could not load passwords - possibly data is corrpupted!");
             }
         }
         
@@ -258,8 +262,8 @@ namespace KRing.Persistence.Repositories
         {
             using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Create))
             {
-                _iv = CryptoHashing.GenerateSalt();
-                fs.Write(_iv, 0, CryptoHashing.SaltByteSize);
+                _iv = CryptoHashing.GenerateSalt(_ivLength);
+                fs.Write(_iv, 0, _iv.Length);
             }
         }
 
@@ -269,12 +273,12 @@ namespace KRing.Persistence.Repositories
             {
                 using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Open))
                 {
-                    fs.Read(_iv, 0, CryptoHashing.SaltByteSize);
+                    fs.Read(_iv, 0, _iv.Length);
                 }
             }
             else
             {
-                _iv = CryptoHashing.GenerateSalt();
+                _iv = CryptoHashing.GenerateSalt(_ivLength);
             }
         }
 
