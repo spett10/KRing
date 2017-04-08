@@ -31,6 +31,7 @@ namespace KRing.Persistence.Repositories
         private readonly SecureString _password;
 
         public int EntryCount => _entries.Count;
+        public bool DecryptionErrorOccured { get; private set; }
 
         /// <summary>
         /// If you create a new Repository object, and the underlying DB already exists
@@ -50,6 +51,8 @@ namespace KRing.Persistence.Repositories
                                Environment.CurrentDirectory + ConfigurationManager.AppSettings["relativedbPath"],
                                Environment.CurrentDirectory + ConfigurationManager.AppSettings["relativeconfigPath"]);
 #endif
+
+            DecryptionErrorOccured = false;
 
             _count = _dataConfig.GetStorageCount();
             _iv = new byte[_ivLength];
@@ -72,6 +75,8 @@ namespace KRing.Persistence.Repositories
         public DbEntryRepository(SecureString password, IDataConfig config)
         {
             _dataConfig = config;
+            
+            DecryptionErrorOccured = false;
 
             _count = _dataConfig.GetStorageCount();
             _iv = new byte[_ivLength];
@@ -190,20 +195,25 @@ namespace KRing.Persistence.Repositories
             {
                 foreach (var entr in _entries)
                 {
-                    /* Concatenate data and encrypt */
+                    /* encrypt */
                     var rawDomain = Encoding.UTF8.GetBytes(entr.Domain);
                     var rawPass = Encoding.UTF8.GetBytes(entr.Password.ConvertToUnsecureString());
 
-                    var domainCipher = Aes256AuthenticatedCipher.Encrypt(rawDomain, _key, _iv);
-                    var passCipher = Aes256AuthenticatedCipher.Encrypt(rawPass, _key, _iv);
+                    var ivForDomain = CryptoHashing.GenerateSalt(_ivLength);
+                    var ivForPass = CryptoHashing.GenerateSalt(_ivLength);
 
-                    /* write domain, tag */
+                    var domainCipher = Aes256AuthenticatedCipher.Encrypt(rawDomain, _key, ivForDomain);
+                    var passCipher = Aes256AuthenticatedCipher.Encrypt(rawPass, _key, ivForPass);
+
+                    /* write domain, tag, iv */
                     streamWriter.WriteLine(domainCipher.GetCipherAsBase64());
                     streamWriter.WriteLine(domainCipher.GetTagAsBase64());
+                    streamWriter.WriteLine(Convert.ToBase64String(ivForDomain));
 
                     /* write password, tag */
                     streamWriter.WriteLine(passCipher.GetCipherAsBase64());
                     streamWriter.WriteLine(passCipher.GetTagAsBase64());
+                    streamWriter.WriteLine(Convert.ToBase64String(ivForPass));
                 }
             }
 
@@ -228,24 +238,34 @@ namespace KRing.Persistence.Repositories
                     /* READ */
                     var domainBase64 = streamReader.ReadLine();
                     var domainTagBase64 = streamReader.ReadLine();
+                    var domainIv = Convert.FromBase64String(streamReader.ReadLine());
 
                     var domainCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTagBase64);
 
                     var passwordBase64 = streamReader.ReadLine();
                     var passwordTag = streamReader.ReadLine();
+                    var passwordIv = Convert.FromBase64String(streamReader.ReadLine());
 
                     var passwordCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(passwordBase64, passwordTag);
 
-                    /* DECRYPT */
-                    var domain = Aes256AuthenticatedCipher.Decrypt(domainCipher, _key, _iv);
-                    var password = Aes256AuthenticatedCipher.Decrypt(passwordCipher, _key, _iv);
+                    try
+                    {
+                        /* DECRYPT */
+                        var domain = Aes256AuthenticatedCipher.Decrypt(domainCipher, _key, domainIv);
+                        var password = Aes256AuthenticatedCipher.Decrypt(passwordCipher, _key, passwordIv);
 
-                    /* CREATE DBENTRY */
-                    SecureString securePassword = new SecureString();
-                    securePassword.PopulateWithString(Encoding.UTF8.GetString(password));
+                        /* CREATE DBENTRY */
+                        SecureString securePassword = new SecureString();
+                        securePassword.PopulateWithString(Encoding.UTF8.GetString(password));
 
-                    DBEntry newEntry = new DBEntry(Encoding.UTF8.GetString(domain), securePassword);
-                    entries.Add(newEntry);
+                        DBEntry newEntry = new DBEntry(Encoding.UTF8.GetString(domain), securePassword);
+                        entries.Add(newEntry);
+                    }
+                    catch(Exception)
+                    {
+                        DecryptionErrorOccured = true;
+                    }
+                    
                 }
 
                 fs.Close();
@@ -254,7 +274,7 @@ namespace KRing.Persistence.Repositories
             }
             catch(Exception)
             {
-                throw new Exception("Could not load passwords - possibly data is corrpupted!");
+                throw new Exception("Could not load passwords - possibly data is corrupted!");
             }
         }
         

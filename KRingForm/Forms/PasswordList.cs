@@ -32,6 +32,11 @@ namespace KRingForm
             _passwordRep = new DbEntryRepository(_user.Password);
 
             UpdateList();
+
+            if (_passwordRep.DecryptionErrorOccured)
+            {
+                MessageBox.Show("One or more passwords were corrupted and could not be decrypted. They have thus been deleted");
+            }
         }
 
         /* TODO: make async? */

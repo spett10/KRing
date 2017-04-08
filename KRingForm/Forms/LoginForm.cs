@@ -63,7 +63,7 @@ namespace KRingForm
 
         private bool CheckUserName(string username)
         {
-            return username == savedUser?.UserName ? true : false;
+            return String.Equals(savedUser.UserName, username, StringComparison.CurrentCultureIgnoreCase);
         }
 
         private void HandleFailedLogon()
