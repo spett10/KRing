@@ -38,7 +38,7 @@ namespace KRingForm
 
             if(userName == string.Empty || password == string.Empty)
             {
-                MessageBox.Show("Please input username and password", "Error");
+                Program._messageToUser("Please input username and password");
             }
             else
             {
@@ -69,7 +69,7 @@ namespace KRingForm
         private void HandleFailedLogon()
         {
             usedLoginAttempts++;
-            MessageBox.Show("Wrong username and/or password", "Error");
+            Program._messageToUser("Wrong username and/or password");
 
 
             if(usedLoginAttempts >= maxLoginAttemps)

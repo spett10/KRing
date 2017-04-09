@@ -35,13 +35,13 @@ namespace KRingForm.Forms
             
             if(domainName == String.Empty || plaintextPassword == String.Empty)
             {
-                MessageBox.Show("Please enter Domain and Password", "Error");
+                Program._messageToUser("Please enter Domain and Password");
             }
             else
             {
                 if(_passwordRep.ExistsEntry(domainName))
                 {
-                    MessageBox.Show("Domain already exists in stored passwords", "Error");
+                    Program._messageToUser("Domain already exists in stored passwords");
                 }
                 else
                 {

@@ -16,14 +16,10 @@ using KRing.Core;
 
 namespace KRingForm
 {
-    public delegate void MessageToUser(string message);
-
     public partial class CreateUserForm : Form
     {
         private List<IPasswordRule> _rules;
-
-        private MessageToUser _messageToUser = s => { MessageBox.Show(s); };
-
+        
         public CreateUserForm()
         {
             InitializeComponent();
@@ -38,7 +34,7 @@ namespace KRingForm
 
             if(password == null || password == String.Empty)
             {
-                _messageToUser("Password cannot be empty");
+                Program._messageToUser("Password cannot be empty");
                 return;
             }
 
@@ -63,7 +59,7 @@ namespace KRingForm
             }
             else
             {
-                _messageToUser("Password not strong enough - it must have at least one special character, one capital character and one digit!");
+                Program._messageToUser("Password not strong enough - it must have at least one special character, one capital character and one digit!");
             }
 
             

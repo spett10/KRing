@@ -12,12 +12,16 @@ using System.Windows.Forms;
 
 namespace KRingForm
 {
+    public delegate void MessageToUser(string message);
+
     public static class Program
     {
         public delegate void LoginCallback(bool isLoginSuccessful);
 
         public static bool isLoggedIn;
         public static User SavedUser;
+
+        public static readonly MessageToUser _messageToUser = s => { MessageBox.Show(s); };
 
         /// <summary>
         /// The main entry point for the application.
@@ -39,7 +43,7 @@ namespace KRingForm
                 }
                 catch(Exception e)
                 {
-                    MessageBox.Show("Error: " + e.Message, "Exception");
+                    _messageToUser("Error: " + e.Message);
                 }
             }
 
@@ -50,7 +54,7 @@ namespace KRingForm
             }
             catch(Exception e)
             {
-                MessageBox.Show("Error: " + e.Message);
+                _messageToUser("Error: " + e.Message);
             }            
 
             /* Run the passwordlist if successful login */
@@ -62,7 +66,7 @@ namespace KRingForm
                 }
                     catch (Exception e)
                 {
-                    MessageBox.Show("Error: " + e.Message);
+                    _messageToUser("Error: " + e.Message);
                 }
             }
         }
