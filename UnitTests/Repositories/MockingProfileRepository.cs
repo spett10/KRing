@@ -30,9 +30,10 @@ namespace UnitTests
 
         public MockingProfileRepository(string username, SecureString password)
         {
-            var passwordSalted = CryptoHashing.ScryptHashPassword(password);
+            
             var saltForKey = CryptoHashing.GenerateSalt();
-            var saltForHash = CryptoHashing.GenerateSalt();
+            var saltForHash = CryptoHashing.GenerateSalt(64);
+            var passwordSalted = CryptoHashing.ScryptHashPassword(password, saltForHash);
 
             _correctUser = new User(username,
                                     password,
