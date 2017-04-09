@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace KRing.Core.Interfaces
 {
-    interface IPasswordRule
+    public interface IPasswordRule
     {
         int Apply(string password);
     }

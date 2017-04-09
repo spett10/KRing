@@ -9,6 +9,8 @@ namespace KRing.Core.Model
         public SecureString Password { get; set; }
         public Cookie Cookie { get; private set; }
 
+        private static readonly int HashSaltSize = 64;
+
         public User(string name, SecureString password, Cookie cookie)
         {
             UserName = name;
@@ -25,7 +27,7 @@ namespace KRing.Core.Model
 
         public static User NewUserWithFreshSalt(string newUserName, SecureString password)
         {
-            var saltForHash = CryptoHashing.GenerateSalt(64);
+            var saltForHash = CryptoHashing.GenerateSalt(HashSaltSize);
             var saltedPassword = CryptoHashing.ScryptHashPassword(password,saltForHash);
             var saltForKey = CryptoHashing.GenerateSalt();
 
@@ -38,7 +40,7 @@ namespace KRing.Core.Model
             return new User("Dummy", new SecureString(),
                                     new Cookie(CryptoHashing.GenerateSalt(),
                                                 CryptoHashing.GenerateSalt(),
-                                                CryptoHashing.GenerateSalt()));
+                                                CryptoHashing.GenerateSalt(HashSaltSize)));
         }
         
         public override string ToString()
