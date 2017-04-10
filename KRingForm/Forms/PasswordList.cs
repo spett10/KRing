@@ -67,8 +67,7 @@ namespace KRingForm
             catch(Exception)
             {
                 HandleException();
-            }
-            
+            }            
         }
 
         private void editButton_Click(object sender, EventArgs e)
@@ -160,6 +159,19 @@ namespace KRingForm
             if(_passwordRep.EncryptionErrorOccured)
             {
                 MessageBox.Show("One or more passwords could not be encrypted - their data has been lost");
+            }
+        }
+
+        private void newButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var newForm = new NewPasswordForm(_passwordRep, UpdateList);
+                newForm.Show();
+            }
+            catch (Exception)
+            {
+                HandleException();
             }
         }
     }

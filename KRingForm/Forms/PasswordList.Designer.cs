@@ -36,6 +36,7 @@
             this.viewButton = new System.Windows.Forms.Button();
             this.deleteUserButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
+            this.newButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // passwordListBox
@@ -58,7 +59,7 @@
             // 
             // addButton
             // 
-            this.addButton.Location = new System.Drawing.Point(196, 77);
+            this.addButton.Location = new System.Drawing.Point(196, 106);
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(75, 23);
             this.addButton.TabIndex = 2;
@@ -68,7 +69,7 @@
             // 
             // editButton
             // 
-            this.editButton.Location = new System.Drawing.Point(196, 106);
+            this.editButton.Location = new System.Drawing.Point(196, 135);
             this.editButton.Name = "editButton";
             this.editButton.Size = new System.Drawing.Size(75, 23);
             this.editButton.TabIndex = 3;
@@ -78,7 +79,7 @@
             // 
             // deleteButton
             // 
-            this.deleteButton.Location = new System.Drawing.Point(196, 135);
+            this.deleteButton.Location = new System.Drawing.Point(196, 164);
             this.deleteButton.Name = "deleteButton";
             this.deleteButton.Size = new System.Drawing.Size(75, 23);
             this.deleteButton.TabIndex = 4;
@@ -88,7 +89,7 @@
             // 
             // viewButton
             // 
-            this.viewButton.Location = new System.Drawing.Point(196, 48);
+            this.viewButton.Location = new System.Drawing.Point(196, 77);
             this.viewButton.Name = "viewButton";
             this.viewButton.Size = new System.Drawing.Size(75, 23);
             this.viewButton.TabIndex = 0;
@@ -116,11 +117,22 @@
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
+            // newButton
+            // 
+            this.newButton.Location = new System.Drawing.Point(196, 48);
+            this.newButton.Name = "newButton";
+            this.newButton.Size = new System.Drawing.Size(75, 23);
+            this.newButton.TabIndex = 7;
+            this.newButton.Text = "New";
+            this.newButton.UseVisualStyleBackColor = true;
+            this.newButton.Click += new System.EventHandler(this.newButton_Click);
+            // 
             // PasswordList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(319, 412);
+            this.Controls.Add(this.newButton);
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.deleteUserButton);
             this.Controls.Add(this.viewButton);
@@ -146,5 +158,6 @@
         private System.Windows.Forms.Button viewButton;
         private System.Windows.Forms.Button deleteUserButton;
         private System.Windows.Forms.Button saveButton;
+        private System.Windows.Forms.Button newButton;
     }
 }
