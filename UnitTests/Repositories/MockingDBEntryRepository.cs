@@ -9,9 +9,9 @@ using KRing.Persistence.Model;
 
 namespace UnitTests.Repositories
 {
-    class MockingDBEntryRepository : IDbEntryRepository
+    class MockingDBEntryRepository : IStoredPasswordRepository
     {
-        private List<DBEntry> _entries;
+        private List<StoredPassword> _entries;
         public bool _addEntryCalled = false;
         public bool _updateEntryCalled = false;
         public bool _deleteEntryCalled = false;
@@ -22,7 +22,7 @@ namespace UnitTests.Repositories
 
         public MockingDBEntryRepository()
         {
-            _entries = new List<DBEntry>();
+            _entries = new List<StoredPassword>();
         }
 
         public int EntryCount
@@ -49,10 +49,10 @@ namespace UnitTests.Repositories
             }
         }
 
-        public void AddEntry(DBEntry newDto)
+        public void AddEntry(StoredPassword newDto)
         {
             _addEntryCalled = true;
-            _entries.Add(new DBEntry(newDto.Domain, newDto.Password));
+            _entries.Add(new StoredPassword(newDto.Domain, newDto.Password));
         }
 
         public void DeleteAllEntries()
@@ -80,12 +80,12 @@ namespace UnitTests.Repositories
             return _entries.Exists(e => e.Domain == domain);
         }
 
-        public List<DBEntry> GetEntries()
+        public List<StoredPassword> GetEntries()
         {
             return _entries;
         }
 
-        public DBEntry GetEntry(int index)
+        public StoredPassword GetEntry(int index)
         {
             return _entries.ElementAt(index);
         }
@@ -106,13 +106,13 @@ namespace UnitTests.Repositories
             return !(_entries.Count > 0);
         }
 
-        public List<DBEntry> LoadEntriesFromDb()
+        public List<StoredPassword> LoadEntriesFromDb()
         {
             _loadCalled = true;
             return _entries;
         }
 
-        public void UpdateEntry(DBEntry updatedEntry)
+        public void UpdateEntry(StoredPassword updatedEntry)
         {
             _updateEntryCalled = true;
         }

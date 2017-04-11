@@ -14,7 +14,7 @@ namespace KRingForm.Forms
 {
     public partial class ViewForm : Form
     {
-        private readonly DBEntry _entry;
+        private readonly StoredPassword _entry;
         private DateTime _startTime;
         private DateTime _endTime;
         private static readonly int _secondsToDisplay = 5;
@@ -23,7 +23,7 @@ namespace KRingForm.Forms
 
         private string message = "Window closes after " + _secondsToDisplay.ToString() + "seconds";
 
-        public ViewForm(DBEntry entry)
+        public ViewForm(StoredPassword entry)
         {
             InitializeComponent();
 

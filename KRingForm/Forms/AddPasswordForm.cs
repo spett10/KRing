@@ -18,10 +18,10 @@ namespace KRingForm.Forms
 {
     public partial class AddPasswordForm : Form
     {
-        private readonly IDbEntryRepository _passwordRep;
+        private readonly IStoredPasswordRepository _passwordRep;
         private readonly UpdateListCallback _callback;
 
-        public AddPasswordForm(IDbEntryRepository repository, UpdateListCallback callback)
+        public AddPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback)
         {
             InitializeComponent();
             _passwordRep = repository;
@@ -47,7 +47,7 @@ namespace KRingForm.Forms
                 {
                     var password = new SecureString();
                     password.PopulateWithString(plaintextPassword);
-                    var dbEntry = new DBEntry(domainName, password);
+                    var dbEntry = new StoredPassword(domainName, password);
 
                     _passwordRep.AddEntry(dbEntry);
                     

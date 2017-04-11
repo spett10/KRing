@@ -105,12 +105,12 @@ namespace KRing.Core.View
             return password;
         }
 
-        public DBEntry RequestNewEntryInformation(User user)
+        public StoredPassword RequestNewEntryInformation(User user)
         {
             string domain = RequestUserInput("Please enter domain associated with password you want to store");
             SecureString password = RequestPassword("Please Enter the password to be stored");
 
-            return new DBEntry(domain, password);
+            return new StoredPassword(domain, password);
         }
 
         public string RequestUserInput(string msg)
@@ -129,7 +129,7 @@ namespace KRing.Core.View
             Console.WriteLine("\nToo many wrong attempts. Exiting.");
         }
 
-        public void ShowAllDomainsToUser(IEnumerable<DBEntry> entries)
+        public void ShowAllDomainsToUser(IEnumerable<StoredPassword> entries)
         {
             MessageToUser("Stored Domains:");
 

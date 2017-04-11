@@ -33,12 +33,17 @@
             this.passwordLabel = new System.Windows.Forms.Label();
             this.passwordBox = new System.Windows.Forms.TextBox();
             this.addButton = new System.Windows.Forms.Button();
+            this.generateButton = new System.Windows.Forms.Button();
+            this.smallSizeButton = new System.Windows.Forms.RadioButton();
+            this.mediumSizeButton = new System.Windows.Forms.RadioButton();
+            this.largeSizeButton = new System.Windows.Forms.RadioButton();
+            this.sizeLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // domainLabel
             // 
             this.domainLabel.AutoSize = true;
-            this.domainLabel.Location = new System.Drawing.Point(98, 9);
+            this.domainLabel.Location = new System.Drawing.Point(102, 6);
             this.domainLabel.Name = "domainLabel";
             this.domainLabel.Size = new System.Drawing.Size(43, 13);
             this.domainLabel.TabIndex = 0;
@@ -46,16 +51,15 @@
             // 
             // domainBox
             // 
-            this.domainBox.Location = new System.Drawing.Point(55, 25);
+            this.domainBox.Location = new System.Drawing.Point(59, 22);
             this.domainBox.Name = "domainBox";
             this.domainBox.Size = new System.Drawing.Size(137, 20);
             this.domainBox.TabIndex = 1;
-            this.domainBox.TextChanged += new System.EventHandler(this.domainBox_TextChanged);
             // 
             // passwordLabel
             // 
             this.passwordLabel.AutoSize = true;
-            this.passwordLabel.Location = new System.Drawing.Point(71, 61);
+            this.passwordLabel.Location = new System.Drawing.Point(75, 47);
             this.passwordLabel.Name = "passwordLabel";
             this.passwordLabel.Size = new System.Drawing.Size(106, 13);
             this.passwordLabel.TabIndex = 2;
@@ -63,26 +67,86 @@
             // 
             // passwordBox
             // 
-            this.passwordBox.Location = new System.Drawing.Point(55, 77);
+            this.passwordBox.Location = new System.Drawing.Point(59, 63);
             this.passwordBox.Name = "passwordBox";
+            this.passwordBox.ReadOnly = true;
             this.passwordBox.Size = new System.Drawing.Size(137, 20);
             this.passwordBox.TabIndex = 3;
             // 
             // addButton
             // 
-            this.addButton.Location = new System.Drawing.Point(89, 103);
+            this.addButton.Location = new System.Drawing.Point(140, 136);
             this.addButton.Name = "addButton";
-            this.addButton.Size = new System.Drawing.Size(75, 23);
+            this.addButton.Size = new System.Drawing.Size(56, 23);
             this.addButton.TabIndex = 4;
             this.addButton.Text = "Add";
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
+            // generateButton
+            // 
+            this.generateButton.Location = new System.Drawing.Point(59, 136);
+            this.generateButton.Name = "generateButton";
+            this.generateButton.Size = new System.Drawing.Size(63, 23);
+            this.generateButton.TabIndex = 5;
+            this.generateButton.Text = "Generate";
+            this.generateButton.UseVisualStyleBackColor = true;
+            this.generateButton.Click += new System.EventHandler(this.generateButton_Click);
+            // 
+            // smallSizeButton
+            // 
+            this.smallSizeButton.AutoSize = true;
+            this.smallSizeButton.Location = new System.Drawing.Point(71, 102);
+            this.smallSizeButton.Name = "smallSizeButton";
+            this.smallSizeButton.Size = new System.Drawing.Size(31, 17);
+            this.smallSizeButton.TabIndex = 6;
+            this.smallSizeButton.Text = "8";
+            this.smallSizeButton.UseVisualStyleBackColor = true;
+            this.smallSizeButton.CheckedChanged += new System.EventHandler(this.smallSizeButton_CheckedChanged);
+            // 
+            // mediumSizeButton
+            // 
+            this.mediumSizeButton.AutoSize = true;
+            this.mediumSizeButton.Location = new System.Drawing.Point(108, 102);
+            this.mediumSizeButton.Name = "mediumSizeButton";
+            this.mediumSizeButton.Size = new System.Drawing.Size(37, 17);
+            this.mediumSizeButton.TabIndex = 7;
+            this.mediumSizeButton.Text = "12";
+            this.mediumSizeButton.UseVisualStyleBackColor = true;
+            this.mediumSizeButton.CheckedChanged += new System.EventHandler(this.mediumSizeButton_CheckedChanged);
+            // 
+            // largeSizeButton
+            // 
+            this.largeSizeButton.AutoSize = true;
+            this.largeSizeButton.Checked = true;
+            this.largeSizeButton.Location = new System.Drawing.Point(151, 102);
+            this.largeSizeButton.Name = "largeSizeButton";
+            this.largeSizeButton.Size = new System.Drawing.Size(37, 17);
+            this.largeSizeButton.TabIndex = 8;
+            this.largeSizeButton.TabStop = true;
+            this.largeSizeButton.Text = "16";
+            this.largeSizeButton.UseVisualStyleBackColor = true;
+            this.largeSizeButton.CheckedChanged += new System.EventHandler(this.largeSizeButton_CheckedChanged);
+            // 
+            // sizeLabel
+            // 
+            this.sizeLabel.AutoSize = true;
+            this.sizeLabel.Location = new System.Drawing.Point(118, 86);
+            this.sizeLabel.Name = "sizeLabel";
+            this.sizeLabel.Size = new System.Drawing.Size(27, 13);
+            this.sizeLabel.TabIndex = 9;
+            this.sizeLabel.Text = "Size";
+            // 
             // NewPasswordForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(254, 161);
+            this.ClientSize = new System.Drawing.Size(249, 171);
+            this.Controls.Add(this.sizeLabel);
+            this.Controls.Add(this.largeSizeButton);
+            this.Controls.Add(this.mediumSizeButton);
+            this.Controls.Add(this.smallSizeButton);
+            this.Controls.Add(this.generateButton);
             this.Controls.Add(this.addButton);
             this.Controls.Add(this.passwordBox);
             this.Controls.Add(this.passwordLabel);
@@ -102,5 +166,10 @@
         private System.Windows.Forms.Label passwordLabel;
         private System.Windows.Forms.TextBox passwordBox;
         private System.Windows.Forms.Button addButton;
+        private System.Windows.Forms.Button generateButton;
+        private System.Windows.Forms.RadioButton smallSizeButton;
+        private System.Windows.Forms.RadioButton mediumSizeButton;
+        private System.Windows.Forms.RadioButton largeSizeButton;
+        private System.Windows.Forms.Label sizeLabel;
     }
 }

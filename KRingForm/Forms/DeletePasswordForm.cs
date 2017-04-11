@@ -15,11 +15,11 @@ namespace KRingForm.Forms
 {
     public partial class DeletePasswordForm : Form
     {
-        private readonly IDbEntryRepository _repository;
+        private readonly IStoredPasswordRepository _repository;
         private readonly string _entry;
         private readonly UpdateListCallback _callback;
 
-        public DeletePasswordForm(IDbEntryRepository repository, UpdateListCallback callback, string entry)
+        public DeletePasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback, string entry)
         {
             InitializeComponent();
 

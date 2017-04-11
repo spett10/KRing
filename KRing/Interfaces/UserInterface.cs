@@ -19,13 +19,13 @@ namespace KRing.Interfaces
 
         void MessageToUser(string msg);
 
-        void ShowAllDomainsToUser(IEnumerable<DBEntry> entries);
+        void ShowAllDomainsToUser(IEnumerable<StoredPassword> entries);
 
         void GoodbyeMessage(User User);
 
         SecureString RequestPassword(string msg);
 
-        DBEntry RequestNewEntryInformation(User user);
+        StoredPassword RequestNewEntryInformation(User user);
 
         string RequestUserInput(string msg);
 

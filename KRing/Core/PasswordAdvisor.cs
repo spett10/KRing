@@ -104,10 +104,10 @@ namespace KRing.Core
                     case PasswordScore.Blank:
                     case PasswordScore.VeryWeak:
                     case PasswordScore.Weak:
+                    case PasswordScore.Medium:
                         ui.MessageToUser("Your password is too weak due to lack of special characters, digits and/or upper/lower case variation");
                         passwordStrongEnough = false;
-                        break;
-                    case PasswordScore.Medium:
+                        break;                    
                     case PasswordScore.Strong:
                     case PasswordScore.VeryStrong:
                         ui.MessageToUser("Your password is strong enough to be used! :)");

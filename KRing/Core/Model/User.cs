@@ -7,18 +7,18 @@ namespace KRing.Core.Model
     {
         public string UserName { get; private set; }
         public SecureString Password { get; set; }
-        public Cookie Cookie { get; private set; }
+        public SecurityData Cookie { get; private set; }
 
         private static readonly int HashSaltSize = 64;
 
-        public User(string name, SecureString password, Cookie cookie)
+        public User(string name, SecureString password, SecurityData cookie)
         {
             UserName = name;
             Password = password;
             Cookie = cookie;
         }
 
-        public User(string name, Cookie cookie)
+        public User(string name, SecurityData cookie)
         {
             UserName = name;
             Password = new SecureString();
@@ -31,14 +31,14 @@ namespace KRing.Core.Model
             var saltedPassword = CryptoHashing.ScryptHashPassword(password,saltForHash);
             var saltForKey = CryptoHashing.GenerateSalt();
 
-            var cookie = new Cookie(saltedPassword, saltForKey, saltForHash);
+            var cookie = new SecurityData(saltedPassword, saltForKey, saltForHash);
             return new User(newUserName, password, cookie);
         }
 
         public static User DummyUser()
         {
             return new User("Dummy", new SecureString(),
-                                    new Cookie(CryptoHashing.GenerateSalt(),
+                                    new SecurityData(CryptoHashing.GenerateSalt(),
                                                 CryptoHashing.GenerateSalt(),
                                                 CryptoHashing.GenerateSalt(HashSaltSize)));
         }

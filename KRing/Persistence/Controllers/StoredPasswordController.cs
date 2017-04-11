@@ -1,37 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Security;
-using System.Security.Cryptography;
-using System.Text;
 using KRing.Core;
 using KRing.Core.Model;
 using KRing.Extensions;
 using KRing.Interfaces;
 using KRing.Persistence.Model;
-using KRing.Persistence.Repositories;
 using KRing.Persistence.Interfaces;
 
 namespace KRing.Persistence.Controllers
 { 
-    public class DbController
+    public class StoredPasswordController
     {
         /// <summary>
         /// Singleton pattern, since we use the same file throughout, so we only want one accessing it at any time. 
         /// </summary>
-        private static IDbEntryRepository _dbEntryRepository;
+        private static IStoredPasswordRepository _dbEntryRepository;
 
         public int EntryCount => _dbEntryRepository.EntryCount;
 
-        public DbController(IDbEntryRepository dbEntryRepository)
+        public StoredPasswordController(IStoredPasswordRepository dbEntryRepository)
         {
             _dbEntryRepository = dbEntryRepository;
         }
 
         public void AddPassword(IUserInterface ui, User user)
         {
-            DBEntry newEntry = ui.RequestNewEntryInformation(user);
+            StoredPassword newEntry = ui.RequestNewEntryInformation(user);
             try
             {
                 _dbEntryRepository.AddEntry(newEntry);
@@ -58,7 +51,7 @@ namespace KRing.Persistence.Controllers
 
             try
             {
-                _dbEntryRepository.UpdateEntry(new DBEntry(entry.Domain, newPassword));
+                _dbEntryRepository.UpdateEntry(new StoredPassword(entry.Domain, newPassword));
             }
             catch(Exception)
             {

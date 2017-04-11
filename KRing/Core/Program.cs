@@ -18,7 +18,7 @@ namespace KRing.Core
     {
         private static bool _isRunning;
         private static Session _currentSession;
-        private static DbController _dbController;
+        private static StoredPasswordController _dbController;
         private static IUserInterface _ui;
         private static IPasswordUI _pswdUi;
         private static ProfileController _profileController;
@@ -89,7 +89,7 @@ namespace KRing.Core
         /// </summary>
         private static void TryToLoadDB()
         {
-            _dbController = new DbController(new DbEntryRepository(_currentSession.User.Password));
+            _dbController = new StoredPasswordController(new StoredPasswordRepository(_currentSession.User.Password));
             if (_currentSession.IsLoggedIn)
             {
                 _isRunning = true;

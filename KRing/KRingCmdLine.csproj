@@ -70,7 +70,7 @@
     <Compile Include="Core\ActionType.cs" />
     <Compile Include="Core\Controllers\ProfileController.cs" />
     <Compile Include="Core\Interfaces\IPasswordRule.cs" />
-    <Compile Include="Core\Model\Cookie.cs" />
+    <Compile Include="Core\Model\SecurityData.cs" />
     <Compile Include="Core\Model\Session.cs" />
     <Compile Include="Core\Model\User.cs" />
     <Compile Include="Core\CryptoHashing.cs" />
@@ -78,17 +78,17 @@
     <Compile Include="Core\Program.cs" />
     <Compile Include="Core\View\ConsoleLineInterface.cs" />
     <Compile Include="Interfaces\IPasswordUI.cs" />
-    <Compile Include="Persistence\Controllers\DBController.cs" />
+    <Compile Include="Persistence\Controllers\StoredPasswordController.cs" />
     <Compile Include="Persistence\Converter.cs" />
     <Compile Include="Persistence\DataConfig.cs" />
     <Compile Include="Extensions\SecureStringExtension.cs" />
     <Compile Include="Interfaces\UserInterface.cs" />
     <Compile Include="Persistence\FileUtil.cs" />
     <Compile Include="Persistence\Interfaces\IDataConfig.cs" />
-    <Compile Include="Persistence\Model\DBEntry.cs" />
-    <Compile Include="Persistence\Repositories\DBEntryRepository.cs" />
+    <Compile Include="Persistence\Model\StoredPassword.cs" />
+    <Compile Include="Persistence\Repositories\StoredPasswordRepository.cs" />
     <Compile Include="Persistence\Interfaces\IProfileRepository.cs" />
-    <Compile Include="Persistence\Interfaces\IDbEntryRepository.cs" />
+    <Compile Include="Persistence\Interfaces\IStoredPasswordRepository.cs" />
     <Compile Include="Persistence\Repositories\ProfileRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

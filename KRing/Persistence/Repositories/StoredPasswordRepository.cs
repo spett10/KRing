@@ -16,11 +16,11 @@ using System.Text;
 
 namespace KRing.Persistence.Repositories
 {
-    public class DbEntryRepository : IDbEntryRepository
+    public class StoredPasswordRepository : IStoredPasswordRepository
     {
         private readonly IDataConfig _dataConfig;
         private readonly int _count;
-        private List<DBEntry> _entries;
+        private List<StoredPassword> _entries;
         
         private byte[] _iv;
         private byte[] _key;
@@ -39,7 +39,7 @@ namespace KRing.Persistence.Repositories
         /// The password must be the same. Otherwise, the decryption will fail and an error must be thrown.
         /// </summary>
         /// <param name="password"></param>
-        public DbEntryRepository(SecureString password)
+        public StoredPasswordRepository(SecureString password)
         {
 #if DEBUG
             _dataConfig = new DataConfig(
@@ -65,7 +65,7 @@ namespace KRing.Persistence.Repositories
             
             if(IsDbEmpty())
             {
-                _entries = new List<DBEntry>();
+                _entries = new List<StoredPassword>();
                 DeleteAllEntries();
             }
             else
@@ -74,7 +74,7 @@ namespace KRing.Persistence.Repositories
             }            
         }
 
-        public DbEntryRepository(SecureString password, IDataConfig config)
+        public StoredPasswordRepository(SecureString password, IDataConfig config)
         {
             _dataConfig = config;
             
@@ -90,7 +90,7 @@ namespace KRing.Persistence.Repositories
 
             if (IsDbEmpty())
             {
-                _entries = new List<DBEntry>();
+                _entries = new List<StoredPassword>();
                 DeleteAllEntries();
             }
             else
@@ -121,7 +121,7 @@ namespace KRing.Persistence.Repositories
                 throw new ArgumentException("domain does not exist to delete");
         }
 
-        public void UpdateEntry(DBEntry updatedEntry)
+        public void UpdateEntry(StoredPassword updatedEntry)
         {
             var entry =
                 _entries.FirstOrDefault(e => e.Domain.Equals(updatedEntry.Domain, StringComparison.OrdinalIgnoreCase));
@@ -129,7 +129,7 @@ namespace KRing.Persistence.Repositories
             else throw new ArgumentException("No such Domain");
         }
         
-        public DBEntry GetEntry(int index)
+        public StoredPassword GetEntry(int index)
         {
             return _entries.ElementAt(index);
         }
@@ -151,7 +151,7 @@ namespace KRing.Persistence.Repositories
             DeleteDb();
         }
         
-        public List<DBEntry> GetEntries()
+        public List<StoredPassword> GetEntries()
         {
             return _entries;
         }
@@ -164,7 +164,7 @@ namespace KRing.Persistence.Repositories
                                Equals(domain, StringComparison.CurrentCulture));
         }
 
-        public void AddEntry(DBEntry newDbEntry)
+        public void AddEntry(StoredPassword newDbEntry)
         {
             bool duplicateExists = _entries.Exists(
                                             e => e.
@@ -235,11 +235,11 @@ namespace KRing.Persistence.Repositories
 
         }
 
-        public List<DBEntry> LoadEntriesFromDb()
+        public List<StoredPassword> LoadEntriesFromDb()
         {
             try
             {
-                List<DBEntry> entries = new List<DBEntry>();
+                List<StoredPassword> entries = new List<StoredPassword>();
 
                 FileStream fs = new FileStream(_dataConfig.dbPath, FileMode.Open);
 
@@ -270,7 +270,7 @@ namespace KRing.Persistence.Repositories
                         SecureString securePassword = new SecureString();
                         securePassword.PopulateWithString(Encoding.UTF8.GetString(password));
 
-                        DBEntry newEntry = new DBEntry(Encoding.UTF8.GetString(domain), securePassword);
+                        StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), securePassword);
                         entries.Add(newEntry);
 
                         DecryptionErrorOccured = false;

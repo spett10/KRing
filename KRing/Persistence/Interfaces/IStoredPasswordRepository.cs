@@ -4,22 +4,22 @@ using KRing.Persistence.Model;
 
 namespace KRing.Persistence.Interfaces
 {
-    public interface IDbEntryRepository
+    public interface IStoredPasswordRepository
     {
         int EntryCount { get; }
 
-        void AddEntry(DBEntry newDbEntry);
+        void AddEntry(StoredPassword newDbEntry);
         void DeleteAllEntries();
         void DeleteEntry(string domain);
         void DeleteEntry(int index);
         bool ExistsEntry(string domain);
-        List<DBEntry> GetEntries();
-        DBEntry GetEntry(int index);
+        List<StoredPassword> GetEntries();
+        StoredPassword GetEntry(int index);
         SecureString GetPasswordFromCount(int count);
         SecureString GetPasswordFromDomain(string domain);
         bool IsDbEmpty();
-        List<DBEntry> LoadEntriesFromDb();
-        void UpdateEntry(DBEntry updatedEntry);
+        List<StoredPassword> LoadEntriesFromDb();
+        void UpdateEntry(StoredPassword updatedEntry);
         void WriteEntriesToDb();
         bool DecryptionErrorOccured { get; }
         bool EncryptionErrorOccured { get; }

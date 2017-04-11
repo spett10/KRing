@@ -20,7 +20,7 @@ namespace KRingForm
         public delegate void UpdateListCallback();
 
         private readonly User _user;
-        private readonly IDbEntryRepository _passwordRep;
+        private readonly IStoredPasswordRepository _passwordRep;
 
         private int _currentIndex;
 
@@ -29,7 +29,7 @@ namespace KRingForm
             InitializeComponent();
             _user = user;
 
-            _passwordRep = new DbEntryRepository(_user.Password);
+            _passwordRep = new StoredPasswordRepository(_user.Password);
 
             UpdateList();
 
@@ -127,7 +127,7 @@ namespace KRingForm
 
                 var password = _passwordRep.GetPasswordFromDomain(selectedDomain);
 
-                var entry = new DBEntry(selectedDomain, password);
+                var entry = new StoredPassword(selectedDomain, password);
 
                 var viewForm = new ViewForm(entry);
                 viewForm.Show();

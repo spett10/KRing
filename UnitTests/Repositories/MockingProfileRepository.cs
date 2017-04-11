@@ -25,7 +25,7 @@ namespace UnitTests
 
             _correctUser = new User("testuser",
                                     password,
-                                    new Cookie(passwordSalted, saltForKey, saltForHash));
+                                    new SecurityData(passwordSalted, saltForKey, saltForHash));
         }
 
         public MockingProfileRepository(string username, SecureString password)
@@ -37,7 +37,7 @@ namespace UnitTests
 
             _correctUser = new User(username,
                                     password,
-                                    new Cookie(passwordSalted, saltForKey, saltForHash));
+                                    new SecurityData(passwordSalted, saltForKey, saltForHash));
             
         }
 

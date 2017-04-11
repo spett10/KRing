@@ -72,7 +72,7 @@ namespace KRing.Persistence.Repositories
                 if (storedHashSalt == null) { throw new ArgumentNullException("No salt for password"); }
                 var hashSalt = Convert.FromBase64String(storedHashSalt);
 
-                var cookie = new Cookie(storedPasswordSalted, keySalt, hashSalt);
+                var cookie = new SecurityData(storedPasswordSalted, keySalt, hashSalt);
 
                 return new User(storedUser,cookie);
             }

@@ -14,7 +14,7 @@ namespace UnitTests
     {
         private SecureString _password;
         private string _username;
-        private Cookie _cookie;
+        private SecurityData _cookie;
 
         [TestInitialize]
         public void TestInitialize()
@@ -24,7 +24,7 @@ namespace UnitTests
 
             _username = "test";
 
-            _cookie = new Cookie(CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt());
+            _cookie = new SecurityData(CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt());
         }
 
         [TestMethod]
@@ -32,7 +32,7 @@ namespace UnitTests
         {
             var repository = new MockingDBEntryRepository();
 
-            var controller = new DbController(repository);
+            var controller = new StoredPasswordController(repository);
 
             var user = new User(_username, _password, _cookie);
 
@@ -48,7 +48,7 @@ namespace UnitTests
         {
             var repository = new MockingDBEntryRepository();
 
-            var controller = new DbController(repository);
+            var controller = new StoredPasswordController(repository);
 
             var user = new User(_username, _password, _cookie);
 
@@ -70,7 +70,7 @@ namespace UnitTests
         {
             var repository = new MockingDBEntryRepository();
 
-            var controller = new DbController(repository);
+            var controller = new StoredPasswordController(repository);
 
             var user = new User(_username, _password, _cookie);
 
@@ -90,7 +90,7 @@ namespace UnitTests
         {
             var repository = new MockingDBEntryRepository();
 
-            var controller = new DbController(repository);
+            var controller = new StoredPasswordController(repository);
 
             var ui = new MockingUI(_username, _password);
 
@@ -104,7 +104,7 @@ namespace UnitTests
         {
             var repository = new MockingDBEntryRepository();
 
-            var controller = new DbController(repository);
+            var controller = new StoredPasswordController(repository);
 
             var ui = new MockingUI(_username, _password);
             
@@ -124,7 +124,7 @@ namespace UnitTests
         {
             var repository = new MockingDBEntryRepository();
 
-            var controller = new DbController(repository);
+            var controller = new StoredPasswordController(repository);
 
             var ui = new MockingUI();
 
@@ -138,7 +138,7 @@ namespace UnitTests
         {
             var repository = new MockingDBEntryRepository();
 
-            var controller = new DbController(repository);
+            var controller = new StoredPasswordController(repository);
 
             var ui = new MockingUI(_username, _password);
 
@@ -165,7 +165,7 @@ namespace UnitTests
         {
             var repository = new MockingDBEntryRepository();
 
-            var controller = new DbController(repository);
+            var controller = new StoredPasswordController(repository);
 
             controller.SaveAllEntries();
         }
@@ -175,7 +175,7 @@ namespace UnitTests
         {
             var repository = new MockingDBEntryRepository();
 
-            var controller = new DbController(repository);
+            var controller = new StoredPasswordController(repository);
 
             var ui = new MockingUI(_username, _password);
             ui.answerWithRandomPassword = true;

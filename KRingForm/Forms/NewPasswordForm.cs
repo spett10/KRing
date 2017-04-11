@@ -17,19 +17,19 @@ namespace KRingForm.Forms
 {
     public partial class NewPasswordForm : Form
     {
-        private readonly IDbEntryRepository _passwordRep;
+        private readonly IStoredPasswordRepository _passwordRep;
         private readonly UpdateListCallback _callback;
 
-        //TODO: add choices, some websites only allow certain sizes? Should be multiple of 3 so there is no padding (== looks ugly)
-        private readonly int passwordSize = 12;
+        private bool _generateClicked = false;
+        private int chosenSize;
 
-        public NewPasswordForm(IDbEntryRepository repository, UpdateListCallback callback)
+        public NewPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback)
         {
             InitializeComponent();
             _passwordRep = repository;
             _callback = callback;
-            
-            passwordBox.Text = Convert.ToBase64String(CryptoHashing.GenerateSalt(passwordSize));
+
+            chosenSize = 16;
         }
 
         private void addButton_Click(object sender, EventArgs e)
@@ -37,6 +37,12 @@ namespace KRingForm.Forms
             if(domainBox.Text == null || domainBox.Text == String.Empty)
             {
                 Program._messageToUser("Please enter domain");
+                return;
+            }
+
+            if (!_generateClicked)
+            {
+                Program._messageToUser("Please generate random password before you add it to storage");
                 return;
             }
 
@@ -48,7 +54,7 @@ namespace KRingForm.Forms
                 securePassword.AppendChar(c);
             }
 
-            var dbEntry = new DBEntry(domainBox.Text, securePassword);
+            var dbEntry = new StoredPassword(domainBox.Text, securePassword);
 
             _passwordRep.AddEntry(dbEntry);
 
@@ -57,9 +63,40 @@ namespace KRingForm.Forms
             this.Close();
         }
 
-        private void domainBox_TextChanged(object sender, EventArgs e)
+        private void generateButton_Click(object sender, EventArgs e)
         {
+            if (!_generateClicked)
+            {
+                /* We want to display/save the random bytes in base64, but we dont want padding. So we choose a byte size */
+                /* That requires no padding, and will produce as many characters as the user requested. Since base64 takes 6 bits
+                 * for each character, and a byte is 8 bits, we get the below fraction (reduced, of course) */
+                var saltSize = (chosenSize / 4) * 3;
 
+                passwordBox.Text = Convert.ToBase64String(CryptoHashing.GenerateSalt(saltSize));
+
+                /* Disable buttons since you can only generate once */
+                smallSizeButton.Enabled = false;
+                mediumSizeButton.Enabled = false;
+                largeSizeButton.Enabled = false;
+                generateButton.Enabled = false;
+
+                _generateClicked = true;
+            }            
+        }
+
+        private void smallSizeButton_CheckedChanged(object sender, EventArgs e)
+        {
+            chosenSize = 8;
+        }
+
+        private void mediumSizeButton_CheckedChanged(object sender, EventArgs e)
+        {
+            chosenSize = 12;
+        }
+
+        private void largeSizeButton_CheckedChanged(object sender, EventArgs e)
+        {
+            chosenSize = 16;
         }
     }
 }
