@@ -28,11 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.domainLabel = new System.Windows.Forms.Label();
             this.domainBox = new System.Windows.Forms.TextBox();
             this.passwordLabel = new System.Windows.Forms.Label();
             this.passwordBox = new System.Windows.Forms.TextBox();
             this.addButton = new System.Windows.Forms.Button();
+            this.buttonToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // domainLabel
@@ -74,6 +76,7 @@
             this.addButton.Size = new System.Drawing.Size(75, 23);
             this.addButton.TabIndex = 2;
             this.addButton.Text = "Add";
+            this.buttonToolTip.SetToolTip(this.addButton, "Adds the password and domain to encrypted memory.");
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
@@ -102,5 +105,6 @@
         private System.Windows.Forms.Label passwordLabel;
         private System.Windows.Forms.TextBox passwordBox;
         private System.Windows.Forms.Button addButton;
+        private System.Windows.Forms.ToolTip buttonToolTip;
     }
 }

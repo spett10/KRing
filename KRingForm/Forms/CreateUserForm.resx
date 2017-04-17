@@ -117,4 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="buttonToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="createButton.ToolTip" xml:space="preserve">
+    <value>Attempts to create your user, if the password is strong enough. There may only be one user at any given time. We do not store your password encrypted or unencrypted, but use a technique called "password storage" to authenticate you. This still requires you to enter your password and remember it, as we do not store it, we cannot recover it for you. Do not store your password for your user anywhere, but commit it to memory instead.</value>
+  </data>
 </root>

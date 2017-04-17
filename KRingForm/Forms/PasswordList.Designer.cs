@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.passwordListBox = new System.Windows.Forms.ListBox();
             this.listLabel = new System.Windows.Forms.Label();
             this.addButton = new System.Windows.Forms.Button();
@@ -37,6 +38,7 @@
             this.deleteUserButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.newButton = new System.Windows.Forms.Button();
+            this.buttonToolTips = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // passwordListBox
@@ -56,6 +58,8 @@
             this.listLabel.Size = new System.Drawing.Size(92, 13);
             this.listLabel.TabIndex = 1;
             this.listLabel.Text = "Stored Passwords";
+            this.buttonToolTips.SetToolTip(this.listLabel, "Select a stored password by clicking it in the below list, and manipulate it usin" +
+        "g the buttons to the right.");
             // 
             // addButton
             // 
@@ -64,6 +68,9 @@
             this.addButton.Size = new System.Drawing.Size(75, 23);
             this.addButton.TabIndex = 2;
             this.addButton.Text = "Add";
+            this.buttonToolTips.SetToolTip(this.addButton, "Enables you to add a password, where you yourself can enter the password. We reco" +
+        "mmend the \"New\" button for new passwords, whereas the \"Add\" button should be use" +
+        "d to add existing passwords to storage.");
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
@@ -74,6 +81,7 @@
             this.editButton.Size = new System.Drawing.Size(75, 23);
             this.editButton.TabIndex = 3;
             this.editButton.Text = "Edit";
+            this.buttonToolTips.SetToolTip(this.editButton, "Enables you to edit the selected password and/or its domain.");
             this.editButton.UseVisualStyleBackColor = true;
             this.editButton.Click += new System.EventHandler(this.editButton_Click);
             // 
@@ -84,6 +92,7 @@
             this.deleteButton.Size = new System.Drawing.Size(75, 23);
             this.deleteButton.TabIndex = 4;
             this.deleteButton.Text = "Delete";
+            this.buttonToolTips.SetToolTip(this.deleteButton, "Delete the selected password.");
             this.deleteButton.UseVisualStyleBackColor = true;
             this.deleteButton.Click += new System.EventHandler(this.deleteButton_Click);
             // 
@@ -94,6 +103,8 @@
             this.viewButton.Size = new System.Drawing.Size(75, 23);
             this.viewButton.TabIndex = 0;
             this.viewButton.Text = "View";
+            this.buttonToolTips.SetToolTip(this.viewButton, "View the details of the selected password. Enables you to copy the password to yo" +
+        "ur clipboard, or reveal it to you on the screen.");
             this.viewButton.UseVisualStyleBackColor = true;
             this.viewButton.Click += new System.EventHandler(this.viewButton_Click);
             // 
@@ -104,6 +115,8 @@
             this.deleteUserButton.Size = new System.Drawing.Size(75, 23);
             this.deleteUserButton.TabIndex = 5;
             this.deleteUserButton.Text = "Delete User";
+            this.buttonToolTips.SetToolTip(this.deleteUserButton, "Delete your user and all associated passwords. Recovery is not possible, so apply" +
+        " with extreme care.");
             this.deleteUserButton.UseVisualStyleBackColor = true;
             this.deleteUserButton.Click += new System.EventHandler(this.deleteUserButton_Click);
             // 
@@ -114,6 +127,7 @@
             this.saveButton.Size = new System.Drawing.Size(75, 23);
             this.saveButton.TabIndex = 6;
             this.saveButton.Text = "Save";
+            this.buttonToolTips.SetToolTip(this.saveButton, "Save your changes to the password list to the underlying encrypted storage.");
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
@@ -124,8 +138,13 @@
             this.newButton.Size = new System.Drawing.Size(75, 23);
             this.newButton.TabIndex = 7;
             this.newButton.Text = "New";
+            this.buttonToolTips.SetToolTip(this.newButton, "Create a new, cryptographically random password.");
             this.newButton.UseVisualStyleBackColor = true;
             this.newButton.Click += new System.EventHandler(this.newButton_Click);
+            // 
+            // buttonToolTips
+            // 
+            this.buttonToolTips.ToolTipTitle = "New";
             // 
             // PasswordList
             // 
@@ -159,5 +178,6 @@
         private System.Windows.Forms.Button deleteUserButton;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button newButton;
+        private System.Windows.Forms.ToolTip buttonToolTips;
     }
 }

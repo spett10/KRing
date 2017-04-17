@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.domainLabel = new System.Windows.Forms.Label();
             this.domainBox = new System.Windows.Forms.TextBox();
             this.passwordLabel = new System.Windows.Forms.Label();
@@ -38,6 +39,7 @@
             this.mediumSizeButton = new System.Windows.Forms.RadioButton();
             this.largeSizeButton = new System.Windows.Forms.RadioButton();
             this.sizeLabel = new System.Windows.Forms.Label();
+            this.buttonToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // domainLabel
@@ -80,6 +82,7 @@
             this.addButton.Size = new System.Drawing.Size(56, 23);
             this.addButton.TabIndex = 4;
             this.addButton.Text = "Add";
+            this.buttonToolTip.SetToolTip(this.addButton, "Adds the generated password to your password list.");
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
@@ -90,6 +93,8 @@
             this.generateButton.Size = new System.Drawing.Size(63, 23);
             this.generateButton.TabIndex = 5;
             this.generateButton.Text = "Generate";
+            this.buttonToolTip.SetToolTip(this.generateButton, "Generates a cryptographically random password, with a length in characters as you" +
+        " have chosen in the size above. ");
             this.generateButton.UseVisualStyleBackColor = true;
             this.generateButton.Click += new System.EventHandler(this.generateButton_Click);
             // 
@@ -136,6 +141,7 @@
             this.sizeLabel.Size = new System.Drawing.Size(27, 13);
             this.sizeLabel.TabIndex = 9;
             this.sizeLabel.Text = "Size";
+            this.buttonToolTip.SetToolTip(this.sizeLabel, "The size of your password, counted in characters.");
             // 
             // NewPasswordForm
             // 
@@ -171,5 +177,6 @@
         private System.Windows.Forms.RadioButton mediumSizeButton;
         private System.Windows.Forms.RadioButton largeSizeButton;
         private System.Windows.Forms.Label sizeLabel;
+        private System.Windows.Forms.ToolTip buttonToolTip;
     }
 }

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ViewForm));
             this.domainLabel = new System.Windows.Forms.Label();
             this.domainBox = new System.Windows.Forms.TextBox();
             this.passwordLabel = new System.Windows.Forms.Label();
@@ -37,6 +38,7 @@
             this.warning = new System.Windows.Forms.Label();
             this.warningTimer = new System.Windows.Forms.Timer(this.components);
             this.revealButton = new System.Windows.Forms.Button();
+            this.buttonToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // domainLabel
@@ -80,6 +82,7 @@
             this.copyButton.Size = new System.Drawing.Size(75, 23);
             this.copyButton.TabIndex = 4;
             this.copyButton.Text = "Copy";
+            this.buttonToolTip.SetToolTip(this.copyButton, resources.GetString("copyButton.ToolTip"));
             this.copyButton.UseVisualStyleBackColor = true;
             this.copyButton.Click += new System.EventHandler(this.copyButton_Click);
             // 
@@ -103,6 +106,8 @@
             this.revealButton.Size = new System.Drawing.Size(75, 23);
             this.revealButton.TabIndex = 6;
             this.revealButton.Text = "Reveal";
+            this.buttonToolTip.SetToolTip(this.revealButton, "Reveals the password in plaintext for 5 seconds. Beware that people can be lookin" +
+        "g over your shoulder etc.");
             this.revealButton.UseVisualStyleBackColor = true;
             this.revealButton.Click += new System.EventHandler(this.revealButton_Click);
             // 
@@ -135,5 +140,6 @@
         private System.Windows.Forms.Label warning;
         private System.Windows.Forms.Timer warningTimer;
         private System.Windows.Forms.Button revealButton;
+        private System.Windows.Forms.ToolTip buttonToolTip;
     }
 }
