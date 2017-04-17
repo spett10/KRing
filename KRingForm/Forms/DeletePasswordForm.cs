@@ -33,7 +33,7 @@ namespace KRingForm.Forms
         private void okButton_Click(object sender, EventArgs e)
         {
             _repository.DeleteEntry(_entry);
-            _callback();
+            _callback(OperationType.DeletePassword);
             this.Close();
         }
 

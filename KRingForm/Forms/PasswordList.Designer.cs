@@ -39,6 +39,7 @@
             this.saveButton = new System.Windows.Forms.Button();
             this.newButton = new System.Windows.Forms.Button();
             this.buttonToolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // passwordListBox
@@ -162,6 +163,8 @@
             this.Controls.Add(this.passwordListBox);
             this.Name = "PasswordList";
             this.Text = "PasswordList";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PasswordList_FormClosing);
+            this.Load += new System.EventHandler(this.PasswordList_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -179,5 +182,6 @@
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.Button newButton;
         private System.Windows.Forms.ToolTip buttonToolTips;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }

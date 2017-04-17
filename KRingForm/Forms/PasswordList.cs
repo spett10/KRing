@@ -12,17 +12,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace KRingForm
 {
+    public enum OperationType
+    {
+        NewPassword = 0,
+        ViewPassword = 1,
+        AddPassword = 2,
+        EditPassword = 3,
+        DeletePassword = 4,
+        SavePassword = 5,
+        DeleteUser = 6,
+        NoOperation = 7
+    }
+
     public partial class PasswordList : Form
     {
-        public delegate void UpdateListCallback();
+        public delegate void UpdateListCallback(OperationType operation);
+        public delegate void ExitingCallback();
 
         private readonly User _user;
         private readonly IStoredPasswordRepository _passwordRep;
 
         private int _currentIndex;
+        private bool _unsavedChanges;
+        private bool _exitWithoutSaving;
 
         public PasswordList(User user)
         {
@@ -31,16 +47,30 @@ namespace KRingForm
 
             _passwordRep = new StoredPasswordRepository(_user.Password);
 
-            UpdateList();
+            UpdateList(OperationType.NoOperation);
 
             if (_passwordRep.DecryptionErrorOccured)
             {
                 MessageBox.Show("One or more passwords were corrupted and could not be decrypted. They have thus been deleted");
             }
+
+            _unsavedChanges = false;
+            _exitWithoutSaving = false;
+        }
+
+        public void NotExiting()
+        {
+            _exitWithoutSaving = false;
+        }
+
+        public void Exiting()
+        {
+            _exitWithoutSaving = true;
+            this.Close();
         }
 
         /* TODO: make async? */
-        public void UpdateList()
+        public void UpdateList(OperationType operation)
         {
             passwordListBox.Items.Clear();
 
@@ -49,6 +79,15 @@ namespace KRingForm
             foreach (var pswd in passwords)
             {
                 passwordListBox.Items.Add(pswd.Domain);
+            }
+
+            if(operation != OperationType.SavePassword || operation != OperationType.NoOperation)
+            {
+                _unsavedChanges = true;
+            }
+            else
+            {
+                _unsavedChanges = false;
             }
         }
 
@@ -158,8 +197,10 @@ namespace KRingForm
 
             if(_passwordRep.EncryptionErrorOccured)
             {
-                MessageBox.Show("One or more passwords could not be encrypted - their data has been lost");
+                Program._messageToUser("One or more passwords could not be encrypted - their data has been lost");
             }
+
+            _unsavedChanges = false;
         }
 
         private void newButton_Click(object sender, EventArgs e)
@@ -172,6 +213,24 @@ namespace KRingForm
             catch (Exception)
             {
                 HandleException();
+            }
+        }
+
+        private void PasswordList_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PasswordList_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(_unsavedChanges && !_exitWithoutSaving)
+            {
+                e.Cancel = true;
+                
+                var warning = new ExitDialogue(
+                    Exiting,
+                    NotExiting);
+                warning.Show();
             }
         }
     }

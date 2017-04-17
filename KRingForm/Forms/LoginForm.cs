@@ -42,19 +42,18 @@ namespace KRingForm
             }
             else
             {
-                var securePassword = new SecureString();
-                securePassword.PopulateWithString(password);
-
                 var correctUsername = CheckUserName(userName);
 
-                var correctPassword = CryptoHashing.ScryptCheckPassword(securePassword, savedUser.Cookie.HashSalt, savedUser.Cookie.HashedPassword);
+                var correctPassword = CryptoHashing.ScryptCheckPassword(password, savedUser.Cookie.HashSalt, savedUser.Cookie.HashedPassword);
 
-                if (!(correctPassword && correctPassword))
+                if (!(correctPassword && correctUsername))
                 {
                     HandleFailedLogon();
                 }
                 else
                 {
+                    savedUser.Password = new SecureString();
+                    savedUser.Password.PopulateWithString(password);
                     _callback(true);
                     this.Close();
                 }

@@ -125,7 +125,14 @@ namespace KRing.Persistence.Repositories
         {
             var entry =
                 _entries.FirstOrDefault(e => e.Domain.Equals(updatedEntry.Domain, StringComparison.OrdinalIgnoreCase));
-            if (entry != null) entry.Password = updatedEntry.Password;
+            if (entry != null)
+            {
+                var rawPassword = updatedEntry.Password.ConvertToUnsecureString();
+                updatedEntry.Password = new SecureString();
+                updatedEntry.Password.PopulateWithString(rawPassword);
+                entry.Password = new SecureString();
+                entry.Password.PopulateWithString(rawPassword);
+            }
             else throw new ArgumentException("No such Domain");
         }
         
@@ -200,9 +207,12 @@ namespace KRing.Persistence.Repositories
                 {
                     try
                     {
-                        /* encrypt */
+                        /* encrypt, and reallocate the securestring after convertion */
                         var rawDomain = Encoding.UTF8.GetBytes(entr.Domain);
-                        var rawPass = Encoding.UTF8.GetBytes(entr.Password.ConvertToUnsecureString());
+                        var rawPassword = entr.Password.ConvertToUnsecureString();
+                        entr.Password = new SecureString();
+                        entr.Password.PopulateWithString(rawPassword);
+                        var rawPass = Encoding.UTF8.GetBytes(rawPassword);
 
                         var ivForDomain = CryptoHashing.GenerateSalt(_ivLength);
                         var ivForPass = CryptoHashing.GenerateSalt(_ivLength);
@@ -232,7 +242,6 @@ namespace KRing.Persistence.Repositories
             fileStream.Close();
 
             UpdateConfig(_entries.Count);
-
         }
 
         public List<StoredPassword> LoadEntriesFromDb()

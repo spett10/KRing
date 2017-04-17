@@ -15,8 +15,7 @@ namespace UnitTests
         [TestMethod]
         public void ScryptEncoding_GivingCorrect_ShouldSucced()
         {
-            var password = new SecureString();
-            password.PopulateWithString("UggaBuggaSuperSecret");
+            var password = "UggaBuggaSuperSecret";
 
             string hashedPassword = CryptoHashing.ScryptHashPassword(password);
 
@@ -28,13 +27,11 @@ namespace UnitTests
         [TestMethod]
         public void ScryptEncoding_GivingIncorrect_ShouldFail()
         {
-            var password = new SecureString();
-            password.PopulateWithString("UggaBuggaSuperSecret");
+            var password = "UggaBuggaSuperSecret";
 
             string hashedPassword = CryptoHashing.ScryptHashPassword(password);
             
-            var wrongPassword = new SecureString();
-            wrongPassword.PopulateWithString("UggaBuggaSuperSecret1");
+            var wrongPassword = "UggaBuggaSuperSecret1";
 
             bool isCorrectPassword = CryptoHashing.ScryptCheckPassword(wrongPassword, hashedPassword);
 
@@ -98,7 +95,7 @@ namespace UnitTests
         [TestMethod]
         public void Scrypt_SaltAndData_ShouldBeEqual()
         {
-            var password = new SecureString();            
+            var password = "LOLOL";          
             var salt = CryptoHashing.GenerateSalt(64);
                         
             var hashed = CryptoHashing.ScryptHashPassword(password, salt);

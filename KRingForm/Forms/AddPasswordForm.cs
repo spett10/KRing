@@ -51,7 +51,7 @@ namespace KRingForm.Forms
 
                     _passwordRep.AddEntry(dbEntry);
                     
-                    _callback();
+                    _callback(OperationType.AddPassword);
 
                     this.Close();
                 }                

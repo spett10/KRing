@@ -17,8 +17,7 @@ namespace UnitTests
         public void TestInitialize()
         {
             string username = "Alice";
-            var password = new SecureString();
-            password.PopulateWithString("Super Secure");
+            var password = "Super Secure";
 
             var passwordSalted = CryptoHashing.ScryptHashPassword(password);
             var keySalt = CryptoHashing.GenerateSalt();
@@ -26,7 +25,10 @@ namespace UnitTests
 
             var cookie = new SecurityData(passwordSalted, keySalt, hashSalt);
 
-            _user = new User(username, password, cookie);
+            var securePassword = new SecureString();
+            securePassword.PopulateWithString(password);
+
+            _user = new User(username, securePassword, cookie);
         }
 
         [TestMethod]
@@ -38,8 +40,7 @@ namespace UnitTests
 
             var readUser = repository.ReadUser();
 
-            var password = new SecureString();
-            password.PopulateWithString("Super Secure");
+            var password = "Super Secure";
 
             var isValidPassword = CryptoHashing.ScryptCheckPassword(password, readUser.Cookie.HashedPassword); //think when we read the users password is not the password but the hashed password
             Assert.IsTrue(isValidPassword);

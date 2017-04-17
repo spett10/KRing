@@ -48,7 +48,7 @@ namespace KRingForm.Forms
                 
                 _passwordRep.UpdateEntry(newEntry);
 
-                _callback();
+                _callback(OperationType.EditPassword);
 
                 this.Close();
             }

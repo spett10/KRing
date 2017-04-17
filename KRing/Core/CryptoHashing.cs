@@ -18,28 +18,28 @@ namespace KRing.Core
         public static readonly int SaltByteSize = 16;
         private static readonly int iterations = 10000; //could we go further? like.. 20k? 30k? We only have to load them once. 
 
-        public static string ScryptHashPassword(SecureString password)
+        public static string ScryptHashPassword(string password)
         {
             ScryptEncoder encoder = new ScryptEncoder();
-            return encoder.Encode(password.ConvertToUnsecureString());
+            return encoder.Encode(password);
         }
 
-        public static bool ScryptCheckPassword(SecureString password, string hashedPassword)
+        public static bool ScryptCheckPassword(string password, string hashedPassword)
         {
             ScryptEncoder encoder = new ScryptEncoder();
-            return encoder.Compare(password.ConvertToUnsecureString(), hashedPassword);
+            return encoder.Compare(password, hashedPassword);
         }
 
-        public static string ScryptHashPassword(SecureString password, byte[] salt)
+        public static string ScryptHashPassword(string password, byte[] salt)
         {
             ScryptEncoder encoder = new ScryptEncoder();
-            return encoder.Encode(Convert.ToBase64String(salt) + password.ConvertToUnsecureString());
+            return encoder.Encode(Convert.ToBase64String(salt) + password);
         }
 
-        public static bool ScryptCheckPassword(SecureString password, byte[] salt, string hashedPassword)
+        public static bool ScryptCheckPassword(string password, byte[] salt, string hashedPassword)
         {
             ScryptEncoder encoder = new ScryptEncoder();
-            return encoder.Compare(Convert.ToBase64String(salt) + password.ConvertToUnsecureString(), hashedPassword);
+            return encoder.Compare(Convert.ToBase64String(salt) + password, hashedPassword);
         }
 
         public static byte[] GenerateSaltedHash(string plaintext, byte[] salt)
@@ -71,13 +71,17 @@ namespace KRing.Core
 
         public static byte[] DeriveKeyFromPasswordAndSalt(SecureString plaintext, byte[] salt, int keyLength)
         {
-            Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(plaintext.ConvertToUnsecureString(), salt, iterations);
+            var raw = plaintext.ConvertToUnsecureString();
+            Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(raw, salt, iterations);
             try
             {
                 return algorithm.GetBytes(keyLength);
             }
             finally
             {
+                //TODO: should this be in the caller instead, and we take a string, or pref. a char array?
+                plaintext = new SecureString();
+                plaintext.PopulateWithString(raw);
                 algorithm.Dispose();
             }
         }

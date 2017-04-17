@@ -27,8 +27,12 @@ namespace KRing.Core.Model
 
         public static User NewUserWithFreshSalt(string newUserName, SecureString password)
         {
+            var rawPass = password.ConvertToUnsecureString();
+            password = new SecureString();
+            password.PopulateWithString(rawPass);
+
             var saltForHash = CryptoHashing.GenerateSalt(HashSaltSize);
-            var saltedPassword = CryptoHashing.ScryptHashPassword(password,saltForHash);
+            var saltedPassword = CryptoHashing.ScryptHashPassword(rawPass,saltForHash);
             var saltForKey = CryptoHashing.GenerateSalt();
 
             var cookie = new SecurityData(saltedPassword, saltForKey, saltForHash);
