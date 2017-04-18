@@ -127,11 +127,7 @@ namespace KRing.Persistence.Repositories
                 _entries.FirstOrDefault(e => e.Domain.Equals(updatedEntry.Domain, StringComparison.OrdinalIgnoreCase));
             if (entry != null)
             {
-                var rawPassword = updatedEntry.Password.ConvertToUnsecureString();
-                updatedEntry.Password = new SecureString();
-                updatedEntry.Password.PopulateWithString(rawPassword);
-                entry.Password = new SecureString();
-                entry.Password.PopulateWithString(rawPassword);
+                entry.PlaintextPassword = updatedEntry.PlaintextPassword;
             }
             else throw new ArgumentException("No such Domain");
         }
@@ -141,14 +137,14 @@ namespace KRing.Persistence.Repositories
             return _entries.ElementAt(index);
         }
 
-        public SecureString GetPasswordFromDomain(string domain)
+        public string GetPasswordFromDomain(string domain)
         {
-            return _entries.Where(e => e.Domain == domain).Select(e => e.Password).First();
+            return _entries.Where(e => e.Domain == domain).Select(e => e.PlaintextPassword).First();
         }
 
-        public SecureString GetPasswordFromCount(int count)
+        public string GetPasswordFromCount(int count)
         {
-            return _entries.ElementAt(count).Password;
+            return _entries.ElementAt(count).PlaintextPassword;
         }
 
         public void DeleteAllEntries()
@@ -207,11 +203,9 @@ namespace KRing.Persistence.Repositories
                 {
                     try
                     {
-                        /* encrypt, and reallocate the securestring after convertion */
+                        /* encrypt */
                         var rawDomain = Encoding.UTF8.GetBytes(entr.Domain);
-                        var rawPassword = entr.Password.ConvertToUnsecureString();
-                        entr.Password = new SecureString();
-                        entr.Password.PopulateWithString(rawPassword);
+                        var rawPassword = entr.PlaintextPassword;
                         var rawPass = Encoding.UTF8.GetBytes(rawPassword);
 
                         var ivForDomain = CryptoHashing.GenerateSalt(_ivLength);
@@ -276,10 +270,7 @@ namespace KRing.Persistence.Repositories
                         var password = Aes256AuthenticatedCipher.Decrypt(passwordCipher, _key, passwordIv);
 
                         /* CREATE DBENTRY */
-                        SecureString securePassword = new SecureString();
-                        securePassword.PopulateWithString(Encoding.UTF8.GetString(password));
-
-                        StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), securePassword);
+                        StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(password));
                         entries.Add(newEntry);
 
                         DecryptionErrorOccured = false;

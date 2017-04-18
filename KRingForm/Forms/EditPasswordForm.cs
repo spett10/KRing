@@ -41,10 +41,7 @@ namespace KRingForm.Forms
             }
             else
             {
-                var password = new SecureString();
-                password.PopulateWithString(plaintextPassword);
-
-                var newEntry = new StoredPassword(_editTarget, password);
+                var newEntry = new StoredPassword(_editTarget, plaintextPassword);
                 
                 _passwordRep.UpdateEntry(newEntry);
 

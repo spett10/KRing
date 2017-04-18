@@ -46,15 +46,9 @@ namespace KRingForm.Forms
                 return;
             }
 
-            var password = passwordBox.Text.ToCharArray();
+            var password = passwordBox.Text;
 
-            var securePassword = new SecureString();
-            foreach(var c in password)
-            {
-                securePassword.AppendChar(c);
-            }
-
-            var dbEntry = new StoredPassword(domainBox.Text, securePassword);
+            var dbEntry = new StoredPassword(domainBox.Text, password);
 
             _passwordRep.AddEntry(dbEntry);
 

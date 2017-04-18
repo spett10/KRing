@@ -52,7 +52,7 @@ namespace UnitTests.Repositories
         public void AddEntry(StoredPassword newDto)
         {
             _addEntryCalled = true;
-            _entries.Add(new StoredPassword(newDto.Domain, newDto.Password));
+            _entries.Add(new StoredPassword(newDto.Domain, newDto.PlaintextPassword));
         }
 
         public void DeleteAllEntries()
@@ -90,13 +90,13 @@ namespace UnitTests.Repositories
             return _entries.ElementAt(index);
         }
 
-        public SecureString GetPasswordFromCount(int count)
+        public string GetPasswordFromCount(int count)
         {
             _viewEntryCalled = true;
-            return _entries.ElementAt(count).Password;
+            return _entries.ElementAt(count).PlaintextPassword;
         }
 
-        public SecureString GetPasswordFromDomain(string domain)
+        public string GetPasswordFromDomain(string domain)
         {
             throw new NotImplementedException();
         }

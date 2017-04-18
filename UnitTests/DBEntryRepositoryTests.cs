@@ -14,6 +14,7 @@ namespace UnitTests
     public class DBEntryRepositoryTests
     {
         SecureString _password;
+        string _plaintextPassword = "YELLOW SUBMARINE";
         string _correctDomain;
         IDataConfig _config;
 
@@ -21,7 +22,7 @@ namespace UnitTests
         public void TestInitialize()
         {
             _password = new SecureString();
-            _password.PopulateWithString("YELLOW SUBMARINE");
+            _password.PopulateWithString(_plaintextPassword);
 
             _correctDomain = "test";
 
@@ -43,7 +44,7 @@ namespace UnitTests
         {
             var repository = new StoredPasswordRepository(_password);
 
-            repository.AddEntry(new StoredPassword(_correctDomain, _password));
+            repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
             var exists = repository.ExistsEntry(_correctDomain);
 
@@ -58,10 +59,10 @@ namespace UnitTests
         {
             var repository = new StoredPasswordRepository(_password);
 
-            repository.AddEntry(new StoredPassword(_correctDomain, _password));
+            repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
             //duplicates are not allowed
-            repository.AddEntry(new StoredPassword(_correctDomain, _password));
+            repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
         }
 
         [TestMethod]
@@ -69,7 +70,7 @@ namespace UnitTests
         {
             var repository = new StoredPasswordRepository(_password);
 
-            repository.AddEntry(new StoredPassword(_correctDomain, _password));
+            repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
             repository.DeleteEntry(_correctDomain);
 
             var exists = repository.ExistsEntry(_correctDomain);
@@ -86,9 +87,9 @@ namespace UnitTests
             string domain2 = "FooBaz";
             string domain3 = "Testing";
 
-            repository.AddEntry(new StoredPassword(domain1, _password));
-            repository.AddEntry(new StoredPassword(domain2, _password));
-            repository.AddEntry(new StoredPassword(domain3, _password));
+            repository.AddEntry(new StoredPassword(domain1, _plaintextPassword));
+            repository.AddEntry(new StoredPassword(domain2, _plaintextPassword));
+            repository.AddEntry(new StoredPassword(domain3, _plaintextPassword));
 
             var countDuring = repository.EntryCount;
 
@@ -118,9 +119,9 @@ namespace UnitTests
             string domain2 = "FooBaz";
             string domain3 = "Testing";
 
-            repository.AddEntry(new StoredPassword(domain1, _password));
-            repository.AddEntry(new StoredPassword(domain2, _password));
-            repository.AddEntry(new StoredPassword(domain3, _password));
+            repository.AddEntry(new StoredPassword(domain1, _plaintextPassword));
+            repository.AddEntry(new StoredPassword(domain2, _plaintextPassword));
+            repository.AddEntry(new StoredPassword(domain3, _plaintextPassword));
 
             repository.WriteEntriesToDb();
 
@@ -146,7 +147,7 @@ namespace UnitTests
         {
             var repository = new StoredPasswordRepository(_password);
 
-            repository.AddEntry(new StoredPassword(_correctDomain, _password));
+            repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
             repository.DeleteEntry(_correctDomain);
 
@@ -161,8 +162,8 @@ namespace UnitTests
             var repository = new StoredPasswordRepository(_password);
             string fake_domain = "other";
 
-            repository.AddEntry(new StoredPassword(_correctDomain, _password));
-            repository.AddEntry(new StoredPassword(fake_domain, _password));
+            repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
+            repository.AddEntry(new StoredPassword(fake_domain, _plaintextPassword));
             repository.DeleteEntry(0);
 
             var result = repository.ExistsEntry(_correctDomain);
@@ -180,7 +181,7 @@ namespace UnitTests
         {
             var repository = new StoredPasswordRepository(_password);
 
-            repository.AddEntry(new StoredPassword(_correctDomain, _password));
+            repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
             repository.DeleteEntry(_correctDomain);
 
@@ -194,7 +195,7 @@ namespace UnitTests
         {
             var repository = new StoredPasswordRepository(_password);
 
-            repository.AddEntry(new StoredPassword(_correctDomain, _password));
+            repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
             repository.DeleteEntry(10);
         }
@@ -204,17 +205,16 @@ namespace UnitTests
         {
             var repository = new StoredPasswordRepository(_password);
 
-            repository.AddEntry(new StoredPassword(_correctDomain, _password));
+            repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
-            var newPassword = new SecureString();
-            newPassword.PopulateWithString("TESTING");
+            var newPassword = "TESTING";
             var newDto = new StoredPassword(_correctDomain, newPassword);
 
             repository.UpdateEntry(newDto);
 
             var updatedPassword = repository.GetPasswordFromDomain(_correctDomain);
 
-            Assert.AreEqual(updatedPassword.ConvertToUnsecureString(), newPassword.ConvertToUnsecureString());
+            Assert.AreEqual(updatedPassword, newPassword);
         }
 
         [TestMethod]
@@ -223,9 +223,9 @@ namespace UnitTests
         {
             var repository = new StoredPasswordRepository(_password);
 
-            repository.AddEntry(new StoredPassword(_correctDomain, _password));
+            repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
-            var newDto = new StoredPassword("UGGA BUGGA", _password);
+            var newDto = new StoredPassword("UGGA BUGGA", _plaintextPassword);
 
             repository.UpdateEntry(newDto);
         }
@@ -236,7 +236,7 @@ namespace UnitTests
         {
             var repository = new StoredPasswordRepository(_password);
 
-            repository.AddEntry(new StoredPassword(_correctDomain, _password));
+            repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
             var password = repository.GetPasswordFromDomain(_correctDomain + "not");
         }

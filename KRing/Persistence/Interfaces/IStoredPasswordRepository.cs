@@ -15,8 +15,8 @@ namespace KRing.Persistence.Interfaces
         bool ExistsEntry(string domain);
         List<StoredPassword> GetEntries();
         StoredPassword GetEntry(int index);
-        SecureString GetPasswordFromCount(int count);
-        SecureString GetPasswordFromDomain(string domain);
+        string GetPasswordFromCount(int count);
+        string GetPasswordFromDomain(string domain);
         bool IsDbEmpty();
         List<StoredPassword> LoadEntriesFromDb();
         void UpdateEntry(StoredPassword updatedEntry);

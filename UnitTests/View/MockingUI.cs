@@ -16,6 +16,7 @@ namespace UnitTests
     {
         public string _username;
         private readonly SecureString _password;
+        private readonly string _plaintextPassword = "A";
         public int IndexToAnswer { get; set; }
 
         public bool answerWithRandomPassword = false;
@@ -67,16 +68,13 @@ namespace UnitTests
         {
             if(answerWithRandomPassword)
             {
-                var password = new SecureString();
-
                 //Make random password... 
                 //They should, with good prop. at least, be random enough that the password advisor that might check them, should call them good.
-                password.PopulateWithString(Convert.ToBase64String(CryptoHashing.GenerateSalt())); 
-                return new StoredPassword(_username, password);
+                return new StoredPassword(_username, Convert.ToBase64String(CryptoHashing.GenerateSalt()));
             }
             else
             {
-                return new StoredPassword(_username, _password);
+                return new StoredPassword(_username, _plaintextPassword);
             }
         }
 

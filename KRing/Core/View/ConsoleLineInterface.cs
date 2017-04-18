@@ -3,6 +3,7 @@ using System.Security;
 using KRing.Core.Model;
 using KRing.Interfaces;
 using KRing.Persistence.Model;
+using KRing.Extensions;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -110,7 +111,7 @@ namespace KRing.Core.View
             string domain = RequestUserInput("Please enter domain associated with password you want to store");
             SecureString password = RequestPassword("Please Enter the password to be stored");
 
-            return new StoredPassword(domain, password);
+            return new StoredPassword(domain, password.ConvertToUnsecureString());
         }
 
         public string RequestUserInput(string msg)

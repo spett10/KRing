@@ -51,7 +51,7 @@ namespace KRing.Persistence.Controllers
 
             try
             {
-                _dbEntryRepository.UpdateEntry(new StoredPassword(entry.Domain, newPassword));
+                _dbEntryRepository.UpdateEntry(new StoredPassword(entry.Domain, newPassword.ConvertToUnsecureString()));
             }
             catch(Exception)
             {
@@ -92,7 +92,7 @@ namespace KRing.Persistence.Controllers
             try
             {
                 var entry = _dbEntryRepository.GetPasswordFromCount(requestedDomain);
-                ui.MessageToUser("Password for domain is:\n\n " + entry.ConvertToUnsecureString());
+                ui.MessageToUser("Password for domain is:\n\n " + entry);
             }
             catch(Exception)
             {

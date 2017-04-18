@@ -29,13 +29,10 @@ namespace KRingForm.Forms
 
             _entry = entry;
 
-            domainBox.Text = _entry.Domain;
-            passwordBox.Text = "******";
+            domainBox.Text = _entry.Domain;           
 
-            _password = entry.Password.ConvertToUnsecureString();
-            _entry.Password = new System.Security.SecureString();
-            _entry.Password.PopulateWithString(_password);
-
+            _password = entry.PlaintextPassword;
+            passwordBox.Text = string.Concat(Enumerable.Repeat("*", _password.Length));
             warning.Hide();
         }
 
@@ -55,9 +52,6 @@ namespace KRingForm.Forms
             _endTime = _startTime.AddSeconds(_secondsToDisplay);
 
             this.passwordBox.Text = _password;
-
-            _entry.Password = new System.Security.SecureString();
-            _entry.Password.PopulateWithString(passwordBox.Text);
 
             warningTimer.Interval = (int)(_endTime - _startTime).TotalMilliseconds;
             warningTimer.Start();

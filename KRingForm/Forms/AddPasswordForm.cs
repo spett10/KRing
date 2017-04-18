@@ -45,9 +45,7 @@ namespace KRingForm.Forms
                 }
                 else
                 {
-                    var password = new SecureString();
-                    password.PopulateWithString(plaintextPassword);
-                    var dbEntry = new StoredPassword(domainName, password);
+                    var dbEntry = new StoredPassword(domainName, plaintextPassword);
 
                     _passwordRep.AddEntry(dbEntry);
                     

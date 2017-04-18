@@ -9,20 +9,36 @@ namespace KRing.Persistence.Model
     public class StoredPassword
     {
         public string Domain { get; private set; }
-        public SecureString Password { get; set; }
+        public string PlaintextPassword
+        {   get
+            {
+                var plain = Password.ConvertToUnsecureString();
+                PlaintextPassword = plain;
+                return plain;
+            }
 
-        public StoredPassword(string domain, SecureString password)
+            set
+            {
+                Password = new SecureString();
+                Password.PopulateWithString(value);
+            }
+        }
+
+        private SecureString Password { get; set; }
+
+        public StoredPassword(string domain, string password)
         {
             Domain = domain;
-            Password = password;
+            Password = new SecureString();
+            Password.PopulateWithString(password);
         }
 
         public List<string> ToStrings()
         {
             List<string> properties = new List<string>();
-
+            
             properties.Add(this.Domain);
-            properties.Add(Password.ConvertToUnsecureString());
+            properties.Add(PlaintextPassword);
 
             return properties;
         }
