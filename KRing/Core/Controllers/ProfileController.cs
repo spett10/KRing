@@ -121,7 +121,7 @@ namespace KRing.Core.Controllers
 
             if (allowLogin)
             {
-                _user.Password = password;
+                _user.PlaintextPassword = password.ConvertToUnsecureString();
                 return new Session(_user, true);
             }
             else

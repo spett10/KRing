@@ -95,13 +95,16 @@ namespace UnitTests
 
             repository.WriteUser(_user);
 
+            var securePassword = new SecureString();
+            securePassword.PopulateWithString(_user.PlaintextPassword);
+
             var salt = CryptoHashing.GenerateSalt();
-            var passwordSalted = CryptoHashing.GenerateSaltedHash(_user.Password, salt);
+            var passwordSalted = CryptoHashing.GenerateSaltedHash(securePassword, salt);
             var keySalt = CryptoHashing.GenerateSalt();
             var hashSalt = CryptoHashing.GenerateSalt();
             
             var otherCookie = new SecurityData(passwordSalted, keySalt, hashSalt);
-            var otherUser = new User("Bob", _user.Password, _user.Cookie);
+            var otherUser = new User("Bob", securePassword, _user.Cookie);
 
             repository.WriteUser(otherUser);
 

@@ -89,7 +89,10 @@ namespace KRing.Core
         /// </summary>
         private static void TryToLoadDB()
         {
-            _dbController = new StoredPasswordController(new StoredPasswordRepository(_currentSession.User.Password));
+            var securePassword = new SecureString();
+            securePassword.PopulateWithString(_currentSession.User.PlaintextPassword);
+
+            _dbController = new StoredPasswordController(new StoredPasswordRepository(securePassword));
             if (_currentSession.IsLoggedIn)
             {
                 _isRunning = true;

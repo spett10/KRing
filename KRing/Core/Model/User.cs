@@ -6,7 +6,22 @@ namespace KRing.Core.Model
     public class User
     {
         public string UserName { get; private set; }
-        public SecureString Password { get; set; }
+        public string PlaintextPassword
+        {
+            get
+            {
+                var raw = Password.ConvertToUnsecureString();
+                PlaintextPassword = raw;
+                return raw;
+            }
+
+            set
+            {
+                Password = new SecureString();
+                Password.PopulateWithString(value);
+            }
+        }
+        private SecureString Password { get; set; }
         public SecurityData Cookie { get; private set; }
 
         private static readonly int HashSaltSize = 64;

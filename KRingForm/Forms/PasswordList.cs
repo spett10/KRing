@@ -3,6 +3,7 @@ using KRing.Persistence.Interfaces;
 using KRing.Persistence.Repositories;
 using KRingForm.Forms;
 using KRing.Persistence.Model;
+using KRing.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Security;
 
 namespace KRingForm
 {
@@ -45,7 +47,10 @@ namespace KRingForm
             InitializeComponent();
             _user = user;
 
-            _passwordRep = new StoredPasswordRepository(_user.Password);
+            var securePassword = new SecureString();
+            securePassword.PopulateWithString(user.PlaintextPassword);
+
+            _passwordRep = new StoredPasswordRepository(securePassword);
 
             UpdateList(OperationType.NoOperation);
 

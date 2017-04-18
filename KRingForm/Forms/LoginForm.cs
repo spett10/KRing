@@ -52,8 +52,7 @@ namespace KRingForm
                 }
                 else
                 {
-                    savedUser.Password = new SecureString();
-                    savedUser.Password.PopulateWithString(password);
+                    savedUser.PlaintextPassword = password;
                     _callback(true);
                     this.Close();
                 }
