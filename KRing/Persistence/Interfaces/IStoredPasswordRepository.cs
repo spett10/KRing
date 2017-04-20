@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security;
 using KRing.Persistence.Model;
+using System.Threading.Tasks;
 
 namespace KRing.Persistence.Interfaces
 {
@@ -19,8 +20,10 @@ namespace KRing.Persistence.Interfaces
         string GetPasswordFromDomain(string domain);
         bool IsDbEmpty();
         List<StoredPassword> LoadEntriesFromDb();
+        Task<List<StoredPassword>> LoadEntriesFromDbAsync();
         void UpdateEntry(StoredPassword updatedEntry);
         void WriteEntriesToDb();
+        Task WriteEntriesToDbAsync();
         bool DecryptionErrorOccured { get; }
         bool EncryptionErrorOccured { get; }
     }

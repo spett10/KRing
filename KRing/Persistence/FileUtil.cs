@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace KRing.Persistence
 {
@@ -18,6 +19,17 @@ namespace KRing.Persistence
                 using (StreamWriter streamWriter = new StreamWriter(fileStream))
                 {
                     streamWriter.WriteLine(toWrite);
+                }
+            }
+        }
+
+        public async static Task FilePurgeAsync(string filepath, string toWrite)
+        {
+            using (FileStream fileStream = new FileStream(filepath, FileMode.Create))
+            {
+                using (StreamWriter streamWriter = new StreamWriter(fileStream))
+                {
+                    await streamWriter.WriteLineAsync(toWrite);
                 }
             }
         }

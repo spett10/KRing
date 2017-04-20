@@ -13,6 +13,7 @@ using KRing.Persistence.Interfaces;
 using KRing.Interfaces;
 using Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace KRing.Persistence.Repositories
 {
@@ -189,6 +190,51 @@ namespace KRing.Persistence.Repositories
             return _count <= 0;
         } 
 
+        public async Task WriteEntriesToDbAsync()
+        {
+            UpdateMeta();
+
+            _key = DeriveKey(_password);
+
+            using (FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create))
+            using (StreamWriter streamWriter = new StreamWriter(fileStream))
+            {
+                foreach(var entr in _entries)
+                {
+                    try
+                    {
+                        /* Encrypt */
+                        var rawDomain = Encoding.UTF8.GetBytes(entr.Domain);
+                        var rawPassword = entr.PlaintextPassword;
+                        var rawPass = Encoding.UTF8.GetBytes(rawPassword);
+
+                        var ivForDomain = CryptoHashing.GenerateSalt(_ivLength);
+                        var ivForPass = CryptoHashing.GenerateSalt(_ivLength);
+
+                        var domainCipher = Aes256AuthenticatedCipher.Encrypt(rawDomain, _key, ivForDomain);
+                        var passCipher = Aes256AuthenticatedCipher.Encrypt(rawPass, _key, ivForPass);
+
+                        /* write domain, tag, iv */
+                        await streamWriter.WriteLineAsync(domainCipher.GetCipherAsBase64());
+                        await streamWriter.WriteLineAsync(domainCipher.GetTagAsBase64());
+                        await streamWriter.WriteLineAsync(Convert.ToBase64String(ivForDomain));
+
+                        /* write password, tag */
+                        await streamWriter.WriteLineAsync(passCipher.GetCipherAsBase64());
+                        await streamWriter.WriteLineAsync(passCipher.GetTagAsBase64());
+                        await streamWriter.WriteLineAsync(Convert.ToBase64String(ivForPass));
+
+                        UpdateConfig(_entries.Count);
+                        EncryptionErrorOccured = false;                        
+                    }
+                    catch(Exception)
+                    {
+                        EncryptionErrorOccured = true;
+                    }
+                }
+            }            
+        }
+
         public void WriteEntriesToDb()
         {
             UpdateMeta();
@@ -237,6 +283,60 @@ namespace KRing.Persistence.Repositories
 
             UpdateConfig(_entries.Count);
         }
+
+        public async Task<List<StoredPassword>> LoadEntriesFromDbAsync()
+        {
+            try
+            {
+                List<StoredPassword> entries = new List<StoredPassword>();
+
+                using (FileStream fs = new FileStream(_dataConfig.dbPath, FileMode.Open))
+                using (StreamReader streamReader = new StreamReader(fs))
+                {
+                    for (int i = 0; i < _count; i++)
+                    {
+                        /* READ */
+                        var domainBase64 = await streamReader.ReadLineAsync();
+                        var domainTagBase64 = await streamReader.ReadLineAsync();
+                        var domainIvTask = streamReader.ReadLineAsync();
+
+                        var domainCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTagBase64);
+
+                        var passwordBase64 = await streamReader.ReadLineAsync();
+                        var passwordTag = await streamReader.ReadLineAsync();
+                        var passwordIvTask = streamReader.ReadLineAsync();
+
+                        var passwordCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(passwordBase64, passwordTag);
+
+                        try
+                        {
+                            /* DECRYPT */
+                            var domainIv = Convert.FromBase64String(await domainIvTask);
+                            var passwordIv = Convert.FromBase64String(await passwordIvTask);
+
+                            var domain = Aes256AuthenticatedCipher.Decrypt(domainCipher, _key, domainIv);
+                            var password = Aes256AuthenticatedCipher.Decrypt(passwordCipher, _key, passwordIv);
+
+                            StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(password));
+                            entries.Add(newEntry);
+
+                            DecryptionErrorOccured = false;
+                        }
+                        catch (Exception)
+                        {
+                            DecryptionErrorOccured = true;
+                        }
+
+                    }
+                }
+                
+                return entries;
+            }
+            catch(Exception)
+            {
+                throw new Exception("Could not load passwords - possibly data is corrupted!");
+            }
+        } 
 
         public List<StoredPassword> LoadEntriesFromDb()
         {
@@ -292,12 +392,36 @@ namespace KRing.Persistence.Repositories
             }
         }
         
+        private async void UpdateMetaAsync()
+        {
+            using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Create))
+            {
+                _iv = CryptoHashing.GenerateSalt(_ivLength);
+                await fs.WriteAsync(_iv, 0, _iv.Length);
+            }
+        }
+
         private void UpdateMeta()
         {
             using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Create))
             {
                 _iv = CryptoHashing.GenerateSalt(_ivLength);
                 fs.Write(_iv, 0, _iv.Length);
+            }
+        }
+
+        private async void SetupMetaAsync()
+        {
+            if (_count > 0)
+            {
+                using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Open))
+                {
+                    await fs.ReadAsync(_iv, 0, _iv.Length);
+                }
+            }
+            else
+            {
+                _iv = CryptoHashing.GenerateSalt(_ivLength);
             }
         }
 

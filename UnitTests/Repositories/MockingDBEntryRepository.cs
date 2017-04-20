@@ -122,5 +122,15 @@ namespace UnitTests.Repositories
             _saveCalled = true;
             return;
         }
+
+        public Task<List<StoredPassword>> LoadEntriesFromDbAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task WriteEntriesToDbAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
