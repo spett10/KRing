@@ -35,5 +35,20 @@ namespace UnitTests.Config
         {
             return;
         }
+
+        public Task<int> GetStorageCountAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ClearConfigAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateConfigAsync(int count)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

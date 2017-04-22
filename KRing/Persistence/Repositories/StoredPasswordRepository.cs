@@ -241,8 +241,7 @@ namespace KRing.Persistence.Repositories
 
             _key = DeriveKey(_password);
 
-            FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create);
-
+            using(FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create))
             using (StreamWriter streamWriter = new StreamWriter(fileStream))
             {
                 foreach (var entr in _entries)
@@ -278,9 +277,7 @@ namespace KRing.Persistence.Repositories
                     }                    
                 }
             }
-
-            fileStream.Close();
-
+            
             UpdateConfig(_entries.Count);
         }
 
@@ -344,46 +341,43 @@ namespace KRing.Persistence.Repositories
             {
                 List<StoredPassword> entries = new List<StoredPassword>();
 
-                FileStream fs = new FileStream(_dataConfig.dbPath, FileMode.Open);
-
-                StreamReader streamReader = new StreamReader(fs);
-
-                for (int i = 0; i < _count; i++)
+                using (FileStream fs = new FileStream(_dataConfig.dbPath, FileMode.Open))
+                using (StreamReader streamReader = new StreamReader(fs))
                 {
-                    /* READ */
-                    var domainBase64 = streamReader.ReadLine();
-                    var domainTagBase64 = streamReader.ReadLine();
-                    var domainIv = Convert.FromBase64String(streamReader.ReadLine());
-
-                    var domainCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTagBase64);
-
-                    var passwordBase64 = streamReader.ReadLine();
-                    var passwordTag = streamReader.ReadLine();
-                    var passwordIv = Convert.FromBase64String(streamReader.ReadLine());
-
-                    var passwordCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(passwordBase64, passwordTag);
-
-                    try
+                    for (int i = 0; i < _count; i++)
                     {
-                        /* DECRYPT */
-                        var domain = Aes256AuthenticatedCipher.Decrypt(domainCipher, _key, domainIv);
-                        var password = Aes256AuthenticatedCipher.Decrypt(passwordCipher, _key, passwordIv);
+                        /* READ */
+                        var domainBase64 = streamReader.ReadLine();
+                        var domainTagBase64 = streamReader.ReadLine();
+                        var domainIv = Convert.FromBase64String(streamReader.ReadLine());
 
-                        /* CREATE DBENTRY */
-                        StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(password));
-                        entries.Add(newEntry);
+                        var domainCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTagBase64);
 
-                        DecryptionErrorOccured = false;
+                        var passwordBase64 = streamReader.ReadLine();
+                        var passwordTag = streamReader.ReadLine();
+                        var passwordIv = Convert.FromBase64String(streamReader.ReadLine());
+
+                        var passwordCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(passwordBase64, passwordTag);
+
+                        try
+                        {
+                            /* DECRYPT */
+                            var domain = Aes256AuthenticatedCipher.Decrypt(domainCipher, _key, domainIv);
+                            var password = Aes256AuthenticatedCipher.Decrypt(passwordCipher, _key, passwordIv);
+
+                            /* CREATE DBENTRY */
+                            StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(password));
+                            entries.Add(newEntry);
+
+                            DecryptionErrorOccured = false;
+                        }
+                        catch (Exception)
+                        {
+                            DecryptionErrorOccured = true;
+                        }
+
                     }
-                    catch(Exception)
-                    {
-                        DecryptionErrorOccured = true;
-                    }
-                    
                 }
-
-                fs.Close();
-
                 return entries;
             }
             catch(Exception)
@@ -451,9 +445,20 @@ namespace KRing.Persistence.Repositories
             _dataConfig.ClearConfig();
         }
 
+        private async Task DeleteDbAsync()
+        {
+            await FileUtil.FilePurgeAsync(_dataConfig.dbPath, "-");
+            await _dataConfig.ClearConfigAsync();
+        }
+
         private void UpdateConfig(int count)
         {
             _dataConfig.UpdateConfig(count);
+        }
+
+        private async Task UpdateConfigAsync(int count)
+        {
+            await _dataConfig.UpdateConfigAsync(count);
         }
     }
 }

@@ -6,6 +6,7 @@ using KRing.Extensions;
 using System.Transactions;
 using System.Configuration;
 using KRing.Persistence.Interfaces;
+using System.Threading.Tasks;
 
 namespace KRing.Persistence.Repositories
 {
@@ -35,7 +36,11 @@ namespace KRing.Persistence.Repositories
             FileUtil.FilePurge(_profilePath, "");
         }
 
-        /* TODO: encrypt the salted password */
+        public async Task DeleteUserAsync()
+        {
+            await FileUtil.FilePurgeAsync(_profilePath, "");
+        }
+
         public void WriteUser(User user)
         {
             if(user == null)
@@ -51,7 +56,23 @@ namespace KRing.Persistence.Repositories
                 profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.KeySalt));
                 profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.HashSalt));
             }
+        }
 
+        public async Task WriteUserAsync(User user)
+        {
+            if (user == null)
+                throw new ArgumentNullException();
+
+            //Make sure we dont write two users
+            await DeleteUserAsync();
+
+            using (StreamWriter profileWriter = new StreamWriter(_profilePath))
+            {
+                await profileWriter.WriteLineAsync(user.UserName);
+                await profileWriter.WriteLineAsync(user.Cookie.HashedPassword);
+                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.KeySalt));
+                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.HashSalt));
+            }
         }
 
         public User ReadUser()
@@ -75,6 +96,30 @@ namespace KRing.Persistence.Repositories
                 var cookie = new SecurityData(storedPasswordSalted, keySalt, hashSalt);
 
                 return new User(storedUser,cookie);
+            }
+        }
+
+        public async Task<User> ReadUserAsync()
+        {
+            using (StreamReader profileReader = new StreamReader(_profilePath))
+            {
+                var storedUser = await profileReader.ReadLineAsync();
+                if (storedUser == null) { throw new ArgumentNullException("Empty Profile"); }
+
+                var storedPasswordSalted = await profileReader.ReadLineAsync();
+                if (storedPasswordSalted == null) { throw new ArgumentNullException("Empty Password for profile"); }
+
+                var storedKeySalt = await profileReader.ReadLineAsync();
+                if (storedKeySalt == null) { throw new ArgumentNullException("No salt for key"); }
+                var keySalt = Convert.FromBase64String(storedKeySalt);
+
+                var storedHashSalt = await profileReader.ReadLineAsync();
+                if (storedHashSalt == null) { throw new ArgumentNullException("No salt for password"); }
+                var hashSalt = Convert.FromBase64String(storedHashSalt);
+
+                var cookie = new SecurityData(storedPasswordSalted, keySalt, hashSalt);
+
+                return new User(storedUser, cookie);
             }
         }
     }

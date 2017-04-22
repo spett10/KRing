@@ -5,6 +5,7 @@ using System.Security;
 using KRing.Core;
 using KRing.Extensions;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace UnitTests
 {
@@ -49,14 +50,29 @@ namespace UnitTests
             return;
         }
 
+        public Task DeleteUserAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public User ReadUser()
         {
             return _correctUser;
         }
 
+        public Task<User> ReadUserAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         public void WriteUser(User user)
         {
             _correctUser = user;
+        }
+
+        public Task WriteUserAsync(User user)
+        {
+            throw new NotImplementedException();
         }
     }
 }
