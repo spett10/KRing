@@ -174,6 +174,7 @@
     <Content Include="Data\Release\db.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\Release\log.txt" />
     <Content Include="Data\Release\meta.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

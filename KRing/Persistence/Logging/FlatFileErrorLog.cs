@@ -17,7 +17,7 @@ namespace KRing.Persistence.Logging
 #if DEBUG
             _logfile = ConfigurationManager.AppSettings["relativeLogPathDebug"];
 #else
-            _logfile = ConfigurationManager.AppSettings["relativeLogPath"];
+            _logfile = Environment.CurrentDirectory + ConfigurationManager.AppSettings["relativeLogPath"];
 #endif
 
             /* Clear log on each startup, else it will grow forever */
