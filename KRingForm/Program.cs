@@ -2,6 +2,7 @@
 using KRing.Core.Model;
 using KRing.Interfaces;
 using KRing.Persistence;
+using KRing.Persistence.Logging;
 using KRing.Persistence.Repositories;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Windows.Forms;
 namespace KRingForm
 {
     public delegate void MessageToUser(string message);
+    public delegate void Log(string context, string message);
 
     public static class Program
     {
@@ -22,6 +24,9 @@ namespace KRingForm
         public static User SavedUser;
 
         public static readonly MessageToUser _messageToUser = s => { MessageBox.Show(s); };
+        public static readonly Log Log = (c, s) => { _log.Log(c, s); };
+
+        private static FlatFileErrorLog _log = new FlatFileErrorLog();
 
         /// <summary>
         /// The main entry point for the application.
@@ -44,6 +49,7 @@ namespace KRingForm
                 catch(Exception e)
                 {
                     _messageToUser("Error: " + e.Message);
+                    Log("Main", e.Message);
                 }
             }
 
@@ -55,6 +61,7 @@ namespace KRingForm
             catch(Exception e)
             {
                 _messageToUser("Error: " + e.Message);
+                Log("Main", e.Message);
             }            
 
             /* Run the passwordlist if successful login */
@@ -67,6 +74,7 @@ namespace KRingForm
                     catch (Exception e)
                 {
                     _messageToUser("Error: " + e.Message);
+                    Log("Main", e.Message);
                 }
             }
         }

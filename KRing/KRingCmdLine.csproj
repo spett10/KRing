@@ -85,6 +85,7 @@
     <Compile Include="Interfaces\UserInterface.cs" />
     <Compile Include="Persistence\FileUtil.cs" />
     <Compile Include="Persistence\Interfaces\IDataConfig.cs" />
+    <Compile Include="Persistence\Logging\FlatFileErrorLog.cs" />
     <Compile Include="Persistence\Model\StoredPassword.cs" />
     <Compile Include="Persistence\Repositories\StoredPasswordRepository.cs" />
     <Compile Include="Persistence\Interfaces\IProfileRepository.cs" />

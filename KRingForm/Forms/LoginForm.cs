@@ -48,7 +48,7 @@ namespace KRingForm
 
                 if (!(correctPassword && correctUsername))
                 {
-                    HandleFailedLogon();
+                    HandleFailedLogon(userName);
                 }
                 else
                 {
@@ -64,15 +64,16 @@ namespace KRingForm
             return String.Equals(savedUser.UserName, username, StringComparison.CurrentCultureIgnoreCase);
         }
 
-        private void HandleFailedLogon()
+        private void HandleFailedLogon(string user)
         {
             usedLoginAttempts++;
             Program._messageToUser("Wrong username and/or password");
-
+            Program.Log("Login failed attempt", "User: " + user);
 
             if(usedLoginAttempts >= maxLoginAttemps)
             {
                 MessageBox.Show("All login attempts used.");
+                Program.Log("Login failed all attempts", "User: " + user);
                 _callback(false);
                 this.Close();
             }

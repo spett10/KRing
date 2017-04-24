@@ -56,7 +56,9 @@ namespace KRingForm
 
             if (_passwordRep.DecryptionErrorOccured)
             {
-                MessageBox.Show("One or more passwords were corrupted and could not be decrypted. They have thus been deleted");
+                string message = "One or more passwords were corrupted and could not be decrypted. They have thus been deleted";
+                MessageBox.Show(message);
+                Program.Log("PasswordList", message);
             }
 
             _unsavedChanges = false;
@@ -111,6 +113,7 @@ namespace KRingForm
             catch(Exception)
             {
                 HandleException();
+                Program.Log("addButton", "Exception occured");
             }            
         }
 
@@ -126,6 +129,7 @@ namespace KRingForm
             catch (Exception)
             {
                 HandleException();
+                Program.Log("editButton", "Exception occured");
             }
 
         }
@@ -142,6 +146,7 @@ namespace KRingForm
             catch (Exception)
             {
                 HandleException();
+                Program.Log("deleteButton", "Exception occured");
             }
 
         }
@@ -179,6 +184,7 @@ namespace KRingForm
             catch (Exception)
             {
                 HandleException();
+                Program.Log("viewButton", "Exception occured");
             }
 
         }
@@ -193,6 +199,7 @@ namespace KRingForm
         /// </summary>
         private void HandleException()
         {
+            Program.Log("PasswordList", "Exception occured, trying to write db");
             _passwordRep.WriteEntriesToDb();
         }
 
@@ -203,6 +210,7 @@ namespace KRingForm
             if(_passwordRep.EncryptionErrorOccured)
             {
                 Program._messageToUser("One or more passwords could not be encrypted - their data has been lost");
+                Program.Log("Save", "One or more passwords could not be encrypted");
             }
 
             _unsavedChanges = false;
@@ -218,6 +226,7 @@ namespace KRingForm
             catch (Exception)
             {
                 HandleException();
+                Program.Log("newButton", "Exception occured");
             }
         }
 
