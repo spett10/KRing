@@ -76,6 +76,7 @@
     <Compile Include="Core\CryptoHashing.cs" />
     <Compile Include="Core\PasswordAdvisor.cs" />
     <Compile Include="Core\Program.cs" />
+    <Compile Include="Core\ReleasePathDependent.cs" />
     <Compile Include="Core\View\ConsoleLineInterface.cs" />
     <Compile Include="Interfaces\IPasswordUI.cs" />
     <Compile Include="Persistence\Controllers\StoredPasswordController.cs" />

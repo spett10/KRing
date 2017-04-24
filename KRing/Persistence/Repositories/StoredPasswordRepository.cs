@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace KRing.Persistence.Repositories
 {
-    public class StoredPasswordRepository : IStoredPasswordRepository
+    public class StoredPasswordRepository : ReleasePathDependent, IStoredPasswordRepository
     {
         private readonly IDataConfig _dataConfig;
         private readonly int _count;
@@ -49,9 +49,9 @@ namespace KRing.Persistence.Repositories
                                ConfigurationManager.AppSettings["relativeconfigPathDebug"]);
 #else
             _dataConfig = new DataConfig(
-                               Environment.CurrentDirectory + ConfigurationManager.AppSettings["relativemetaPath"],
-                               Environment.CurrentDirectory + ConfigurationManager.AppSettings["relativedbPath"],
-                               Environment.CurrentDirectory + ConfigurationManager.AppSettings["relativeconfigPath"]);
+                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativemetaPath"],
+                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"],
+                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeconfigPath"]);
 #endif
 
             DecryptionErrorOccured = false;

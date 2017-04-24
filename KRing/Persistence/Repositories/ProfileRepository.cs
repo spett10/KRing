@@ -7,10 +7,11 @@ using System.Transactions;
 using System.Configuration;
 using KRing.Persistence.Interfaces;
 using System.Threading.Tasks;
+using KRing.Core;
 
 namespace KRing.Persistence.Repositories
 {
-    public class ProfileRepository : IProfileRepository
+    public class ProfileRepository : ReleasePathDependent, IProfileRepository
     {
         private readonly string _profilePath;
 
@@ -20,8 +21,7 @@ namespace KRing.Persistence.Repositories
             var filename = ConfigurationManager.AppSettings["relativeprofilePathDebug"];
             _profilePath = filename;
 #else
-            var filename = ConfigurationManager.AppSettings["relativeprofilePath"];
-            _profilePath = Environment.CurrentDirectory + filename;
+            _profilePath = base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeprofilePath"];
 #endif
 
         }

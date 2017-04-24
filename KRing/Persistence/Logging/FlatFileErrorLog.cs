@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using KRing.Core;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace KRing.Persistence.Logging
 {
-    public class FlatFileErrorLog
+    public class FlatFileErrorLog : ReleasePathDependent
     {
         private string _logfile;
 
@@ -17,7 +18,7 @@ namespace KRing.Persistence.Logging
 #if DEBUG
             _logfile = ConfigurationManager.AppSettings["relativeLogPathDebug"];
 #else
-            _logfile = Environment.CurrentDirectory + ConfigurationManager.AppSettings["relativeLogPath"];
+            _logfile = base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeLogPath"];
 #endif
 
             /* Clear log on each startup, else it will grow forever */
