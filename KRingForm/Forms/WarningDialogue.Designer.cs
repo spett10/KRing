@@ -39,7 +39,7 @@
             this.yesButton.Location = new System.Drawing.Point(184, 38);
             this.yesButton.Name = "yesButton";
             this.yesButton.Size = new System.Drawing.Size(75, 23);
-            this.yesButton.TabIndex = 0;
+            this.yesButton.TabIndex = 1;
             this.yesButton.Text = "Yes";
             this.yesButton.UseVisualStyleBackColor = true;
             this.yesButton.Click += new System.EventHandler(this.yesButton_Click);
@@ -49,7 +49,7 @@
             this.noButton.Location = new System.Drawing.Point(265, 38);
             this.noButton.Name = "noButton";
             this.noButton.Size = new System.Drawing.Size(75, 23);
-            this.noButton.TabIndex = 1;
+            this.noButton.TabIndex = 0;
             this.noButton.Text = "No";
             this.noButton.UseVisualStyleBackColor = true;
             this.noButton.Click += new System.EventHandler(this.noButton_Click);

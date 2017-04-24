@@ -25,7 +25,7 @@ namespace KRingForm
             InitializeComponent();
         }
 
-        private void createButton_Click(object sender, EventArgs e)
+        private async void createButton_Click(object sender, EventArgs e)
         {
             var username = usernameBox.Text;
 
@@ -49,20 +49,20 @@ namespace KRingForm
 
                 var user = User.NewUserWithFreshSalt(username, securePassword);
 
-                /* Update Profile */
-                profileRep.WriteUser(user);
+                var writeUserTask = profileRep.WriteUserAsync(user);
 
                 /* Callback to set User */
                 Program.SavedUser = user;
+
+                /* Update Profile */
+                await writeUserTask;
 
                 this.Close();
             }
             else
             {
                 Program._messageToUser("Password not strong enough - it must have at least one special character, one capital character and one digit!");
-            }
-
-            
+            }            
         }
 
         private bool IsPasswordStrongEnough(PasswordScore score)

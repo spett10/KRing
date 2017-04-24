@@ -195,7 +195,7 @@ namespace KRingForm
         }
 
         /// <summary>
-        /// If something fails, make sure to write database.
+        /// If something fails, make sure to write database. Its a blocking call, we want to be really sure. 
         /// </summary>
         private void HandleException()
         {
@@ -203,9 +203,10 @@ namespace KRingForm
             _passwordRep.WriteEntriesToDb();
         }
 
-        private void saveButton_Click(object sender, EventArgs e)
+        private async void saveButton_Click(object sender, EventArgs e)
         {
-            _passwordRep.WriteEntriesToDb();
+            /* Start write */
+            await _passwordRep.WriteEntriesToDbAsync();
 
             if(_passwordRep.EncryptionErrorOccured)
             {
