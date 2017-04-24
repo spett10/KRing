@@ -32,6 +32,7 @@ bin/
 obj/
 Data/
 
+KRingForm/Data/*
 KRingForm/bin/
 KRingForm/bin/*
 UnitTests/bin/
