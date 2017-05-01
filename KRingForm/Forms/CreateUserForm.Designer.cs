@@ -95,6 +95,7 @@
             this.Controls.Add(this.usernameLabel);
             this.Name = "CreateUserForm";
             this.Text = "CreateUserForm";
+            this.Load += new System.EventHandler(this.CreateUserForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -70,9 +70,9 @@
             // 
             // passwordBox
             // 
-            this.passwordBox.Location = new System.Drawing.Point(72, 86);
+            this.passwordBox.Location = new System.Drawing.Point(50, 86);
             this.passwordBox.Name = "passwordBox";
-            this.passwordBox.Size = new System.Drawing.Size(100, 20);
+            this.passwordBox.Size = new System.Drawing.Size(141, 20);
             this.passwordBox.TabIndex = 0;
             // 
             // editButton
@@ -122,7 +122,6 @@
             // 
             this.largeSizeButton.AutoSize = true;
             this.largeSizeButton.Checked = true;
-            this.largeSizeButton.Enabled = false;
             this.largeSizeButton.Location = new System.Drawing.Point(140, 135);
             this.largeSizeButton.Name = "largeSizeButton";
             this.largeSizeButton.Size = new System.Drawing.Size(37, 17);

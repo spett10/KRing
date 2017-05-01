@@ -27,6 +27,7 @@ namespace KRingForm
         public static readonly Log Log = (c, s) => { /*_log.Log(c, s);*/ };
 
         private static FlatFileErrorLog _log = new FlatFileErrorLog();
+        public static bool userCreated;
 
         /// <summary>
         /// The main entry point for the application.
@@ -39,6 +40,7 @@ namespace KRingForm
             
 
             isLoggedIn = false;
+            userCreated = false;
 
             /* Check if a user exists; If not, create new user, if it does, show logon format */
             if (!DoesUserExist())
@@ -53,17 +55,21 @@ namespace KRingForm
                     Log("Main", e.Message);
                 }
             }
-
+            
             /* Try to loging */
-            try
+            if(DoesUserExist() || userCreated)
             {
-                Application.Run(new LoginForm(SavedUser, loginCallback));
+                try
+                {
+                    Application.Run(new LoginForm(SavedUser, loginCallback));
+                }
+                catch (Exception e)
+                {
+                    _messageToUser("Error: " + e.Message);
+                    Log("Main", e.Message);
+                }
             }
-            catch(Exception e)
-            {
-                _messageToUser("Error: " + e.Message);
-                Log("Main", e.Message);
-            }            
+                     
 
             /* Run the passwordlist if successful login */
             if(isLoggedIn)

@@ -59,7 +59,7 @@ namespace KRingForm.Forms
 
         private void largeSizeButton_CheckedChanged(object sender, EventArgs e)
         {
-            _generator.Size = PasswordGenerator.PasswordSize.Small;
+            _generator.Size = PasswordGenerator.PasswordSize.Large;
         }
 
         private void mediumSizeButton_CheckedChanged(object sender, EventArgs e)
@@ -69,7 +69,7 @@ namespace KRingForm.Forms
 
         private void smallSizeButton_CheckedChanged(object sender, EventArgs e)
         {
-            _generator.Size = PasswordGenerator.PasswordSize.Large;
+            _generator.Size = PasswordGenerator.PasswordSize.Small;
         }
 
         private void generateButton_Click(object sender, EventArgs e)

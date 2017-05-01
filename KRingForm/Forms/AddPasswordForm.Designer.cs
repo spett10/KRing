@@ -69,9 +69,9 @@
             // 
             // passwordBox
             // 
-            this.passwordBox.Location = new System.Drawing.Point(71, 76);
+            this.passwordBox.Location = new System.Drawing.Point(50, 76);
             this.passwordBox.Name = "passwordBox";
-            this.passwordBox.Size = new System.Drawing.Size(100, 20);
+            this.passwordBox.Size = new System.Drawing.Size(140, 20);
             this.passwordBox.TabIndex = 1;
             // 
             // addButton

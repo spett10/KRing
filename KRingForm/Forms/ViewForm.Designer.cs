@@ -69,10 +69,10 @@
             // 
             // passwordBox
             // 
-            this.passwordBox.Location = new System.Drawing.Point(71, 88);
+            this.passwordBox.Location = new System.Drawing.Point(56, 88);
             this.passwordBox.Name = "passwordBox";
             this.passwordBox.ReadOnly = true;
-            this.passwordBox.Size = new System.Drawing.Size(124, 20);
+            this.passwordBox.Size = new System.Drawing.Size(154, 20);
             this.passwordBox.TabIndex = 3;
             // 
             // copyButton

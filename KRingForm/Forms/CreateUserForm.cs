@@ -53,6 +53,7 @@ namespace KRingForm
 
                 /* Callback to set User */
                 Program.SavedUser = user;
+                Program.userCreated = true;
 
                 /* Update Profile */
                 await writeUserTask;
@@ -84,6 +85,11 @@ namespace KRingForm
             }
 
             return passwordStrongEnough;
+        }
+
+        private void CreateUserForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
