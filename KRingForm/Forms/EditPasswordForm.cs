@@ -19,7 +19,11 @@ namespace KRingForm.Forms
     {
         private readonly IStoredPasswordRepository _passwordRep;
         private readonly UpdateListCallback _callback;
+        private PasswordGenerator _generator;
+
         private string _editTarget;
+
+        private bool _generateClicked = false;
 
         public EditPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback, string domain)
         {
@@ -27,6 +31,8 @@ namespace KRingForm.Forms
             _passwordRep = repository;
             _callback = callback;
             _editTarget = domain;
+
+            _generator = new PasswordGenerator();
 
             domainBox.Text = domain;
         }
@@ -37,7 +43,7 @@ namespace KRingForm.Forms
 
             if(plaintextPassword == String.Empty)
             {
-                Program._messageToUser("Please enter new password");
+                Program._messageToUser("Please enter new password or generate it");
             }
             else
             {
@@ -48,6 +54,37 @@ namespace KRingForm.Forms
                 _callback(OperationType.EditPassword);
 
                 this.Close();
+            }
+        }
+
+        private void largeSizeButton_CheckedChanged(object sender, EventArgs e)
+        {
+            _generator.Size = PasswordGenerator.PasswordSize.Small;
+        }
+
+        private void mediumSizeButton_CheckedChanged(object sender, EventArgs e)
+        {
+            _generator.Size = PasswordGenerator.PasswordSize.Medium;
+        }
+
+        private void smallSizeButton_CheckedChanged(object sender, EventArgs e)
+        {
+            _generator.Size = PasswordGenerator.PasswordSize.Large;
+        }
+
+        private void generateButton_Click(object sender, EventArgs e)
+        {
+            if (!_generateClicked)
+            {
+                passwordBox.Text = _generator.Generate();
+
+                /* Disable buttons since you can only generate once */
+                smallSizeButton.Enabled = false;
+                mediumSizeButton.Enabled = false;
+                largeSizeButton.Enabled = false;
+                generateButton.Enabled = false;
+
+                _generateClicked = true;
             }
         }
     }

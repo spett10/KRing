@@ -19,9 +19,10 @@ namespace KRingForm.Forms
     {
         private readonly IStoredPasswordRepository _passwordRep;
         private readonly UpdateListCallback _callback;
+        private readonly PasswordGenerator _generator;
+
 
         private bool _generateClicked = false;
-        private int chosenSize;
 
         public NewPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback)
         {
@@ -29,7 +30,8 @@ namespace KRingForm.Forms
             _passwordRep = repository;
             _callback = callback;
 
-            chosenSize = 16;
+            _generator = new PasswordGenerator();
+            
         }
 
         private void addButton_Click(object sender, EventArgs e)
@@ -61,12 +63,8 @@ namespace KRingForm.Forms
         {
             if (!_generateClicked)
             {
-                /* We want to display/save the random bytes in base64, but we dont want padding. So we choose a byte size */
-                /* That requires no padding, and will produce as many characters as the user requested. Since base64 takes 6 bits
-                 * for each character, and a byte is 8 bits, we get the below fraction (reduced, of course) */
-                var saltSize = (chosenSize / 4) * 3;
 
-                passwordBox.Text = Convert.ToBase64String(CryptoHashing.GenerateSalt(saltSize));
+                passwordBox.Text = _generator.Generate();
 
                 /* Disable buttons since you can only generate once */
                 smallSizeButton.Enabled = false;
@@ -80,17 +78,17 @@ namespace KRingForm.Forms
 
         private void smallSizeButton_CheckedChanged(object sender, EventArgs e)
         {
-            chosenSize = 8;
+            _generator.Size = PasswordGenerator.PasswordSize.Small;
         }
 
         private void mediumSizeButton_CheckedChanged(object sender, EventArgs e)
         {
-            chosenSize = 12;
+            _generator.Size = PasswordGenerator.PasswordSize.Medium;
         }
 
         private void largeSizeButton_CheckedChanged(object sender, EventArgs e)
         {
-            chosenSize = 16;
+            _generator.Size = PasswordGenerator.PasswordSize.Large;
         }
     }
 }
