@@ -217,20 +217,6 @@ namespace KRingForm
             _unsavedChanges = false;
         }
 
-        private void newButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                var newForm = new NewPasswordForm(_passwordRep, UpdateList);
-                newForm.Show();
-            }
-            catch (Exception)
-            {
-                HandleException();
-                Program.Log("newButton", "Exception occured");
-            }
-        }
-
         private void PasswordList_Load(object sender, EventArgs e)
         {
 
