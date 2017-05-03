@@ -16,17 +16,19 @@ namespace UnitTests
         public MockingProfileRepository()
         {
             var passwordRaw = "YELLOW SUBMARINE";
+            var usernameRaw = "testuser";
             var password = new SecureString();
 
             password.PopulateWithString(passwordRaw);
 
             var passwordSalted = CryptoHashing.ScryptHashPassword(passwordRaw);
+            var usernameSalted = CryptoHashing.ScryptHashPassword(usernameRaw);
             var saltForKey = CryptoHashing.GenerateSalt();
             var saltForHash = CryptoHashing.GenerateSalt();
 
-            _correctUser = new User("testuser",
+            _correctUser = new User(usernameRaw,
                                     password,
-                                    new SecurityData(passwordSalted, saltForKey, saltForHash));
+                                    new SecurityData(passwordSalted, usernameSalted, saltForKey, saltForHash, saltForHash));
         }
 
         public MockingProfileRepository(string username, SecureString password)
@@ -38,10 +40,11 @@ namespace UnitTests
             var saltForKey = CryptoHashing.GenerateSalt();
             var saltForHash = CryptoHashing.GenerateSalt(64);
             var passwordSalted = CryptoHashing.ScryptHashPassword(rawPass, saltForHash);
+            var usernameSalted = CryptoHashing.ScryptHashPassword(username, saltForHash);
 
             _correctUser = new User(username,
                                     password,
-                                    new SecurityData(passwordSalted, saltForKey, saltForHash));
+                                    new SecurityData(passwordSalted, usernameSalted, saltForKey, saltForHash, saltForHash));
             
         }
 

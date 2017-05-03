@@ -5,7 +5,7 @@ namespace KRing.Core.Model
 {
     public class User
     {
-        public string UserName { get; private set; }
+        public string UserName { get; set; }
         public string PlaintextPassword
         {
             get
@@ -46,11 +46,14 @@ namespace KRing.Core.Model
             password = new SecureString();
             password.PopulateWithString(rawPass);
 
+            var saltForUser = CryptoHashing.GenerateSalt(HashSaltSize);
+            var saltedUsername = CryptoHashing.ScryptHashPassword(newUserName, saltForUser);
+
             var saltForHash = CryptoHashing.GenerateSalt(HashSaltSize);
             var saltedPassword = CryptoHashing.ScryptHashPassword(rawPass,saltForHash);
             var saltForKey = CryptoHashing.GenerateSalt();
 
-            var cookie = new SecurityData(saltedPassword, saltForKey, saltForHash);
+            var cookie = new SecurityData(saltedPassword, saltedUsername, saltForKey, saltForHash, saltForUser);
             return new User(newUserName, password, cookie);
         }
 
@@ -59,7 +62,9 @@ namespace KRing.Core.Model
             return new User("Dummy", new SecureString(),
                                     new SecurityData(CryptoHashing.GenerateSalt(),
                                                 CryptoHashing.GenerateSalt(),
-                                                CryptoHashing.GenerateSalt(HashSaltSize)));
+                                                CryptoHashing.GenerateSalt(),
+                                                CryptoHashing.GenerateSalt(HashSaltSize),
+                                                CryptoHashing.GenerateSalt()));
         }
         
         public override string ToString()

@@ -24,7 +24,7 @@ namespace UnitTests
 
             _username = "test";
 
-            _cookie = new SecurityData(CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt());
+            _cookie = new SecurityData(CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt());
         }
 
         [TestMethod]

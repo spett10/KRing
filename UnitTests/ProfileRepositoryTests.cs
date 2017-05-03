@@ -19,11 +19,12 @@ namespace UnitTests
             string username = "Alice";
             var password = "Super Secure";
 
+            var userSalted = CryptoHashing.ScryptHashPassword(username);
             var passwordSalted = CryptoHashing.ScryptHashPassword(password);
             var keySalt = CryptoHashing.GenerateSalt();
             var hashSalt = CryptoHashing.GenerateSalt();
 
-            var cookie = new SecurityData(passwordSalted, keySalt, hashSalt);
+            var cookie = new SecurityData(passwordSalted, userSalted, keySalt, hashSalt, hashSalt);
 
             var securePassword = new SecureString();
             securePassword.PopulateWithString(password);
@@ -44,9 +45,7 @@ namespace UnitTests
 
             var isValidPassword = CryptoHashing.ScryptCheckPassword(password, readUser.Cookie.HashedPassword); //think when we read the users password is not the password but the hashed password
             Assert.IsTrue(isValidPassword);
-
-            Assert.AreEqual(readUser.UserName, _user.UserName);
-
+            
             var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.KeySalt, _user.Cookie.KeySalt);
             Assert.AreEqual(keysaltIsEqual, true);
             
@@ -98,19 +97,19 @@ namespace UnitTests
             var securePassword = new SecureString();
             securePassword.PopulateWithString(_user.PlaintextPassword);
 
+            string username = "Bob";
             var salt = CryptoHashing.GenerateSalt();
             var passwordSalted = CryptoHashing.GenerateSaltedHash(securePassword, salt);
+            var userSalted = CryptoHashing.GenerateSaltedHash(username, salt);
             var keySalt = CryptoHashing.GenerateSalt();
             var hashSalt = CryptoHashing.GenerateSalt();
             
-            var otherCookie = new SecurityData(passwordSalted, keySalt, hashSalt);
-            var otherUser = new User("Bob", securePassword, _user.Cookie);
+            var otherCookie = new SecurityData(passwordSalted, userSalted, keySalt, hashSalt, hashSalt);
+            var otherUser = new User(username, securePassword, _user.Cookie);
 
             repository.WriteUser(otherUser);
 
             var readUser = repository.ReadUser();
-
-            Assert.AreEqual(otherUser.UserName, readUser.UserName);
 
             Assert.AreEqual(otherUser.Cookie.HashedPassword, readUser.Cookie.HashedPassword);
 

@@ -51,10 +51,12 @@ namespace KRing.Persistence.Repositories
             
             using (StreamWriter profileWriter = new StreamWriter(_profilePath))
             {
-                profileWriter.WriteLine(user.UserName);
+                profileWriter.WriteLine(user.Cookie.HashedUsername);
+                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.UsernameHashSalt));
                 profileWriter.WriteLine(user.Cookie.HashedPassword);
+                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.PasswordHashSalt));
                 profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.KeySalt));
-                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.HashSalt));
+                
             }
         }
 
@@ -68,10 +70,11 @@ namespace KRing.Persistence.Repositories
 
             using (StreamWriter profileWriter = new StreamWriter(_profilePath))
             {
-                await profileWriter.WriteLineAsync(user.UserName);
+                await profileWriter.WriteLineAsync(user.Cookie.HashedUsername);
+                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.UsernameHashSalt));
                 await profileWriter.WriteLineAsync(user.Cookie.HashedPassword);
+                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.PasswordHashSalt));
                 await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.KeySalt));
-                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.HashSalt));
             }
         }
 
@@ -82,20 +85,25 @@ namespace KRing.Persistence.Repositories
                 var storedUser = profileReader.ReadLine();
                 if (storedUser == null) { throw new ArgumentNullException("Empty Profile"); }
 
+                var storedUsernameSalt = profileReader.ReadLine();
+                if(storedUsernameSalt == null) { throw new ArgumentNullException("Empty Username Salt"); }
+                var userSalt = Convert.FromBase64String(storedUsernameSalt);
+
                 var storedPasswordSalted = profileReader.ReadLine();
                 if (storedPasswordSalted == null) { throw new ArgumentNullException("Empty Password for profile"); }
+
+                
+                var storedHashSalt = profileReader.ReadLine();
+                if (storedHashSalt == null) { throw new ArgumentNullException("No salt for password"); }
+                var hashSalt = Convert.FromBase64String(storedHashSalt);
 
                 var storedKeySalt = profileReader.ReadLine();
                 if (storedKeySalt == null) { throw new ArgumentNullException("No salt for key"); }
                 var keySalt = Convert.FromBase64String(storedKeySalt);
 
-                var storedHashSalt = profileReader.ReadLine();
-                if (storedHashSalt == null) { throw new ArgumentNullException("No salt for password"); }
-                var hashSalt = Convert.FromBase64String(storedHashSalt);
+                var cookie = new SecurityData(storedPasswordSalted, storedUser, keySalt, hashSalt, userSalt);
 
-                var cookie = new SecurityData(storedPasswordSalted, keySalt, hashSalt);
-
-                return new User(storedUser,cookie);
+                return new User(" ",cookie);
             }
         }
 
@@ -106,20 +114,24 @@ namespace KRing.Persistence.Repositories
                 var storedUser = await profileReader.ReadLineAsync();
                 if (storedUser == null) { throw new ArgumentNullException("Empty Profile"); }
 
+                var storedUsernameSalt = await profileReader.ReadLineAsync();
+                if (storedUsernameSalt == null) { throw new ArgumentNullException("Empty Username Salt"); }
+                var userSalt = Convert.FromBase64String(storedUsernameSalt);
+
                 var storedPasswordSalted = await profileReader.ReadLineAsync();
                 if (storedPasswordSalted == null) { throw new ArgumentNullException("Empty Password for profile"); }
-
-                var storedKeySalt = await profileReader.ReadLineAsync();
-                if (storedKeySalt == null) { throw new ArgumentNullException("No salt for key"); }
-                var keySalt = Convert.FromBase64String(storedKeySalt);
 
                 var storedHashSalt = await profileReader.ReadLineAsync();
                 if (storedHashSalt == null) { throw new ArgumentNullException("No salt for password"); }
                 var hashSalt = Convert.FromBase64String(storedHashSalt);
 
-                var cookie = new SecurityData(storedPasswordSalted, keySalt, hashSalt);
+                var storedKeySalt = await profileReader.ReadLineAsync();
+                if (storedKeySalt == null) { throw new ArgumentNullException("No salt for key"); }
+                var keySalt = Convert.FromBase64String(storedKeySalt);                
 
-                return new User(storedUser, cookie);
+                var cookie = new SecurityData(storedPasswordSalted, storedUser, keySalt, hashSalt, userSalt);
+
+                return new User(" ", cookie);
             }
         }
     }

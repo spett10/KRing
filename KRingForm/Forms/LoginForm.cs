@@ -42,9 +42,9 @@ namespace KRingForm
             }
             else
             {
-                var correctUsername = CheckUserName(userName);
+                var correctUsername = CryptoHashing.ScryptCheckPassword(userName, savedUser.Cookie.UsernameHashSalt, savedUser.Cookie.HashedUsername);
 
-                var correctPassword = CryptoHashing.ScryptCheckPassword(password, savedUser.Cookie.HashSalt, savedUser.Cookie.HashedPassword);
+                var correctPassword = CryptoHashing.ScryptCheckPassword(password, savedUser.Cookie.PasswordHashSalt, savedUser.Cookie.HashedPassword);
 
                 if (!(correctPassword && correctUsername))
                 {
@@ -52,18 +52,14 @@ namespace KRingForm
                 }
                 else
                 {
+                    savedUser.UserName = userName;
                     savedUser.PlaintextPassword = password;
                     _callback(true);
                     this.Close();
                 }
             }            
         }
-
-        private bool CheckUserName(string username)
-        {
-            return String.Equals(savedUser.UserName, username, StringComparison.CurrentCultureIgnoreCase);
-        }
-
+        
         private void HandleFailedLogon(string user)
         {
             usedLoginAttempts++;
