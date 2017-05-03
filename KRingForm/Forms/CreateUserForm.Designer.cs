@@ -50,6 +50,7 @@
             // usernameBox
             // 
             this.usernameBox.Location = new System.Drawing.Point(88, 55);
+            this.usernameBox.MaxLength = 80;
             this.usernameBox.Name = "usernameBox";
             this.usernameBox.Size = new System.Drawing.Size(100, 20);
             this.usernameBox.TabIndex = 0;
@@ -66,6 +67,7 @@
             // passwordBox
             // 
             this.passwordBox.Location = new System.Drawing.Point(88, 112);
+            this.passwordBox.MaxLength = 80;
             this.passwordBox.Name = "passwordBox";
             this.passwordBox.PasswordChar = '*';
             this.passwordBox.Size = new System.Drawing.Size(100, 20);
@@ -95,7 +97,6 @@
             this.Controls.Add(this.usernameLabel);
             this.Name = "CreateUserForm";
             this.Text = "CreateUserForm";
-            this.Load += new System.EventHandler(this.CreateUserForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

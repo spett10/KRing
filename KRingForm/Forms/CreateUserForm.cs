@@ -87,9 +87,5 @@ namespace KRingForm
             return passwordStrongEnough;
         }
 
-        private void CreateUserForm_Load(object sender, EventArgs e)
-        {
-
-        }
     }
 }

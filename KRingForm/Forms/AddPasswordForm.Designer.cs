@@ -54,6 +54,7 @@
             // domainBox
             // 
             this.domainBox.Location = new System.Drawing.Point(71, 23);
+            this.domainBox.MaxLength = 80;
             this.domainBox.Name = "domainBox";
             this.domainBox.Size = new System.Drawing.Size(100, 20);
             this.domainBox.TabIndex = 0;
@@ -70,6 +71,7 @@
             // passwordBox
             // 
             this.passwordBox.Location = new System.Drawing.Point(50, 76);
+            this.passwordBox.MaxLength = 80;
             this.passwordBox.Name = "passwordBox";
             this.passwordBox.Size = new System.Drawing.Size(140, 20);
             this.passwordBox.TabIndex = 1;
