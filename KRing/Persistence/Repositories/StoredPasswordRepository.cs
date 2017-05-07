@@ -100,6 +100,12 @@ namespace KRing.Persistence.Repositories
             }
         }
 
+        ~StoredPasswordRepository()
+        {
+            CryptoHashing.ZeroOutArray(ref _encrKey);
+            CryptoHashing.ZeroOutArray(ref _macKey);
+        }
+
         public void DeleteEntry(string domain)
         {
             var entry = _entries.SingleOrDefault(e => e.Domain.Equals(domain));
