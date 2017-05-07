@@ -1,3 +1,4 @@
+*.pfx
 KRing/Data/*
 KRing/Data/db.txt
 KRing/Data/config.txt
