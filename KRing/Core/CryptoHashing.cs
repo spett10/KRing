@@ -6,7 +6,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using KRing.Extensions;
-using Scrypt;
 using Security.Cryptography;
 using System.IO;
 using KRing.Persistence.Model;
@@ -17,30 +16,6 @@ namespace KRing.Core
     {
         public static readonly int SaltByteSize = 16;
         private static readonly int iterations = 10000; //could we go further? like.. 20k? 30k? We only have to load them once. 
-
-        public static string ScryptHashPassword(string password)
-        {
-            ScryptEncoder encoder = new ScryptEncoder();
-            return encoder.Encode(password);
-        }
-
-        public static bool ScryptCheckPassword(string password, string hashedPassword)
-        {
-            ScryptEncoder encoder = new ScryptEncoder();
-            return encoder.Compare(password, hashedPassword);
-        }
-
-        public static string ScryptHashPassword(string password, byte[] salt)
-        {
-            ScryptEncoder encoder = new ScryptEncoder();
-            return encoder.Encode(Convert.ToBase64String(salt) + password);
-        }
-
-        public static bool ScryptCheckPassword(string password, byte[] salt, string hashedPassword)
-        {
-            ScryptEncoder encoder = new ScryptEncoder();
-            return encoder.Compare(Convert.ToBase64String(salt) + password, hashedPassword);
-        }
 
         public static byte[] GenerateSaltedHash(string plaintext, byte[] salt)
         {

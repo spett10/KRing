@@ -227,7 +227,7 @@ namespace KRing.Persistence.Repositories
                         UpdateConfig(_entries.Count);
                         EncryptionErrorOccured = false;                        
                     }
-                    catch(Exception)
+                    catch(Exception e)
                     {
                         EncryptionErrorOccured = true;
                     }
@@ -271,7 +271,7 @@ namespace KRing.Persistence.Repositories
 
                         EncryptionErrorOccured = false;
                     }
-                    catch(Exception)
+                    catch(Exception e)
                     {
                         EncryptionErrorOccured = true;
                     }                    
@@ -380,7 +380,7 @@ namespace KRing.Persistence.Repositories
                 }
                 return entries;
             }
-            catch(Exception)
+            catch(Exception e)
             {
                 throw new Exception("Could not load passwords - possibly data is corrupted!");
             }

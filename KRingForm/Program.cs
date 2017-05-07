@@ -24,7 +24,7 @@ namespace KRingForm
         public static User SavedUser;
 
         public static readonly MessageToUser _messageToUser = s => { MessageBox.Show(s); };
-        public static readonly Log Log = (c, s) => { /*_log.Log(c, s);*/ };
+        public static readonly Log Log = (c, s) => { _log.Log(c, s); };
 
         private static FlatFileErrorLog _log = new FlatFileErrorLog();
         public static bool userCreated;

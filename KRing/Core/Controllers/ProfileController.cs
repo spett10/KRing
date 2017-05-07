@@ -113,7 +113,7 @@ namespace KRing.Core.Controllers
             var rawPass = password.ConvertToUnsecureString();
             password = new SecureString();
             password.PopulateWithString(rawPass);
-            bool isPasswordCorrect = CryptoHashing.ScryptCheckPassword(rawPass, _user.Cookie.PasswordHashSalt, storedSaltedPassword);
+            bool isPasswordCorrect = CryptoHashing.CompareSaltedHash(rawPass, _user.Cookie.PasswordHashSalt, storedSaltedPassword);
 
             bool isCorrectUser = username.Equals(_user.UserName, StringComparison.InvariantCultureIgnoreCase);
 

@@ -17,14 +17,14 @@ namespace UnitTests
         {
             var passwordRaw = "YELLOW SUBMARINE";
             var usernameRaw = "testuser";
+            var saltForKey = CryptoHashing.GenerateSalt();
+            var saltForHash = CryptoHashing.GenerateSalt();
             var password = new SecureString();
 
             password.PopulateWithString(passwordRaw);
 
-            var passwordSalted = CryptoHashing.ScryptHashPassword(passwordRaw);
-            var usernameSalted = CryptoHashing.ScryptHashPassword(usernameRaw);
-            var saltForKey = CryptoHashing.GenerateSalt();
-            var saltForHash = CryptoHashing.GenerateSalt();
+            var passwordSalted = CryptoHashing.GenerateSaltedHash(passwordRaw, saltForHash);
+            var usernameSalted = CryptoHashing.GenerateSaltedHash(usernameRaw, saltForHash);            
 
             _correctUser = new User(usernameRaw,
                                     password,
@@ -39,8 +39,8 @@ namespace UnitTests
 
             var saltForKey = CryptoHashing.GenerateSalt();
             var saltForHash = CryptoHashing.GenerateSalt(64);
-            var passwordSalted = CryptoHashing.ScryptHashPassword(rawPass, saltForHash);
-            var usernameSalted = CryptoHashing.ScryptHashPassword(username, saltForHash);
+            var passwordSalted = CryptoHashing.GenerateSaltedHash(rawPass, saltForHash);
+            var usernameSalted = CryptoHashing.GenerateSaltedHash(username, saltForHash);
 
             _correctUser = new User(username,
                                     password,

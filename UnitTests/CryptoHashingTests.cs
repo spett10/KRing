@@ -13,27 +13,29 @@ namespace UnitTests
     public class CryptoHashingTests
     {
         [TestMethod]
-        public void ScryptEncoding_GivingCorrect_ShouldSucced()
+        public void PBKDF2_GivingCorrect_ShouldSucced()
         {
             var password = "UggaBuggaSuperSecret";
+            var salt = CryptoHashing.GenerateSalt();
 
-            string hashedPassword = CryptoHashing.ScryptHashPassword(password);
+            var hashedPassword = Convert.ToBase64String(CryptoHashing.GenerateSaltedHash(password, salt));
 
-            bool isCorrectPassword = CryptoHashing.ScryptCheckPassword(password, hashedPassword);
+            bool isCorrectPassword = CryptoHashing.CompareSaltedHash(password, salt, hashedPassword);
 
             Assert.IsTrue(isCorrectPassword);
         }
 
         [TestMethod]
-        public void ScryptEncoding_GivingIncorrect_ShouldFail()
+        public void PBKDF2_GivingIncorrect_ShouldFail()
         {
             var password = "UggaBuggaSuperSecret";
+            var salt = CryptoHashing.GenerateSalt();
 
-            string hashedPassword = CryptoHashing.ScryptHashPassword(password);
-            
-            var wrongPassword = "UggaBuggaSuperSecret1";
+            var hashedPassword = Convert.ToBase64String(CryptoHashing.GenerateSaltedHash(password, salt));
 
-            bool isCorrectPassword = CryptoHashing.ScryptCheckPassword(wrongPassword, hashedPassword);
+            var wrongpassword = "UggaBuggaSuperSecret1";
+
+            bool isCorrectPassword = CryptoHashing.CompareSaltedHash(wrongpassword, salt, hashedPassword);
 
             Assert.IsFalse(isCorrectPassword);
         }
@@ -90,17 +92,6 @@ namespace UnitTests
             cipher.tag[0] ^= byte.MaxValue;
 
             var decryptedRaw = Aes256AuthenticatedCipher.Decrypt(cipher, key, iv);
-        }
-
-        [TestMethod]
-        public void Scrypt_SaltAndData_ShouldBeEqual()
-        {
-            var password = "LOLOL";          
-            var salt = CryptoHashing.GenerateSalt(64);
-                        
-            var hashed = CryptoHashing.ScryptHashPassword(password, salt);
-
-            Assert.IsTrue(CryptoHashing.ScryptCheckPassword(password, salt, hashed));
         }
     }
 }

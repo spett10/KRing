@@ -54,10 +54,6 @@
     <AssemblyOriginatorKeyFile>assemblysigning.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Scrypt, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Scrypt.NET.1.1.0\lib\net20\Scrypt.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Security.Cryptography">
       <HintPath>..\..\..\..\..\Downloads\Security.Cryptography_1.7.2\Security.Cryptography.dll</HintPath>
     </Reference>

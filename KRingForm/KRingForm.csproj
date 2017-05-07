@@ -191,7 +191,7 @@
   <PropertyGroup>
     <PostBuildEvent>cd $(TargetDir)
 cd Data
-rmdir /q /s Debug
+del /q /s Debug
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

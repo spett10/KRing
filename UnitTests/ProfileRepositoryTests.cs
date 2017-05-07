@@ -18,11 +18,12 @@ namespace UnitTests
         {
             string username = "Alice";
             var password = "Super Secure";
-
-            var userSalted = CryptoHashing.ScryptHashPassword(username);
-            var passwordSalted = CryptoHashing.ScryptHashPassword(password);
             var keySalt = CryptoHashing.GenerateSalt();
             var hashSalt = CryptoHashing.GenerateSalt();
+
+            var userSalted = CryptoHashing.GenerateSaltedHash(username, hashSalt);
+            var passwordSalted = CryptoHashing.GenerateSaltedHash(password, hashSalt);
+            
 
             var cookie = new SecurityData(passwordSalted, userSalted, keySalt, hashSalt, hashSalt);
 
@@ -43,7 +44,7 @@ namespace UnitTests
 
             var password = "Super Secure";
 
-            var isValidPassword = CryptoHashing.ScryptCheckPassword(password, readUser.Cookie.HashedPassword); //think when we read the users password is not the password but the hashed password
+            var isValidPassword = CryptoHashing.CompareSaltedHash(password, readUser.Cookie.PasswordHashSalt, readUser.Cookie.HashedPassword); //think when we read the users password is not the password but the hashed password
             Assert.IsTrue(isValidPassword);
             
             var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.KeySalt, _user.Cookie.KeySalt);
@@ -99,7 +100,7 @@ namespace UnitTests
 
             string username = "Bob";
             var salt = CryptoHashing.GenerateSalt();
-            var passwordSalted = CryptoHashing.GenerateSaltedHash(securePassword, salt);
+            var passwordSalted = CryptoHashing.GenerateSaltedHash(_user.PlaintextPassword, salt);
             var userSalted = CryptoHashing.GenerateSaltedHash(username, salt);
             var keySalt = CryptoHashing.GenerateSalt();
             var hashSalt = CryptoHashing.GenerateSalt();
