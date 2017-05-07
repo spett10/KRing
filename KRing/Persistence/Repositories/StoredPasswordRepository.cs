@@ -43,12 +43,10 @@ namespace KRing.Persistence.Repositories
         {
 #if DEBUG
             _dataConfig = new DataConfig(
-                               ConfigurationManager.AppSettings["relativemetaPathDebug"],
                                ConfigurationManager.AppSettings["relativedbPathDebug"],
                                ConfigurationManager.AppSettings["relativeconfigPathDebug"]);
 #else
             _dataConfig = new DataConfig(
-                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativemetaPath"],
                                base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"],
                                base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeconfigPath"]);
 #endif
@@ -59,7 +57,6 @@ namespace KRing.Persistence.Repositories
             _count = _dataConfig.GetStorageCount();
             _saltForEncrKey = encrKeySalt;
             _saltForMacKey = macKeySalt;
-            //SetupMeta();
 
             _password = password;
             _encrKey = DeriveKey(password, _saltForEncrKey);
@@ -87,7 +84,6 @@ namespace KRing.Persistence.Repositories
             _saltForEncrKey = new byte[_ivLength];
             _saltForEncrKey = encrKeySalt;
             _saltForMacKey = macKeySalt;
-            //SetupMeta();
 
             _password = password;
             _encrKey = DeriveKey(password, _saltForEncrKey);
@@ -196,10 +192,6 @@ namespace KRing.Persistence.Repositories
 
         public async Task WriteEntriesToDbAsync()
         {
-            //UpdateMeta();
-
-            //_encrKey = DeriveKey(_password, _saltForEncrKey);
-
             using (FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create))
             using (StreamWriter streamWriter = new StreamWriter(fileStream))
             {
@@ -241,10 +233,6 @@ namespace KRing.Persistence.Repositories
 
         public void WriteEntriesToDb()
         {
-            //UpdateMeta();
-
-            //_encrKey = DeriveKey(_password, _saltForEncrKey);
-
             using(FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create))
             using (StreamWriter streamWriter = new StreamWriter(fileStream))
             {
@@ -390,59 +378,6 @@ namespace KRing.Persistence.Repositories
             }
         }
         
-        //private async void UpdateMetaAsync()
-        //{
-        //    using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Create))
-        //    {
-        //        _saltForEncrKey = CryptoHashing.GenerateSalt(_ivLength);
-        //        await fs.WriteAsync(_saltForEncrKey, 0, _saltForEncrKey.Length);
-        //    }
-        //}
-
-        //private void UpdateMeta()
-        //{
-        //    using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Create))
-        //    {
-        //        _saltForEncrKey = CryptoHashing.GenerateSalt(_ivLength);
-        //        fs.Write(_saltForEncrKey, 0, _saltForEncrKey.Length);
-        //    }
-        //}
-
-        //private async void SetupMetaAsync()
-        //{
-        //    if (_count > 0)
-        //    {
-        //        using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Open))
-        //        {
-        //            await fs.ReadAsync(_saltForEncrKey, 0, _saltForEncrKey.Length);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        _saltForEncrKey = CryptoHashing.GenerateSalt(_ivLength);
-        //    }
-        //}
-
-        //private void SetupMeta()
-        //{
-        //    if (_count > 0)
-        //    {
-        //        using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Open))
-        //        {
-        //            fs.Read(_saltForEncrKey, 0, _saltForEncrKey.Length);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        _saltForEncrKey = CryptoHashing.GenerateSalt(_ivLength);
-        //    }
-        //}
-
-        //private byte[] DeriveKey(SecureString password)
-        //{
-        //    return CryptoHashing.DeriveKeyFromPasswordAndSalt(password, _saltForEncrKey, _keyLength);
-        //}
-
         private byte[] DeriveKey(SecureString password, byte[] iv)
         {
             return CryptoHashing.DeriveKeyFromPasswordAndSalt(password, iv, _keyLength);
