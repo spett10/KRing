@@ -92,7 +92,7 @@ namespace KRing.Core
             var securePassword = new SecureString();
             securePassword.PopulateWithString(_currentSession.User.PlaintextPassword);
 
-            _dbController = new StoredPasswordController(new StoredPasswordRepository(securePassword));
+            _dbController = new StoredPasswordController(new StoredPasswordRepository(securePassword, _currentSession.User.Cookie.EncryptionKeySalt, _currentSession.User.Cookie.MacKeySalt));
             if (_currentSession.IsLoggedIn)
             {
                 _isRunning = true;

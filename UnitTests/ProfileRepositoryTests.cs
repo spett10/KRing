@@ -18,14 +18,15 @@ namespace UnitTests
         {
             string username = "Alice";
             var password = "Super Secure";
-            var keySalt = CryptoHashing.GenerateSalt();
+            var encrKeySalt = CryptoHashing.GenerateSalt();
+            var macKeySalt = CryptoHashing.GenerateSalt();
             var hashSalt = CryptoHashing.GenerateSalt();
 
             var userSalted = CryptoHashing.GenerateSaltedHash(username, hashSalt);
             var passwordSalted = CryptoHashing.GenerateSaltedHash(password, hashSalt);
             
 
-            var cookie = new SecurityData(passwordSalted, userSalted, keySalt, hashSalt, hashSalt);
+            var cookie = new SecurityData(passwordSalted, userSalted, encrKeySalt, macKeySalt, hashSalt, hashSalt);
 
             var securePassword = new SecureString();
             securePassword.PopulateWithString(password);
@@ -47,14 +48,14 @@ namespace UnitTests
             var isValidPassword = CryptoHashing.CompareSaltedHash(password, readUser.Cookie.PasswordHashSalt, readUser.Cookie.HashedPassword); //think when we read the users password is not the password but the hashed password
             Assert.IsTrue(isValidPassword);
             
-            var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.KeySalt, _user.Cookie.KeySalt);
+            var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.EncryptionKeySalt, _user.Cookie.EncryptionKeySalt);
             Assert.AreEqual(keysaltIsEqual, true);
             
             Assert.AreEqual(_user.Cookie.HashedPassword, readUser.Cookie.HashedPassword);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [ExpectedException(typeof(System.IO.IOException))]
         public void ReadUser_WithoutWritingFirst_ShouldThrowError()
         {
             var repository = new ProfileRepository();
@@ -76,7 +77,7 @@ namespace UnitTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [ExpectedException(typeof(System.IO.IOException))]
         public void WriteUser_DeleteUser_ReadUser_ShouldThrowError()
         {
             var repository = new ProfileRepository();
@@ -102,10 +103,11 @@ namespace UnitTests
             var salt = CryptoHashing.GenerateSalt();
             var passwordSalted = CryptoHashing.GenerateSaltedHash(_user.PlaintextPassword, salt);
             var userSalted = CryptoHashing.GenerateSaltedHash(username, salt);
-            var keySalt = CryptoHashing.GenerateSalt();
+            var encrKeySalt = CryptoHashing.GenerateSalt();
+            var macKeySalt = CryptoHashing.GenerateSalt();
             var hashSalt = CryptoHashing.GenerateSalt();
             
-            var otherCookie = new SecurityData(passwordSalted, userSalted, keySalt, hashSalt, hashSalt);
+            var otherCookie = new SecurityData(passwordSalted, userSalted, encrKeySalt, macKeySalt, hashSalt, hashSalt);
             var otherUser = new User(username, securePassword, _user.Cookie);
 
             repository.WriteUser(otherUser);
@@ -114,7 +116,7 @@ namespace UnitTests
 
             Assert.AreEqual(otherUser.Cookie.HashedPassword, readUser.Cookie.HashedPassword);
 
-            var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.KeySalt, otherUser.Cookie.KeySalt);
+            var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.EncryptionKeySalt, otherUser.Cookie.EncryptionKeySalt);
             Assert.AreEqual(keysaltIsEqual, true);
 
             Assert.AreEqual(readUser.Cookie.HashedPassword, otherUser.Cookie.HashedPassword);

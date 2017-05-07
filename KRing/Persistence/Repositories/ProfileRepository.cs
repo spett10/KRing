@@ -3,7 +3,6 @@ using System.IO;
 using System.Security;
 using KRing.Core.Model;
 using KRing.Extensions;
-using System.Transactions;
 using System.Configuration;
 using KRing.Persistence.Interfaces;
 using System.Threading.Tasks;
@@ -55,7 +54,8 @@ namespace KRing.Persistence.Repositories
                 profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.UsernameHashSalt));
                 profileWriter.WriteLine(user.Cookie.HashedPassword);
                 profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.PasswordHashSalt));
-                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.KeySalt));
+                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.EncryptionKeySalt));
+                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.MacKeySalt));
                 
             }
         }
@@ -74,7 +74,8 @@ namespace KRing.Persistence.Repositories
                 await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.UsernameHashSalt));
                 await profileWriter.WriteLineAsync(user.Cookie.HashedPassword);
                 await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.PasswordHashSalt));
-                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.KeySalt));
+                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.EncryptionKeySalt));
+                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.MacKeySalt));
             }
         }
 
@@ -83,25 +84,29 @@ namespace KRing.Persistence.Repositories
             using (StreamReader profileReader = new StreamReader(_profilePath))
             {
                 var storedUser = profileReader.ReadLine();
-                if (storedUser == null) { throw new ArgumentNullException("Empty Profile"); }
+                if (storedUser == null) { throw new IOException("Empty Profile"); }
 
                 var storedUsernameSalt = profileReader.ReadLine();
-                if(storedUsernameSalt == null) { throw new ArgumentNullException("Empty Username Salt"); }
+                if(storedUsernameSalt == null) { throw new IOException("Empty Username Salt"); }
                 var userSalt = Convert.FromBase64String(storedUsernameSalt);
 
                 var storedPasswordSalted = profileReader.ReadLine();
-                if (storedPasswordSalted == null) { throw new ArgumentNullException("Empty Password for profile"); }
+                if (storedPasswordSalted == null) { throw new IOException("Empty Password for profile"); }
 
                 
                 var storedHashSalt = profileReader.ReadLine();
-                if (storedHashSalt == null) { throw new ArgumentNullException("No salt for password"); }
+                if (storedHashSalt == null) { throw new IOException("No salt for password"); }
                 var hashSalt = Convert.FromBase64String(storedHashSalt);
 
-                var storedKeySalt = profileReader.ReadLine();
-                if (storedKeySalt == null) { throw new ArgumentNullException("No salt for key"); }
-                var keySalt = Convert.FromBase64String(storedKeySalt);
+                var storedEncrKeySalt = profileReader.ReadLine();
+                if (storedEncrKeySalt == null) { throw new IOException("No salt for encryption key"); }
+                var encrKeySalt = Convert.FromBase64String(storedEncrKeySalt);
 
-                var cookie = new SecurityData(storedPasswordSalted, storedUser, keySalt, hashSalt, userSalt);
+                var storedMacKeySalt = profileReader.ReadLine();
+                if(storedMacKeySalt == null) { throw new IOException("No salt for mac key"); }
+                var macKeySalt = Convert.FromBase64String(storedMacKeySalt);
+
+                var cookie = new SecurityData(storedPasswordSalted, storedUser, encrKeySalt, macKeySalt, hashSalt, userSalt);
 
                 return new User(" ",cookie);
             }
@@ -112,24 +117,28 @@ namespace KRing.Persistence.Repositories
             using (StreamReader profileReader = new StreamReader(_profilePath))
             {
                 var storedUser = await profileReader.ReadLineAsync();
-                if (storedUser == null) { throw new ArgumentNullException("Empty Profile"); }
+                if (storedUser == null) { throw new IOException("Empty Profile"); }
 
                 var storedUsernameSalt = await profileReader.ReadLineAsync();
-                if (storedUsernameSalt == null) { throw new ArgumentNullException("Empty Username Salt"); }
+                if (storedUsernameSalt == null) { throw new IOException("Empty Username Salt"); }
                 var userSalt = Convert.FromBase64String(storedUsernameSalt);
 
                 var storedPasswordSalted = await profileReader.ReadLineAsync();
-                if (storedPasswordSalted == null) { throw new ArgumentNullException("Empty Password for profile"); }
+                if (storedPasswordSalted == null) { throw new IOException("Empty Password for profile"); }
 
                 var storedHashSalt = await profileReader.ReadLineAsync();
-                if (storedHashSalt == null) { throw new ArgumentNullException("No salt for password"); }
+                if (storedHashSalt == null) { throw new IOException("No salt for password"); }
                 var hashSalt = Convert.FromBase64String(storedHashSalt);
 
-                var storedKeySalt = await profileReader.ReadLineAsync();
-                if (storedKeySalt == null) { throw new ArgumentNullException("No salt for key"); }
-                var keySalt = Convert.FromBase64String(storedKeySalt);                
+                var storedEncrKeySalt = await profileReader.ReadLineAsync();
+                if (storedEncrKeySalt == null) { throw new IOException("No salt for key"); }
+                var encrKeySalt = Convert.FromBase64String(storedEncrKeySalt);
 
-                var cookie = new SecurityData(storedPasswordSalted, storedUser, keySalt, hashSalt, userSalt);
+                var storedMacKeySalt = await profileReader.ReadLineAsync();
+                if (storedMacKeySalt == null) { throw new IOException("No salt for mac key"); }
+                var macKeySalt = Convert.FromBase64String(storedMacKeySalt);
+
+                var cookie = new SecurityData(storedPasswordSalted, storedUser, encrKeySalt, macKeySalt, hashSalt, userSalt);
 
                 return new User(" ", cookie);
             }

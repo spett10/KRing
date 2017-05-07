@@ -6,12 +6,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security;
-using System.Security.Cryptography;
-using System.Transactions;
 using System.Configuration;
 using KRing.Persistence.Interfaces;
 using KRing.Interfaces;
-using Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,11 +20,13 @@ namespace KRing.Persistence.Repositories
         private readonly int _count;
         private List<StoredPassword> _entries;
         
-        private byte[] _iv;
-        private byte[] _key;
+        private byte[] _saltForEncrKey;
+        private byte[] _saltForMacKey;
+        private byte[] _encrKey;
+        private byte[] _macKey;
 
         private readonly int _keyLength = 32;
-        private readonly int _ivLength = 12;
+        private readonly int _ivLength = 16;
 
         private readonly SecureString _password;
 
@@ -40,7 +39,7 @@ namespace KRing.Persistence.Repositories
         /// The password must be the same. Otherwise, the decryption will fail and an error must be thrown.
         /// </summary>
         /// <param name="password"></param>
-        public StoredPasswordRepository(SecureString password)
+        public StoredPasswordRepository(SecureString password, byte[] encrKeySalt, byte[] macKeySalt)
         {
 #if DEBUG
             _dataConfig = new DataConfig(
@@ -58,11 +57,13 @@ namespace KRing.Persistence.Repositories
             EncryptionErrorOccured = false;
 
             _count = _dataConfig.GetStorageCount();
-            _iv = new byte[_ivLength];
+            _saltForEncrKey = encrKeySalt;
+            _saltForMacKey = macKeySalt;
             SetupMeta();
 
             _password = password;
-            _key = DeriveKey(password);
+            _encrKey = DeriveKey(password, _saltForEncrKey);
+            _macKey = DeriveKey(password, _saltForMacKey);
             
             if(IsDbEmpty())
             {
@@ -75,7 +76,7 @@ namespace KRing.Persistence.Repositories
             }            
         }
 
-        public StoredPasswordRepository(SecureString password, IDataConfig config)
+        public StoredPasswordRepository(SecureString password, byte[] encrKeySalt, byte[] macKeySalt, IDataConfig config)
         {
             _dataConfig = config;
             
@@ -83,11 +84,14 @@ namespace KRing.Persistence.Repositories
             EncryptionErrorOccured = false;
 
             _count = _dataConfig.GetStorageCount();
-            _iv = new byte[_ivLength];
+            _saltForEncrKey = new byte[_ivLength];
+            _saltForEncrKey = encrKeySalt;
+            _saltForMacKey = macKeySalt;
             SetupMeta();
 
             _password = password;
-            _key = DeriveKey(password);
+            _encrKey = DeriveKey(password, _saltForEncrKey);
+            _macKey = DeriveKey(password, _saltForMacKey);
 
             if (IsDbEmpty())
             {
@@ -194,7 +198,7 @@ namespace KRing.Persistence.Repositories
         {
             UpdateMeta();
 
-            _key = DeriveKey(_password);
+            _encrKey = DeriveKey(_password);
 
             using (FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create))
             using (StreamWriter streamWriter = new StreamWriter(fileStream))
@@ -211,8 +215,8 @@ namespace KRing.Persistence.Repositories
                         var ivForDomain = CryptoHashing.GenerateSalt(_ivLength);
                         var ivForPass = CryptoHashing.GenerateSalt(_ivLength);
 
-                        var domainCipher = Aes256AuthenticatedCipher.Encrypt(rawDomain, _key, ivForDomain);
-                        var passCipher = Aes256AuthenticatedCipher.Encrypt(rawPass, _key, ivForPass);
+                        var domainCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawDomain, ivForDomain, _encrKey, _macKey);
+                        var passCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawPass, ivForPass, _encrKey, _macKey);
 
                         /* write domain, tag, iv */
                         await streamWriter.WriteLineAsync(domainCipher.GetCipherAsBase64());
@@ -239,7 +243,7 @@ namespace KRing.Persistence.Repositories
         {
             UpdateMeta();
 
-            _key = DeriveKey(_password);
+            _encrKey = DeriveKey(_password);
 
             using(FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create))
             using (StreamWriter streamWriter = new StreamWriter(fileStream))
@@ -256,8 +260,8 @@ namespace KRing.Persistence.Repositories
                         var ivForDomain = CryptoHashing.GenerateSalt(_ivLength);
                         var ivForPass = CryptoHashing.GenerateSalt(_ivLength);
 
-                        var domainCipher = Aes256AuthenticatedCipher.Encrypt(rawDomain, _key, ivForDomain);
-                        var passCipher = Aes256AuthenticatedCipher.Encrypt(rawPass, _key, ivForPass);
+                        var domainCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawDomain, ivForDomain, _encrKey, _macKey);
+                        var passCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawPass, ivForPass, _encrKey, _macKey);
 
                         /* write domain, tag, iv */
                         streamWriter.WriteLine(domainCipher.GetCipherAsBase64());
@@ -311,8 +315,8 @@ namespace KRing.Persistence.Repositories
                             var domainIv = Convert.FromBase64String(await domainIvTask);
                             var passwordIv = Convert.FromBase64String(await passwordIvTask);
 
-                            var domain = Aes256AuthenticatedCipher.Decrypt(domainCipher, _key, domainIv);
-                            var password = Aes256AuthenticatedCipher.Decrypt(passwordCipher, _key, passwordIv);
+                            var domain = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(domainCipher, _encrKey, domainIv, _macKey);
+                            var password = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
 
                             StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(password));
                             entries.Add(newEntry);
@@ -362,8 +366,8 @@ namespace KRing.Persistence.Repositories
                         try
                         {
                             /* DECRYPT */
-                            var domain = Aes256AuthenticatedCipher.Decrypt(domainCipher, _key, domainIv);
-                            var password = Aes256AuthenticatedCipher.Decrypt(passwordCipher, _key, passwordIv);
+                            var domain = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(domainCipher, _encrKey, domainIv, _macKey);
+                            var password = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
 
                             /* CREATE DBENTRY */
                             StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(password));
@@ -390,8 +394,8 @@ namespace KRing.Persistence.Repositories
         {
             using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Create))
             {
-                _iv = CryptoHashing.GenerateSalt(_ivLength);
-                await fs.WriteAsync(_iv, 0, _iv.Length);
+                _saltForEncrKey = CryptoHashing.GenerateSalt(_ivLength);
+                await fs.WriteAsync(_saltForEncrKey, 0, _saltForEncrKey.Length);
             }
         }
 
@@ -399,8 +403,8 @@ namespace KRing.Persistence.Repositories
         {
             using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Create))
             {
-                _iv = CryptoHashing.GenerateSalt(_ivLength);
-                fs.Write(_iv, 0, _iv.Length);
+                _saltForEncrKey = CryptoHashing.GenerateSalt(_ivLength);
+                fs.Write(_saltForEncrKey, 0, _saltForEncrKey.Length);
             }
         }
 
@@ -410,12 +414,12 @@ namespace KRing.Persistence.Repositories
             {
                 using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Open))
                 {
-                    await fs.ReadAsync(_iv, 0, _iv.Length);
+                    await fs.ReadAsync(_saltForEncrKey, 0, _saltForEncrKey.Length);
                 }
             }
             else
             {
-                _iv = CryptoHashing.GenerateSalt(_ivLength);
+                _saltForEncrKey = CryptoHashing.GenerateSalt(_ivLength);
             }
         }
 
@@ -425,18 +429,23 @@ namespace KRing.Persistence.Repositories
             {
                 using (FileStream fs = new FileStream(_dataConfig.metaPath, FileMode.Open))
                 {
-                    fs.Read(_iv, 0, _iv.Length);
+                    fs.Read(_saltForEncrKey, 0, _saltForEncrKey.Length);
                 }
             }
             else
             {
-                _iv = CryptoHashing.GenerateSalt(_ivLength);
+                _saltForEncrKey = CryptoHashing.GenerateSalt(_ivLength);
             }
         }
 
         private byte[] DeriveKey(SecureString password)
         {
-            return CryptoHashing.DeriveKeyFromPasswordAndSalt(password, _iv, _keyLength);
+            return CryptoHashing.DeriveKeyFromPasswordAndSalt(password, _saltForEncrKey, _keyLength);
+        }
+
+        private byte[] DeriveKey(SecureString password, byte[] iv)
+        {
+            return CryptoHashing.DeriveKeyFromPasswordAndSalt(password, iv, _keyLength);
         }
 
         private void DeleteDb()

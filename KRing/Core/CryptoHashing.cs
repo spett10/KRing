@@ -138,57 +138,125 @@ namespace KRing.Core
             }
         }
 
-        public static AuthenticatedCiphertext Encrypt(byte[] plaintext, byte[] key, byte[] iv)
+        public static AuthenticatedCiphertext CBCEncryptThenHMac(byte[] plaintext, byte[] encryptionIv, byte[] encrKey, byte[] macKey)
         {
-            if (iv.Length != 12) throw new ArgumentException(nameof(iv) + " must be 12 bytes long");
-            if (key.Length != 32) throw new ArgumentException(nameof(key) + " must be 32 bytes long");
-
-            using (AuthenticatedAesCng aes = new AuthenticatedAesCng())
+            if (CryptoHashing.CompareByteArrays(encrKey, macKey))
             {
-                aes.CngMode = CngChainingMode.Gcm;
+                throw new ArgumentException("Using same key for encryption and mac is insecure");
+            }
 
-                aes.Key = key;
-                aes.IV = iv;
+            var cipher = new AuthenticatedCiphertext();
+
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            {
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+                aes.Key = encrKey;
+                aes.IV = encryptionIv;
 
                 using (MemoryStream ms = new MemoryStream())
-                using(IAuthenticatedCryptoTransform encrypt = aes.CreateAuthenticatedEncryptor())
-                using(CryptoStream cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write))
+                using (var encryptor = aes.CreateEncryptor())
+                using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                 {
                     cs.Write(plaintext, 0, plaintext.Length);
                     cs.FlushFinalBlock();
-                    var tag = encrypt.GetTag();
-                    var cipher = ms.ToArray();
-
-                    return new AuthenticatedCiphertext(cipher, tag);
+                    cipher.ciphertext = ms.ToArray();
                 }
             }
+
+            using (var hmac = new HMACSHA256(macKey))
+            {
+                cipher.tag = hmac.ComputeHash(cipher.ciphertext);
+            }
+
+            return cipher;
         }
 
-        public static byte[] Decrypt(AuthenticatedCiphertext ciphertext, byte[] key, byte[] iv)
+        public static byte[] VerifyMacThenCBCDecrypt(AuthenticatedCiphertext ciphertext, byte[] encrKey, byte[] encrIv, byte[] hmacKey)
         {
-            if (iv.Length != 12) throw new ArgumentException(nameof(iv) + " must be 12 bytes long");
-            if (key.Length != 32) throw new ArgumentException(nameof(key) + " must be 32 bytes long");
-
-            using (AuthenticatedAesCng aes = new AuthenticatedAesCng())
+            if (CryptoHashing.CompareByteArrays(encrKey, hmacKey))
             {
-                aes.CngMode = CngChainingMode.Gcm;
+                throw new ArgumentException("Using same key for encryption and mac is insecure");
+            }
 
-                aes.Key = key;
-                aes.IV = iv;
-                aes.Tag = ciphertext.tag;
+            using (var hmac = new HMACSHA256(hmacKey))
+            {
+                var computedHash = hmac.ComputeHash(ciphertext.ciphertext);
+                if(!CryptoHashing.CompareByteArrays(computedHash, ciphertext.tag))
+                {
+                    throw new CryptographicException("Invalid HMAC");
+                }
+            }
+
+            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+            {
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.PKCS7;
+                aes.Key = encrKey;
+                aes.IV = encrIv;
 
                 using (MemoryStream ms = new MemoryStream())
-                using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Write))
+                using (var encryptor = aes.CreateDecryptor())
+                using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                 {
                     cs.Write(ciphertext.ciphertext, 0, ciphertext.ciphertext.Length);
-
-                    //If the authentication tag does not match, we'll fail here with a 
-                    //CryptographicException, and the ciphertext will not be decrypted
                     cs.FlushFinalBlock();
-
                     return ms.ToArray();
                 }
             }
         }
+
+        //public static AuthenticatedCiphertext Encrypt(byte[] plaintext, byte[] key, byte[] iv)
+        //{
+        //    if (iv.Length != 12) throw new ArgumentException(nameof(iv) + " must be 12 bytes long");
+        //    if (key.Length != 32) throw new ArgumentException(nameof(key) + " must be 32 bytes long");
+
+        //    using (AuthenticatedAesCng aes = new AuthenticatedAesCng())
+        //    {
+        //        aes.CngMode = CngChainingMode.Gcm;
+
+        //        aes.Key = key;
+        //        aes.IV = iv;
+
+        //        using (MemoryStream ms = new MemoryStream())
+        //        using(IAuthenticatedCryptoTransform encrypt = aes.CreateAuthenticatedEncryptor())
+        //        using(CryptoStream cs = new CryptoStream(ms, encrypt, CryptoStreamMode.Write))
+        //        {
+        //            cs.Write(plaintext, 0, plaintext.Length);
+        //            cs.FlushFinalBlock();
+        //            var tag = encrypt.GetTag();
+        //            var cipher = ms.ToArray();
+
+        //            return new AuthenticatedCiphertext(cipher, tag);
+        //        }
+        //    }
+        //}
+
+        //public static byte[] Decrypt(AuthenticatedCiphertext ciphertext, byte[] key, byte[] iv)
+        //{
+        //    if (iv.Length != 12) throw new ArgumentException(nameof(iv) + " must be 12 bytes long");
+        //    if (key.Length != 32) throw new ArgumentException(nameof(key) + " must be 32 bytes long");
+
+        //    using (AuthenticatedAesCng aes = new AuthenticatedAesCng())
+        //    {
+        //        aes.CngMode = CngChainingMode.Gcm;
+
+        //        aes.Key = key;
+        //        aes.IV = iv;
+        //        aes.Tag = ciphertext.tag;
+
+        //        using (MemoryStream ms = new MemoryStream())
+        //        using (CryptoStream cs = new CryptoStream(ms, aes.CreateDecryptor(), CryptoStreamMode.Write))
+        //        {
+        //            cs.Write(ciphertext.ciphertext, 0, ciphertext.ciphertext.Length);
+
+        //            //If the authentication tag does not match, we'll fail here with a 
+        //            //CryptographicException, and the ciphertext will not be decrypted
+        //            cs.FlushFinalBlock();
+
+        //            return ms.ToArray();
+        //        }
+        //    }
+        //}
     }
 }

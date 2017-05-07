@@ -41,17 +41,18 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void AesGCM_GiveCorrectKeyAndIv_ShouldBeEqual()
+        public void CBCThenHMAC_GiveCorrectKeyAndIv_ShouldBeEqual()
         {
             var plaintext = "Foo Bar Baz";
             var rawPlaintext = Encoding.UTF8.GetBytes(plaintext);
 
-            var key = Encoding.UTF8.GetBytes("YELLOW SUBMARINEYELLOW SUBMARINE");
-            var iv = CryptoHashing.GenerateSalt(12);
+            var encrkey = Encoding.UTF8.GetBytes("YELLOW SUBMARINEYELLOW SUBMARINE");
+            var hmacKEy = Encoding.UTF8.GetBytes("MELLOW SUBMARINEMELLOW SUBMARINE");
+            var iv = CryptoHashing.GenerateSalt();
 
-            var cipher = Aes256AuthenticatedCipher.Encrypt(rawPlaintext, key, iv);
+            var cipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawPlaintext, iv, encrkey, hmacKEy);
 
-            var decryptedRaw = Aes256AuthenticatedCipher.Decrypt(cipher, key, iv);
+            var decryptedRaw = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(cipher, encrkey, iv, hmacKEy);
 
             var plaintextAfterDecryption = Encoding.UTF8.GetString(decryptedRaw);
 
@@ -60,38 +61,95 @@ namespace UnitTests
 
         [TestMethod]
         [ExpectedException(typeof(CryptographicException))]
-        public void AesGCM_FiddleWithData_ShouldThrowException()
+        public void CBCThenHMAC_FiddleWithCipher_ShouldThrowException()
         {
             var plaintext = "Foo Bar Baz";
             var rawPlaintext = Encoding.UTF8.GetBytes(plaintext);
 
             var key = Encoding.UTF8.GetBytes("YELLOW SUBMARINEYELLOW SUBMARINE");
-            var iv = CryptoHashing.GenerateSalt(12);
+            var hmacKEy = Encoding.UTF8.GetBytes("MELLOW SUBMARINEMELLOW SUBMARINE");
+            var iv = CryptoHashing.GenerateSalt();
 
-            var cipher = Aes256AuthenticatedCipher.Encrypt(rawPlaintext, key, iv);
+            var cipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawPlaintext, key, iv, hmacKEy);
 
             /* FIDDLE */
             cipher.ciphertext[0] ^= byte.MaxValue;
 
-            var decryptedRaw = Aes256AuthenticatedCipher.Decrypt(cipher, key, iv);
+            var decryptedRaw = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(cipher, key, iv, hmacKEy);
         }
 
         [TestMethod]
         [ExpectedException(typeof(CryptographicException))]
-        public void AesGCM_FiddleWithTag_ShouldThrowException()
+        public void CBCThenHMAC_FiddleWithTag_ShouldThrowException()
         {
             var plaintext = "Foo Bar Baz";
             var rawPlaintext = Encoding.UTF8.GetBytes(plaintext);
 
             var key = Encoding.UTF8.GetBytes("YELLOW SUBMARINEYELLOW SUBMARINE");
-            var iv = CryptoHashing.GenerateSalt(12);
+            var hmacKEy = Encoding.UTF8.GetBytes("MELLOW SUBMARINEMELLOW SUBMARINE");
+            var iv = CryptoHashing.GenerateSalt();
 
-            var cipher = Aes256AuthenticatedCipher.Encrypt(rawPlaintext, key, iv);
+            var cipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawPlaintext, key, iv, hmacKEy);
 
             /* FIDDLE */
             cipher.tag[0] ^= byte.MaxValue;
 
-            var decryptedRaw = Aes256AuthenticatedCipher.Decrypt(cipher, key, iv);
+            var decryptedRaw = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(cipher, key, iv, hmacKEy);
         }
+
+
+        //[TestMethod]
+        //public void AesGCM_GiveCorrectKeyAndIv_ShouldBeEqual()
+        //{
+        //    var plaintext = "Foo Bar Baz";
+        //    var rawPlaintext = Encoding.UTF8.GetBytes(plaintext);
+
+        //    var key = Encoding.UTF8.GetBytes("YELLOW SUBMARINEYELLOW SUBMARINE");
+        //    var iv = CryptoHashing.GenerateSalt(12);
+
+        //    var cipher = Aes256AuthenticatedCipher.Encrypt(rawPlaintext, key, iv);
+
+        //    var decryptedRaw = Aes256AuthenticatedCipher.Decrypt(cipher, key, iv);
+
+        //    var plaintextAfterDecryption = Encoding.UTF8.GetString(decryptedRaw);
+
+        //    Assert.IsTrue(plaintext.Equals(plaintextAfterDecryption));
+        //}
+
+        //[TestMethod]
+        //[ExpectedException(typeof(CryptographicException))]
+        //public void AesGCM_FiddleWithData_ShouldThrowException()
+        //{
+        //    var plaintext = "Foo Bar Baz";
+        //    var rawPlaintext = Encoding.UTF8.GetBytes(plaintext);
+
+        //    var key = Encoding.UTF8.GetBytes("YELLOW SUBMARINEYELLOW SUBMARINE");
+        //    var iv = CryptoHashing.GenerateSalt(12);
+
+        //    var cipher = Aes256AuthenticatedCipher.Encrypt(rawPlaintext, key, iv);
+
+        //    /* FIDDLE */
+        //    cipher.ciphertext[0] ^= byte.MaxValue;
+
+        //    var decryptedRaw = Aes256AuthenticatedCipher.Decrypt(cipher, key, iv);
+        //}
+
+        //[TestMethod]
+        //[ExpectedException(typeof(CryptographicException))]
+        //public void AesGCM_FiddleWithTag_ShouldThrowException()
+        //{
+        //    var plaintext = "Foo Bar Baz";
+        //    var rawPlaintext = Encoding.UTF8.GetBytes(plaintext);
+
+        //    var key = Encoding.UTF8.GetBytes("YELLOW SUBMARINEYELLOW SUBMARINE");
+        //    var iv = CryptoHashing.GenerateSalt(12);
+
+        //    var cipher = Aes256AuthenticatedCipher.Encrypt(rawPlaintext, key, iv);
+
+        //    /* FIDDLE */
+        //    cipher.tag[0] ^= byte.MaxValue;
+
+        //    var decryptedRaw = Aes256AuthenticatedCipher.Decrypt(cipher, key, iv);
+        //}
     }
 }

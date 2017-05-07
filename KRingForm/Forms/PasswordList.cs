@@ -50,7 +50,7 @@ namespace KRingForm
             var securePassword = new SecureString();
             securePassword.PopulateWithString(user.PlaintextPassword);
 
-            _passwordRep = new StoredPasswordRepository(securePassword);
+            _passwordRep = new StoredPasswordRepository(securePassword, _user.Cookie.EncryptionKeySalt, _user.Cookie.MacKeySalt);
 
             UpdateList(OperationType.NoOperation);
 
