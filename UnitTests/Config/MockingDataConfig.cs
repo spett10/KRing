@@ -14,25 +14,31 @@ namespace UnitTests.Config
         public string metaPath { get; private set; }
         private string configPath;
 
+        private int _count;
+
         public MockingDataConfig(string meta, string db, string config)
         {
             metaPath = meta;
             dbPath = db;
             configPath = config;
+
+            _count = 0;
         }
 
         public int GetStorageCount()
         {
-            return 0;
+            return _count;
         }
 
         public void ClearConfig()
         {
+            _count = 0;
             return;
         }
 
         public void UpdateConfig(int count)
         {
+            _count = count;
             return;
         }
 

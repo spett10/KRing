@@ -26,15 +26,15 @@ namespace UnitTests
 
             _correctDomain = "test";
 
-            _config = new MockingDataConfig(ConfigurationManager.AppSettings["metaPathDebug"],
-                                            ConfigurationManager.AppSettings["dbPathDebug"],
-                                            ConfigurationManager.AppSettings["configPathDebug"]);
+            _config = new MockingDataConfig(ConfigurationManager.AppSettings["relativemetaPathDebug"],
+                                            ConfigurationManager.AppSettings["relativedbPathDebug"],
+                                            ConfigurationManager.AppSettings["relativeconfigPathDebug"]);
         }
 
         [TestMethod]
         public void CreateDBRepository()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password, _config);
 
             Assert.AreEqual(repository.EntryCount, 0);
         }
@@ -42,7 +42,7 @@ namespace UnitTests
         [TestMethod]
         public void AddEntry_ExistsEntry_ShouldExist()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password, _config);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -57,7 +57,7 @@ namespace UnitTests
         [ExpectedException(typeof(ArgumentException), "Error: Domain Already Exists")]
         public void AddEntry_AddAgain_ShouldThrowException()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password,_config);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -68,7 +68,7 @@ namespace UnitTests
         [TestMethod]
         public void AddEntryThenDeleteIt_ExistsEntry_ShouldNotExist()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password, _config);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
             repository.DeleteEntry(_correctDomain);
@@ -81,7 +81,7 @@ namespace UnitTests
         [TestMethod]
         public void AddSomeEntries_DeleteAll_CheckExists()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password, _config);
 
             string domain1 = "FooBar";
             string domain2 = "FooBaz";
@@ -113,7 +113,7 @@ namespace UnitTests
         [TestMethod]
         public void AddEntriesSaveDBNewDBLoadDB_DoEntriesExist_ShouldExist()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password, _config);
 
             string domain1 = "FooBar";
             string domain2 = "FooBaz";
@@ -126,7 +126,7 @@ namespace UnitTests
             repository.WriteEntriesToDb();
 
             //load db into new object, with same password. 
-            var otherRepository = new StoredPasswordRepository(_password);
+            var otherRepository = new StoredPasswordRepository(_password, _config);
             otherRepository.LoadEntriesFromDb();
 
             var existsDomain1 = otherRepository.ExistsEntry(domain1);
@@ -145,7 +145,7 @@ namespace UnitTests
         [TestMethod]
         public void AddEntryThenDelete_ShouldNotExist()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password, _config);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -159,7 +159,7 @@ namespace UnitTests
         [TestMethod]
         public void AddEntries_DeleteByIndex_ShouldSucceed()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password, _config);
             string fake_domain = "other";
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
@@ -179,7 +179,7 @@ namespace UnitTests
         [ExpectedException(typeof(ArgumentException), "domain does not exist to delete")]
         public void AddEntry_DeleteTwice_ShouldFail()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password, _config);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -193,7 +193,7 @@ namespace UnitTests
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void AddEntry_DeleteWrongIndex_ShouldFail()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password, _config);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -203,7 +203,7 @@ namespace UnitTests
         [TestMethod]
         public void UpdateEntry_ExistsAlready_ShouldSuceed()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password, _config);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -221,7 +221,7 @@ namespace UnitTests
         [ExpectedException(typeof(ArgumentException))]
         public void UpdateEntry_EntryDoesNotExist_ShouldFail()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password, _config);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -234,7 +234,7 @@ namespace UnitTests
         [ExpectedException(typeof(InvalidOperationException))]
         public void GetPasswordFromDomain_WrongDomain_ShouldReturnNull()
         {
-            var repository = new StoredPasswordRepository(_password);
+            var repository = new StoredPasswordRepository(_password, _config);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 

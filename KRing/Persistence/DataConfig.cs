@@ -73,7 +73,7 @@ namespace KRing.Persistence
                 if (readCount != null)
                 {
                     int.TryParse(readCount, out count);
-}
+                }
                 else
                 {
                     count = 0;
