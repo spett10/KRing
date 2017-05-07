@@ -47,10 +47,10 @@ namespace KRing.Core.Model
             password.PopulateWithString(rawPass);
 
             var saltForUser = CryptoHashing.GenerateSalt(HashSaltSize);
-            var saltedUsername = CryptoHashing.ScryptHashPassword(newUserName, saltForUser);
+            var saltedUsername = CryptoHashing.GenerateSaltedHash(newUserName, saltForUser);
 
             var saltForHash = CryptoHashing.GenerateSalt(HashSaltSize);
-            var saltedPassword = CryptoHashing.ScryptHashPassword(rawPass,saltForHash);
+            var saltedPassword = CryptoHashing.GenerateSaltedHash(rawPass,saltForHash);
             var saltForKey = CryptoHashing.GenerateSalt();
 
             var cookie = new SecurityData(saltedPassword, saltedUsername, saltForKey, saltForHash, saltForUser);

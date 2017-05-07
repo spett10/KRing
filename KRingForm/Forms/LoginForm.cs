@@ -42,9 +42,9 @@ namespace KRingForm
             }
             else
             {
-                var correctUsername = CryptoHashing.ScryptCheckPassword(userName, savedUser.Cookie.UsernameHashSalt, savedUser.Cookie.HashedUsername);
+                var correctUsername = CryptoHashing.CompareSaltedHash(userName, savedUser.Cookie.UsernameHashSalt, savedUser.Cookie.HashedUsername);
 
-                var correctPassword = CryptoHashing.ScryptCheckPassword(password, savedUser.Cookie.PasswordHashSalt, savedUser.Cookie.HashedPassword);
+                var correctPassword = CryptoHashing.CompareSaltedHash(password, savedUser.Cookie.PasswordHashSalt, savedUser.Cookie.HashedPassword);
 
                 if (!(correctPassword && correctUsername))
                 {

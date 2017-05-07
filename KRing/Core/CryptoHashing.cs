@@ -56,12 +56,14 @@ namespace KRing.Core
 
         }
 
-        public static byte[] GenerateSaltedHash(SecureString plaintext, byte[] salt)
+        /* Assumes base64 encoding  of input strings */
+        public static bool CompareSaltedHash(string password, byte[] salt, string hashedPassword)
         {
-            Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(plaintext.ConvertToUnsecureString(), salt, iterations);
+            Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(password, salt, iterations);
             try
             {
-                return algorithm.GetBytes(plaintext.Length + salt.Length);
+                var hashed = algorithm.GetBytes(password.Length + salt.Length);
+                return CompareByteArrays(hashed, Convert.FromBase64String(hashedPassword));
             }
             finally
             {
@@ -69,9 +71,22 @@ namespace KRing.Core
             }
         }
 
-        public static byte[] DeriveKeyFromPasswordAndSalt(SecureString plaintext, byte[] salt, int keyLength)
+        public static byte[] DeriveKeyFromPasswordAndSalt(string plaintext, byte[] salt, int keyLength)
         {
-            var raw = plaintext.ConvertToUnsecureString();
+            Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(plaintext, salt, iterations);
+            try
+            {
+                return algorithm.GetBytes(keyLength);
+            }
+            finally
+            {
+                algorithm.Dispose();
+            }
+        }
+
+        public static byte[] DeriveKeyFromPasswordAndSalt(SecureString password, byte[] salt, int keyLength)
+        {
+            var raw = password.ConvertToUnsecureString();
             Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(raw, salt, iterations);
             try
             {
@@ -80,8 +95,8 @@ namespace KRing.Core
             finally
             {
                 //TODO: should this be in the caller instead, and we take a string, or pref. a char array?
-                plaintext = new SecureString();
-                plaintext.PopulateWithString(raw);
+                password = new SecureString();
+                password.PopulateWithString(raw);
                 algorithm.Dispose();
             }
         }
