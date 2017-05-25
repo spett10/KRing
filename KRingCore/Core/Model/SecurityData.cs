@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KRing.Core.Model
+namespace KRingCore.Core.Model
 {
     public class SecurityData
     {

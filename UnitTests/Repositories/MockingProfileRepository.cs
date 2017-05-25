@@ -1,9 +1,9 @@
 ﻿using System;
-using KRing.Persistence.Interfaces;
-using KRing.Core.Model;
+using KRingCore.Persistence.Interfaces;
+using KRingCore.Core.Model;
 using System.Security;
-using KRing.Core;
-using KRing.Extensions;
+using KRingCore.Core;
+using KRingCore.Extensions;
 using System.Diagnostics;
 using System.Threading.Tasks;
 

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Security;
-using KRing.Persistence.Model;
+using KRingCore.Persistence.Model;
 using System.Threading.Tasks;
 
-namespace KRing.Persistence.Interfaces
+namespace KRingCore.Persistence.Interfaces
 {
     public interface IStoredPasswordRepository
     {

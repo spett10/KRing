@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using KRing.Extensions;
-using KRing.Core.Model;
-using KRing.Persistence.Repositories;
-using KRing.Core.Interfaces;
-using KRing.Core;
+using KRingCore.Extensions;
+using KRingCore.Core.Model;
+using KRingCore.Persistence.Repositories;
+using KRingCore.Core.Interfaces;
+using KRingCore.Core;
 
 namespace KRingForm
 {

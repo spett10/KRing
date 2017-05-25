@@ -1,12 +1,12 @@
 ﻿using System.Text.RegularExpressions;
-using KRing.Interfaces;
+using KRingCore.Interfaces;
 using System.Security;
-using KRing.Core.Interfaces;
-using KRing.Extensions;
+using KRingCore.Core.Interfaces;
+using KRingCore.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace KRing.Core
+namespace KRingCore.Core
 {
     public enum PasswordScore
     {

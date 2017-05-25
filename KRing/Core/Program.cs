@@ -4,12 +4,14 @@ using System.Security;
 using System.Text;
 using System.Threading;
 using KRing.Core.Controllers;
-using KRing.Core.Model;
+using KRingCore.Core.Model;
+using KRingCore.Core;
 using KRing.Core.View;
-using KRing.Extensions;
+using KRingCore.Extensions;
 using KRing.Interfaces;
+using KRingCore.Core.Interfaces;
 using KRing.Persistence.Controllers;
-using KRing.Persistence.Repositories;
+using KRingCore.Persistence.Repositories;
 using System.Collections.Generic;
 
 namespace KRing.Core

@@ -1,8 +1,7 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Security;
-using KRing.Extensions;
-using KRing.Core;
+using KRingCore.Extensions;
+using KRingCore.Core;
 
 namespace UnitTests
 {

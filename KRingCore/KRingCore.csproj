@@ -29,8 +29,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>assemblysigning.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -40,7 +47,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\ActionType.cs" />
+    <Compile Include="Core\CryptoHashing.cs" />
+    <Compile Include="Core\Interfaces\IPasswordRule.cs" />
+    <Compile Include="Core\Interfaces\IPasswordUI.cs" />
+    <Compile Include="Core\Model\SecurityData.cs" />
+    <Compile Include="Core\Model\Session.cs" />
+    <Compile Include="Core\Model\User.cs" />
+    <Compile Include="Core\PasswordAdvisor.cs" />
+    <Compile Include="Core\ReleasePathDependent.cs" />
+    <Compile Include="Extensions\SecureStringExtension.cs" />
+    <Compile Include="Persistence\Converter.cs" />
+    <Compile Include="Persistence\DataConfig.cs" />
+    <Compile Include="Persistence\FileUtil.cs" />
+    <Compile Include="Persistence\Interfaces\IDataConfig.cs" />
+    <Compile Include="Persistence\Interfaces\IProfileRepository.cs" />
+    <Compile Include="Persistence\Interfaces\IStoredPasswordRepository.cs" />
+    <Compile Include="Persistence\Logging\FlatFileErrorLog.cs" />
+    <Compile Include="Persistence\Model\StoredPassword.cs" />
+    <Compile Include="Persistence\Repositories\ProfileRepository.cs" />
+    <Compile Include="Persistence\Repositories\StoredPasswordRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="assemblysigning.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

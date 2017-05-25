@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
 using System.Security;
-using KRing.Core.Model;
-using KRing.Extensions;
+using KRingCore.Core.Model;
+using KRingCore.Extensions;
 using System.Configuration;
-using KRing.Persistence.Interfaces;
+using KRingCore.Persistence.Interfaces;
 using System.Threading.Tasks;
-using KRing.Core;
+using KRingCore.Core;
 
-namespace KRing.Persistence.Repositories
+namespace KRingCore.Persistence.Repositories
 {
     public class ProfileRepository : ReleasePathDependent, IProfileRepository
     {

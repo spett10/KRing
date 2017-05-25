@@ -1,8 +1,8 @@
-﻿using KRing.Interfaces;
+﻿using KRingCore.Interfaces;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace KRing.Persistence
+namespace KRingCore.Persistence
 {
     public class DataConfig : IDataConfig
     {

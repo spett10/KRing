@@ -1,9 +1,9 @@
-﻿using KRing.Core.Model;
-using KRing.Persistence.Interfaces;
-using KRing.Persistence.Repositories;
+﻿using KRingCore.Core.Model;
+using KRingCore.Persistence.Interfaces;
+using KRingCore.Persistence.Repositories;
 using KRingForm.Forms;
-using KRing.Persistence.Model;
-using KRing.Extensions;
+using KRingCore.Persistence.Model;
+using KRingCore.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

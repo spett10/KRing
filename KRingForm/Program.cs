@@ -1,14 +1,10 @@
 ﻿using KRing.Core.Controllers;
-using KRing.Core.Model;
+using KRingCore.Core.Model;
 using KRing.Interfaces;
 using KRing.Persistence;
-using KRing.Persistence.Logging;
-using KRing.Persistence.Repositories;
+using KRingCore.Persistence.Logging;
+using KRingCore.Persistence.Repositories;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace KRingForm

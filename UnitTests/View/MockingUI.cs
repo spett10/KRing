@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using KRing.Core;
-using KRing.Core.Model;
+using KRingCore.Core;
+using KRingCore.Core.Model;
 using KRing.Interfaces;
-using KRing.Persistence.Model;
-using KRing.Extensions;
+using KRingCore.Core.Interfaces;
+using KRingCore.Persistence.Model;
 
 namespace UnitTests
 {

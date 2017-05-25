@@ -1,10 +1,11 @@
 ﻿using System;
-using KRing.Core;
-using KRing.Core.Model;
-using KRing.Extensions;
+using KRingCore.Core;
+using KRingCore.Core.Model;
+using KRingCore.Extensions;
 using KRing.Interfaces;
-using KRing.Persistence.Model;
-using KRing.Persistence.Interfaces;
+using KRingCore.Persistence.Model;
+using KRingCore.Persistence.Interfaces;
+using KRingCore.Core.Interfaces;
 
 namespace KRing.Persistence.Controllers
 { 

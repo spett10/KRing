@@ -5,11 +5,11 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using KRing.Extensions;
+using KRingCore.Extensions;
 using System.IO;
-using KRing.Persistence.Model;
+using KRingCore.Persistence.Model;
 
-namespace KRing.Core
+namespace KRingCore.Core
 {
     public static class CryptoHashing
     {

@@ -1,9 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using KRing.Core;
-using KRing.Extensions;
-using System.Security;
-using System.Diagnostics;
+using KRingCore.Core;
 using System.Text;
 using System.Security.Cryptography;
 

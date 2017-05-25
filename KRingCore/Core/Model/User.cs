@@ -1,7 +1,7 @@
 ﻿using System.Security;
-using KRing.Extensions;
+using KRingCore.Extensions;
 
-namespace KRing.Core.Model
+namespace KRingCore.Core.Model
 {
     public class User
     {

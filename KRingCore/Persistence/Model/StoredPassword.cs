@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Security;
-using KRing.Extensions;
+using KRingCore.Extensions;
 
-namespace KRing.Persistence.Model
+namespace KRingCore.Persistence.Model
 {
     /* Maybe this should be a private class of DbController? */
     /* Noone else should know about this class as it stands.. */

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
-using KRing.Persistence.Interfaces;
-using KRing.Persistence.Model;
+using KRingCore.Persistence.Interfaces;
+using KRingCore.Persistence.Model;
 
 namespace UnitTests.Repositories
 {

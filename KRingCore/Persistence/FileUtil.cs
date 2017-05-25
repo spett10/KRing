@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 
-namespace KRing.Persistence
+namespace KRingCore.Persistence
 {
     public static class FileUtil
     {

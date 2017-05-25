@@ -1,7 +1,7 @@
-﻿using KRing.Core.Model;
+﻿using KRingCore.Core.Model;
 using System.Threading.Tasks;
 
-namespace KRing.Persistence.Interfaces
+namespace KRingCore.Persistence.Interfaces
 {
     public interface IProfileRepository
     {

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace KRing.Interfaces
+namespace KRingCore.Interfaces
 {
     public interface IDataConfig
     {

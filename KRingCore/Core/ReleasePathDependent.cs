@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KRing.Core
+namespace KRingCore.Core
 {
     public abstract class ReleasePathDependent
     {

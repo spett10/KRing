@@ -5,7 +5,7 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KRing.Interfaces
+namespace KRingCore.Core.Interfaces
 {
     public interface IPasswordUI
     {

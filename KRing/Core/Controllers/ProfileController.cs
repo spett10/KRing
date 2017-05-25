@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Security;
-using KRing.Core.Model;
-using KRing.Extensions;
+using KRingCore.Core;
+using KRingCore.Core.Model;
+using KRingCore.Extensions;
+using KRingCore.Core.Interfaces;
+using KRingCore.Persistence.Interfaces;
+using KRingCore.Persistence.Repositories;
 using KRing.Interfaces;
-using KRing.Persistence.Repositories;
-using KRing.Persistence.Interfaces;
-using System.Diagnostics;
 
 namespace KRing.Core.Controllers
 {

@@ -2,9 +2,9 @@
 using KRing.Persistence.Controllers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Security;
-using KRing.Extensions;
-using KRing.Core.Model;
-using KRing.Core;
+using KRingCore.Extensions;
+using KRingCore.Core.Model;
+using KRingCore.Core;
 using UnitTests.Repositories;
 
 namespace UnitTests

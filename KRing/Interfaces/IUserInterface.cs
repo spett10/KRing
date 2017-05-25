@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Security;
-using KRing;
-using KRing.Core;
-using KRing.Core.Model;
-using KRing.Persistence.Model;
+using KRingCore.Core;
+using KRingCore.Core.Model;
+using KRingCore.Persistence.Model;
 
 namespace KRing.Interfaces
 {

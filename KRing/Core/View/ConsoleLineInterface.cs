@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Security;
-using KRing.Core.Model;
+using KRingCore.Core.Model;
 using KRing.Interfaces;
-using KRing.Persistence.Model;
-using KRing.Extensions;
-using System.Collections;
+using KRingCore.Core.Interfaces;
+using KRingCore.Persistence.Model;
+using KRingCore.Extensions;
 using System.Collections.Generic;
+using KRingCore.Core;
 
 namespace KRing.Core.View
 {
@@ -198,5 +199,9 @@ namespace KRing.Core.View
             return NewCommand;
         }
 
+        ActionType IUserInterface.MainMenu()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

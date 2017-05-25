@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using KRing.Core;
+using KRingCore.Core;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KRing.Persistence.Logging
+namespace KRingCore.Persistence.Logging
 {
     public class FlatFileErrorLog : ReleasePathDependent
     {

@@ -1,13 +1,13 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using KRing.Persistence.Repositories;
-using KRing.Extensions;
-using KRing.Interfaces;
-using KRing.Persistence.Model;
+using KRingCore.Persistence.Repositories;
+using KRingCore.Extensions;
+using KRingCore.Interfaces;
+using KRingCore.Persistence.Model;
 using System.Security;
 using UnitTests.Config;
 using System.Configuration;
-using KRing.Core;
+using KRingCore.Core;
 
 namespace UnitTests
 {

@@ -1,15 +1,6 @@
 ﻿using System;
-using KRing.Persistence.Interfaces;
-using KRing.Persistence.Model;
-using KRing.Extensions;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Security;
+using KRingCore.Persistence.Interfaces;
+using KRingCore.Persistence.Model;
 using System.Windows.Forms;
 using static KRingForm.PasswordList;
 

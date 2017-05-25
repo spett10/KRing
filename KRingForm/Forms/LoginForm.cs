@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Security;
-using KRing.Core;
-using KRing.Extensions;
-using KRing.Persistence.Repositories;
-using KRing.Core.Model;
+using KRingCore.Core;
+using KRingCore.Core.Model;
 using static KRingForm.Program;
 
 namespace KRingForm
