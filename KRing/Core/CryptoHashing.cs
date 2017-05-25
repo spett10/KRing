@@ -96,9 +96,24 @@ namespace KRing.Core
             return GenerateSalt(SaltByteSize);
         }
 
+        /* Since we compare hmac and other sensitive stuff, we want to go through the motions? No reason to leak what index */
+        /* they differ at by exiting early. So we go through all indexes regardless, to not leak any information other than */ 
+        /* the length */
         public static bool CompareByteArrays(byte[] array1, byte[] array2)
         {
-            return array1.Length == array2.Length && !array1.Where((t, i) => t != array2[i]).Any();
+            if (array1.Length != array2.Length) return false;
+
+            bool equal = true;
+
+            for(int i = 0; i < array1.Length; i++)
+            {
+                if(array1[i] != array2[i])
+                {
+                    equal = false;
+                }
+            }
+
+            return equal;
         }
 
         public static void ZeroOutArray(ref byte[] array)

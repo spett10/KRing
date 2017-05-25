@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\Unit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KRingForm", "KRingForm\KRingForm.csproj", "{4897917B-1EE5-47B2-94D7-03439BC193AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KRingCore", "KRingCore\KRingCore.csproj", "{874A2636-5A37-48B6-B057-A78B51251A8B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4897917B-1EE5-47B2-94D7-03439BC193AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4897917B-1EE5-47B2-94D7-03439BC193AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4897917B-1EE5-47B2-94D7-03439BC193AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{874A2636-5A37-48B6-B057-A78B51251A8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{874A2636-5A37-48B6-B057-A78B51251A8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{874A2636-5A37-48B6-B057-A78B51251A8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{874A2636-5A37-48B6-B057-A78B51251A8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
