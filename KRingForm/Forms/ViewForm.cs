@@ -15,13 +15,21 @@ namespace KRingForm.Forms
     public partial class ViewForm : Form
     {
         private readonly StoredPassword _entry;
-        private DateTime _startTime;
-        private DateTime _endTime;
+
+        private DateTime _revealStartTime;
+        private DateTime _revealEndTime;
+
+        private DateTime _clipboardStartTime;
+        private DateTime _clipboardEndTime;
+
         private static readonly int _secondsToDisplay = 5;
+        private static readonly int _secondsOnClipboard = 10;
 
         private readonly string _password;
 
-        private string message = "Window closes after " + _secondsToDisplay.ToString() + "seconds";
+        private string revealMessage = "Window closes after " + _secondsToDisplay.ToString() + "seconds";
+        private string clipboardMessage = "Clipboard erased after " + _secondsOnClipboard.ToString() + "seconds";
+
 
         public ViewForm(StoredPassword entry)
         {
@@ -39,6 +47,15 @@ namespace KRingForm.Forms
         private void copyButton_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(_password);
+
+            _clipboardStartTime = DateTime.Now;
+            _clipboardEndTime = _clipboardStartTime.AddSeconds(_secondsOnClipboard);
+
+            clipboardTimer.Interval = (int)(_clipboardEndTime - _clipboardStartTime).TotalMilliseconds;
+            clipboardTimer.Start();
+
+            warning.Text = clipboardMessage;
+            warning.Show();
         }
 
         private void warningTimer_Tick(object sender, EventArgs e)
@@ -48,15 +65,21 @@ namespace KRingForm.Forms
 
         private void revealButton_Click(object sender, EventArgs e)
         {
-            _startTime = DateTime.Now;
-            _endTime = _startTime.AddSeconds(_secondsToDisplay);
+            _revealStartTime = DateTime.Now;
+            _revealEndTime = _revealStartTime.AddSeconds(_secondsToDisplay);
 
             this.passwordBox.Text = _password;
 
-            warningTimer.Interval = (int)(_endTime - _startTime).TotalMilliseconds;
+            warningTimer.Interval = (int)(_revealEndTime - _revealStartTime).TotalMilliseconds;
             warningTimer.Start();
 
+            warning.Text = revealMessage;
             warning.Show();
+        }
+
+        private void clipboardTimer_Tick(object sender, EventArgs e)
+        {
+            Clipboard.SetText(" ");
         }
     }
 }

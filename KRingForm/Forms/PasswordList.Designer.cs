@@ -110,6 +110,7 @@
             // 
             // deleteUserButton
             // 
+            this.deleteUserButton.Enabled = false;
             this.deleteUserButton.Location = new System.Drawing.Point(196, 341);
             this.deleteUserButton.Name = "deleteUserButton";
             this.deleteUserButton.Size = new System.Drawing.Size(75, 23);

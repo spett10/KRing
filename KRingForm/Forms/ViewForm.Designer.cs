@@ -39,6 +39,7 @@
             this.warningTimer = new System.Windows.Forms.Timer(this.components);
             this.revealButton = new System.Windows.Forms.Button();
             this.buttonToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.clipboardTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // domainLabel
@@ -111,6 +112,10 @@
             this.revealButton.UseVisualStyleBackColor = true;
             this.revealButton.Click += new System.EventHandler(this.revealButton_Click);
             // 
+            // clipboardTimer
+            // 
+            this.clipboardTimer.Tick += new System.EventHandler(this.clipboardTimer_Tick);
+            // 
             // ViewForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -141,5 +146,6 @@
         private System.Windows.Forms.Timer warningTimer;
         private System.Windows.Forms.Button revealButton;
         private System.Windows.Forms.ToolTip buttonToolTip;
+        private System.Windows.Forms.Timer clipboardTimer;
     }
 }
