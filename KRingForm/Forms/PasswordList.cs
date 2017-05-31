@@ -62,6 +62,7 @@ namespace KRingForm
             }
 
             _unsavedChanges = false;
+            HideSaveButton();
             _exitWithoutSaving = false;
         }
 
@@ -91,11 +92,23 @@ namespace KRingForm
             if(operation != OperationType.SavePassword || operation != OperationType.NoOperation)
             {
                 _unsavedChanges = true;
+                ShowSaveButton();
             }
             else
             {
                 _unsavedChanges = false;
+                HideSaveButton();
             }
+        }
+
+        private void HideSaveButton()
+        {
+            this.saveButton.Enabled = false;
+        }
+
+        private void ShowSaveButton()
+        {
+            this.saveButton.Enabled = true;
         }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
@@ -215,6 +228,7 @@ namespace KRingForm
             }
 
             _unsavedChanges = false;
+            HideSaveButton();
         }
 
         private void PasswordList_Load(object sender, EventArgs e)
