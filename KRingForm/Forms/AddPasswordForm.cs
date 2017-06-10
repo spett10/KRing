@@ -30,9 +30,9 @@ namespace KRingForm.Forms
         private void addButton_Click(object sender, EventArgs e)
         {
             var domainName = domainBox.Text;
-            var plaintextPassword = passwordBox.Text;
+            var plaintextPassword = passwordBox.Text.ToCharArray();
             
-            if(domainName == String.Empty || plaintextPassword == String.Empty)
+            if(domainName == String.Empty || plaintextPassword.Length < 1)
             {
                 Program._messageToUser("Please enter Domain, and either enter or generate a password.");
             }
@@ -49,6 +49,8 @@ namespace KRingForm.Forms
                     _passwordRep.AddEntry(dbEntry);
                     
                     _callback(OperationType.AddPassword);
+
+                    plaintextPassword.ZeroOut();
 
                     this.Close();
                 }                

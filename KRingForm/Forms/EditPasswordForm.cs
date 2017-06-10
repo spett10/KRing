@@ -1,6 +1,7 @@
 ﻿using System;
 using KRingCore.Persistence.Interfaces;
 using KRingCore.Persistence.Model;
+using KRingCore.Extensions;
 using System.Windows.Forms;
 using static KRingForm.PasswordList;
 
@@ -30,9 +31,9 @@ namespace KRingForm.Forms
 
         private void editButton_Click(object sender, EventArgs e)
         {
-            var plaintextPassword = passwordBox.Text;
+            var plaintextPassword = passwordBox.Text.ToCharArray();
 
-            if(plaintextPassword == String.Empty)
+            if(plaintextPassword.Length < 1)
             {
                 Program._messageToUser("Please enter new password or generate it");
             }
@@ -43,6 +44,8 @@ namespace KRingForm.Forms
                 _passwordRep.UpdateEntry(newEntry);
 
                 _callback(OperationType.EditPassword);
+
+                plaintextPassword.ZeroOut();
 
                 this.Close();
             }

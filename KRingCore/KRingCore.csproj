@@ -56,6 +56,7 @@
     <Compile Include="Core\Model\User.cs" />
     <Compile Include="Core\PasswordAdvisor.cs" />
     <Compile Include="Core\ReleasePathDependent.cs" />
+    <Compile Include="Extensions\CharArrayExtension.cs" />
     <Compile Include="Extensions\SecureStringExtension.cs" />
     <Compile Include="Persistence\Converter.cs" />
     <Compile Include="Persistence\DataConfig.cs" />

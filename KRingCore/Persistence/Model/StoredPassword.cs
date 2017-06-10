@@ -33,6 +33,16 @@ namespace KRingCore.Persistence.Model
             Password.PopulateWithString(password);
         }
 
+        public StoredPassword(string domain, char[] password)
+        {
+            Domain = domain;
+            Password = new SecureString();
+            foreach(var c in password)
+            {
+                Password.AppendChar(c);
+            }
+        }
+
         public List<string> ToStrings()
         {
             List<string> properties = new List<string>();

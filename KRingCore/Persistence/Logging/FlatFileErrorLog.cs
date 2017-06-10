@@ -21,8 +21,6 @@ namespace KRingCore.Persistence.Logging
             _logfile = base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeLogPath"];
 #endif
 
-            /* Clear log on each startup, else it will grow forever */
-            FileUtil.FilePurge(_logfile, "");
         }
 
         public void Log(string context, string message)
