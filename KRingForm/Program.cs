@@ -6,6 +6,7 @@ using KRingCore.Persistence.Logging;
 using KRingCore.Persistence.Repositories;
 using System;
 using System.Windows.Forms;
+using KRingForm.Forms;
 
 namespace KRingForm
 {
@@ -24,6 +25,8 @@ namespace KRingForm
 
         private static FlatFileErrorLog _log = new FlatFileErrorLog();
         public static bool userCreated;
+
+        public static bool userInactiveLogout = false;
 
         /// <summary>
         /// The main entry point for the application.
@@ -79,6 +82,13 @@ namespace KRingForm
                     _messageToUser("Error: " + e.Message);
                     Log("Main", e.Message);
                 }
+            }
+
+            /* If passwordlist was closed and the user was inactive, show dialogue */
+            if(userInactiveLogout)
+            {
+                Application.Run(new InactiveDialogue());
+                Log("Main", "User timed out");
             }
         }
 

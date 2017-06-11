@@ -4,20 +4,18 @@ using KRingCore.Persistence.Repositories;
 using KRingForm.Forms;
 using KRingCore.Persistence.Model;
 using KRingCore.Extensions;
+using KRingCore.Core;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Diagnostics;
 using System.Security;
 
 namespace KRingForm
 {
+    public delegate void ActiveCallback();
+
     public enum OperationType
     {
         NewPassword = 0,
@@ -41,6 +39,8 @@ namespace KRingForm
         private int _currentIndex;
         private bool _unsavedChanges;
         private bool _exitWithoutSaving;
+
+        private const int secondsToWait = 120;
 
         public PasswordList(User user)
         {
@@ -99,6 +99,8 @@ namespace KRingForm
                 _unsavedChanges = false;
                 HideSaveButton();
             }
+
+            Notify();
         }
 
         private void HideSaveButton()
@@ -111,16 +113,24 @@ namespace KRingForm
             this.saveButton.Enabled = true;
         }
 
+        private void Notify()
+        {
+            ResetInactiveTimer();
+        }
+
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            _currentIndex = passwordListBox.SelectedIndex;            
+            _currentIndex = passwordListBox.SelectedIndex;
+            Notify();
         }
 
         private void addButton_Click(object sender, EventArgs e)
         {
+            Notify();
+
             try
             {
-                var addForm = new AddPasswordForm(_passwordRep, UpdateList);
+                var addForm = new AddPasswordForm(_passwordRep, UpdateList, Notify);
                 addForm.Show();
             }
             catch(Exception)
@@ -132,11 +142,13 @@ namespace KRingForm
 
         private void editButton_Click(object sender, EventArgs e)
         {
+            Notify();
+
             try
             {
                 var selectedDomain = GetCurrentDomain(_currentIndex);
 
-                var editForm = new EditPasswordForm(_passwordRep, UpdateList, selectedDomain);
+                var editForm = new EditPasswordForm(_passwordRep, UpdateList, Notify, selectedDomain);
                 editForm.Show();
             }
             catch (Exception)
@@ -149,11 +161,13 @@ namespace KRingForm
 
         private void deleteButton_Click(object sender, EventArgs e)
         {
+            Notify();
+
             try
             {
                 var selectedDomain = GetCurrentDomain(_currentIndex);
 
-                var deleteForm = new DeletePasswordForm(_passwordRep, UpdateList, selectedDomain);
+                var deleteForm = new DeletePasswordForm(_passwordRep, UpdateList, Notify, selectedDomain);
                 deleteForm.Show();
             }
             catch (Exception)
@@ -183,6 +197,8 @@ namespace KRingForm
 
         private void viewButton_Click(object sender, EventArgs e)
         {
+            Notify();
+
             try
             {
                 var selectedDomain = GetCurrentDomain(_currentIndex);
@@ -191,7 +207,7 @@ namespace KRingForm
 
                 var entry = new StoredPassword(selectedDomain, password);
 
-                var viewForm = new ViewForm(entry);
+                var viewForm = new ViewForm(entry, Notify);
                 viewForm.Show();
             }
             catch (Exception)
@@ -218,6 +234,8 @@ namespace KRingForm
 
         private async void saveButton_Click(object sender, EventArgs e)
         {
+            Notify();
+
             /* Start write */
             await _passwordRep.WriteEntriesToDbAsync();
 
@@ -238,7 +256,7 @@ namespace KRingForm
 
         private void PasswordList_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(_unsavedChanges && !_exitWithoutSaving)
+            if(_unsavedChanges && !_exitWithoutSaving && !Program.userInactiveLogout)
             {
                 e.Cancel = true;
                 
@@ -247,6 +265,27 @@ namespace KRingForm
                     NotExiting);
                 warning.Show();
             }
+        }
+
+        private void ResetInactiveTimer()
+        {
+            var startTime = DateTime.Now;
+            var endTime = DateTime.Now.AddSeconds(secondsToWait);
+
+            inactiveTimer.Interval = (int)(endTime - startTime).TotalMilliseconds;
+            inactiveTimer.Start();
+        }
+
+        private void inactiveTimer_Tick(object sender, EventArgs e)
+        {
+            if (_unsavedChanges)
+            {
+                _passwordRep.WriteEntriesToDb();
+            }
+
+            Program.userInactiveLogout = true;
+
+            this.Close();
         }
     }
 }

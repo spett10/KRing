@@ -39,6 +39,7 @@
             this.saveButton = new System.Windows.Forms.Button();
             this.buttonToolTips = new System.Windows.Forms.ToolTip(this.components);
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.inactiveTimer = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // passwordListBox
@@ -68,9 +69,8 @@
             this.addButton.Size = new System.Drawing.Size(75, 23);
             this.addButton.TabIndex = 2;
             this.addButton.Text = "Add";
-            this.buttonToolTips.SetToolTip(this.addButton, "Enables you to add a password, where you yourself can enter the password. We reco" +
-        "mmend the \"New\" button for new passwords, whereas the \"Add\" button should be use" +
-        "d to add existing passwords to storage.");
+            this.buttonToolTips.SetToolTip(this.addButton, "Enables you to add a password, where you yourself can enter the password, or have" +
+        " the program generate a cryptographically random one. We recommend the latter.");
             this.addButton.UseVisualStyleBackColor = true;
             this.addButton.Click += new System.EventHandler(this.addButton_Click);
             // 
@@ -136,6 +136,10 @@
             // 
             this.buttonToolTips.ToolTipTitle = "New";
             // 
+            // inactiveTimer
+            // 
+            this.inactiveTimer.Tick += new System.EventHandler(this.inactiveTimer_Tick);
+            // 
             // PasswordList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -170,5 +174,6 @@
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.ToolTip buttonToolTips;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Timer inactiveTimer;
     }
 }

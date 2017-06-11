@@ -2,12 +2,14 @@
 using System.Linq;
 using System.Windows.Forms;
 using KRingCore.Persistence.Model;
+using KRingCore.Core;
 
 namespace KRingForm.Forms
 {
     public partial class ViewForm : Form
     {
         private readonly StoredPassword _entry;
+        private readonly ActiveCallback _activity;
 
         private DateTime _revealStartTime;
         private DateTime _revealEndTime;
@@ -24,10 +26,11 @@ namespace KRingForm.Forms
         private string clipboardMessage = "Clipboard erased after " + _secondsOnClipboard.ToString() + "seconds";
 
 
-        public ViewForm(StoredPassword entry)
+        public ViewForm(StoredPassword entry, ActiveCallback activity)
         {
             InitializeComponent();
 
+            _activity = activity;
             _entry = entry;
 
             domainBox.Text = _entry.Domain;           
@@ -49,6 +52,8 @@ namespace KRingForm.Forms
 
             warning.Text = clipboardMessage;
             warning.Show();
+
+            Notify();
         }
 
         private void warningTimer_Tick(object sender, EventArgs e)
@@ -68,11 +73,18 @@ namespace KRingForm.Forms
 
             warning.Text = revealMessage;
             warning.Show();
+
+            Notify();
         }
 
         private void clipboardTimer_Tick(object sender, EventArgs e)
         {
             Clipboard.SetText(" ");
+        }
+
+        private void Notify()
+        {
+            _activity();
         }
     }
 }

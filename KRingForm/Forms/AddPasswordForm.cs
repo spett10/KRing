@@ -15,20 +15,24 @@ namespace KRingForm.Forms
         private readonly IStoredPasswordRepository _passwordRep;
         private readonly UpdateListCallback _callback;
         private readonly PasswordGenerator _generator;
+        private readonly ActiveCallback _activity;
 
         private bool _generateClicked = false;
 
-        public AddPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback)
+        public AddPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback, ActiveCallback activity)
         {
             InitializeComponent();
             _passwordRep = repository;
             _callback = callback;
+            _activity = activity;
 
             _generator = new PasswordGenerator();
         }
 
         private void addButton_Click(object sender, EventArgs e)
         {
+            Notify();
+
             var domainName = domainBox.Text;
             var plaintextPassword = passwordBox.Text.ToCharArray();
             
@@ -59,6 +63,8 @@ namespace KRingForm.Forms
 
         private void generateButton_Click(object sender, EventArgs e)
         {
+            Notify();
+
             if (!_generateClicked)
             {
                 passwordBox.Text = _generator.Generate();
@@ -75,17 +81,25 @@ namespace KRingForm.Forms
 
         private void smallSizeButton_CheckedChanged(object sender, EventArgs e)
         {
+            Notify();
             _generator.Size = PasswordGenerator.PasswordSize.Small;
         }
 
         private void mediumSizeButton_CheckedChanged(object sender, EventArgs e)
         {
+            Notify();
             _generator.Size = PasswordGenerator.PasswordSize.Medium;
         }
 
         private void largeSizeButton_CheckedChanged(object sender, EventArgs e)
         {
+            Notify();
             _generator.Size = PasswordGenerator.PasswordSize.Large;
+        }
+
+        private void Notify()
+        {
+            _activity();
         }
     }
 
