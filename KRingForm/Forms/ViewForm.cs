@@ -25,6 +25,7 @@ namespace KRingForm.Forms
         private string revealMessage = "Window closes after " + _secondsToDisplay.ToString() + "seconds";
         private string clipboardMessage = "Clipboard erased after " + _secondsOnClipboard.ToString() + "seconds";
 
+        private bool _isPasswordCopied;
 
         public ViewForm(StoredPassword entry, ActiveCallback activity)
         {
@@ -33,7 +34,9 @@ namespace KRingForm.Forms
             _activity = activity;
             _entry = entry;
 
-            domainBox.Text = _entry.Domain;           
+            domainBox.Text = _entry.Domain;
+
+            _isPasswordCopied = false;
 
             _password = entry.PlaintextPassword;
             passwordBox.Text = string.Concat(Enumerable.Repeat("*", _password.Length));
@@ -43,6 +46,8 @@ namespace KRingForm.Forms
         private void copyButton_Click(object sender, EventArgs e)
         {
             Clipboard.SetText(_password);
+
+            _isPasswordCopied = true;
 
             _clipboardStartTime = DateTime.Now;
             _clipboardEndTime = _clipboardStartTime.AddSeconds(_secondsOnClipboard);
@@ -85,6 +90,14 @@ namespace KRingForm.Forms
         private void Notify()
         {
             _activity();
+        }
+
+        private void ViewForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(_isPasswordCopied)
+            {
+                Clipboard.SetText(" ");
+            }
         }
     }
 }

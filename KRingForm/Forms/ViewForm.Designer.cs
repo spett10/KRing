@@ -130,6 +130,7 @@
             this.Controls.Add(this.domainLabel);
             this.Name = "ViewForm";
             this.Text = "ViewForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ViewForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

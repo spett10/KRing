@@ -32,6 +32,7 @@ namespace KRingForm
             }
             else
             {
+                /* Check both username and password, even if username is wrong - dont leak anything timewise (enables enumeration of user) */
                 var correctUsername = CryptoHashing.CompareSaltedHash(userName, savedUser.Cookie.UsernameHashSalt, savedUser.Cookie.HashedUsername);
 
                 var correctPassword = CryptoHashing.CompareSaltedHash(password, savedUser.Cookie.PasswordHashSalt, savedUser.Cookie.HashedPassword);
