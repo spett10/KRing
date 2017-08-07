@@ -89,7 +89,7 @@ namespace KRingForm
                 passwordListBox.Items.Add(pswd.Domain);
             }
 
-            if(operation != OperationType.SavePassword || operation != OperationType.NoOperation)
+            if(operation != OperationType.SavePassword && operation != OperationType.NoOperation)
             {
                 _unsavedChanges = true;
                 ShowSaveButton();
@@ -98,6 +98,18 @@ namespace KRingForm
             {
                 _unsavedChanges = false;
                 HideSaveButton();
+            }
+
+            Notify();
+        }
+
+        public void UpdateList(IEnumerable<StoredPassword> searchResult)
+        {
+            passwordListBox.Items.Clear();
+
+            foreach(var pswd in searchResult)
+            {
+                passwordListBox.Items.Add(pswd.Domain);
             }
 
             Notify();
@@ -286,6 +298,24 @@ namespace KRingForm
             Program.userInactiveLogout = true;
 
             this.Close();
+        }
+
+        private void SearchButton_Click(object sender, EventArgs e)
+        {
+            var searchString = SearchBar.Text;
+
+            /* If search text is empty, show entire list */
+            if(searchString == string.Empty || searchString == null)
+            {
+                UpdateList(OperationType.NoOperation);
+
+                return;
+            }
+
+            /* Otherwise, do a prefix search on the domain names */
+            var result = _passwordRep.PrefixSearch(searchString);
+
+            UpdateList(result);
         }
     }
 }

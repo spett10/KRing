@@ -132,5 +132,10 @@ namespace UnitTests.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public List<StoredPassword> PrefixSearch(string prefixDomain)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

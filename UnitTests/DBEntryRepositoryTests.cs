@@ -8,6 +8,7 @@ using System.Security;
 using UnitTests.Config;
 using System.Configuration;
 using KRingCore.Core;
+using System.Collections.Generic;
 
 namespace UnitTests
 {
@@ -242,6 +243,60 @@ namespace UnitTests
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
             var password = repository.GetPasswordFromDomain(_correctDomain + "not");
+        }
+
+        [TestMethod]
+        public void PrefixSearch_OkScenario()
+        {
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+
+            var dummyPassword = new char[12];
+
+            var passwords = new List<StoredPassword>
+            {
+                new StoredPassword("Google", dummyPassword),
+                new StoredPassword("Goog", dummyPassword),
+                new StoredPassword("Glog", dummyPassword),
+                new StoredPassword("Facebook", dummyPassword)
+            };
+
+            foreach(var pswd in passwords)
+            {
+                repository.AddEntry(pswd);
+            }
+
+            var result = repository.PrefixSearch("Goog");
+
+            var success = result.Count == 2 && result.Exists(e => e.Domain == "Goog") && result.Exists(e => e.Domain == "Google");
+
+            Assert.IsTrue(success);
+        }
+
+        [TestMethod]
+        public void PrefixSearch_NoMatches_ShouldReturnEmptyList()
+        {
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+
+            var dummyPassword = new char[12];
+
+            var passwords = new List<StoredPassword>
+            {
+                new StoredPassword("Google", dummyPassword),
+                new StoredPassword("Goog", dummyPassword),
+                new StoredPassword("Glog", dummyPassword),
+                new StoredPassword("Facebook", dummyPassword)
+            };
+
+            foreach (var pswd in passwords)
+            {
+                repository.AddEntry(pswd);
+            }
+
+            var result = repository.PrefixSearch("Amazon");
+
+            var success = result.Count == 0;
+
+            Assert.IsTrue(success);
         }
 
     }

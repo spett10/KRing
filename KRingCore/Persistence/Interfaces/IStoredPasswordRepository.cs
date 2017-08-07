@@ -15,6 +15,7 @@ namespace KRingCore.Persistence.Interfaces
         void DeleteEntry(int index);
         bool ExistsEntry(string domain);
         List<StoredPassword> GetEntries();
+        List<StoredPassword> PrefixSearch(string prefixDomain);
         StoredPassword GetEntry(int index);
         string GetPasswordFromCount(int count);
         string GetPasswordFromDomain(string domain);

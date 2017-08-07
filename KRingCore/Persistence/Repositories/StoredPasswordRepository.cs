@@ -167,6 +167,11 @@ namespace KRingCore.Persistence.Repositories
             return _entries;
         }
 
+        public List<StoredPassword> PrefixSearch(string prefixDomain)
+        {
+            return _entries.Where(e => e.Domain.StartsWith(prefixDomain)).ToList();
+        }
+
         public bool ExistsEntry(string domain)
         {
             return _entries.Any(e => e.
