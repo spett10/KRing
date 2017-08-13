@@ -1,0 +1,19 @@
+﻿1. Add Username to storedpassword and in the view etc.. 
+2. Make App.config point to different files dependent on build (debug vs release) http://stackoverflow.com/questions/3004210/app-config-transformation-for-projects-which-are-not-web-projects-in-visual-stud
+3. Enable you to point to a folder that is the storage - this way, you can put the folder in dropbox, and have 2 computers point to the same data folder, its synced automatically, not dangerous since everything is encrypted. Brilliant
+11. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
+15. consider having a k1 that is derived from user password and salt (update for each time?). Then, use that to encrypt/decrypt the symmetric key used for encrypting the passwords.
+Then we can change password for the user, but not need to change the key used for encrypting all the entries, so we dont need to reencrypt. 
+23. Should we derive a masterkey, then derive the two needed keys from that key? I think that is better practice.
+28. Make an icon for the buld thingie.
+29. Integration / automated UI tests with AutoIT scripting?
+29.5: Import functionality. Point to a folder to "load". If it has the correct structure and format, overwrite current stored stuff with what we read. 
+Require master password to confirm? 
+30. backup functionality. or export or something. copy data and import data so we dont have to copy paste.
+	-export to a zip? Not needed. Just export to a folder. And import a folder. If files are not called what they should, then abort. Then its easier to update.
+	Require password when reloading? 
+31. folder structures for the main view. 
+32. Remove the empty debug folder when we build release (post build scripting)
+BUGS:
+
+TESTING SOURCE CONTROL ADDING A LINE LULUL
