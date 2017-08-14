@@ -17,6 +17,7 @@ namespace KRingCore.Persistence.Interfaces
         List<StoredPassword> GetEntries();
         List<StoredPassword> PrefixSearch(string prefixDomain);
         StoredPassword GetEntry(int index);
+        StoredPassword GetEntry(string domain);
         string GetPasswordFromCount(int count);
         string GetPasswordFromDomain(string domain);
         bool IsDbEmpty();

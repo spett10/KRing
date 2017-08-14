@@ -52,7 +52,7 @@ namespace UnitTests.Repositories
         public void AddEntry(StoredPassword newDto)
         {
             _addEntryCalled = true;
-            _entries.Add(new StoredPassword(newDto.Domain, newDto.PlaintextPassword));
+            _entries.Add(new StoredPassword(newDto.Domain, newDto.Username, newDto.PlaintextPassword));
         }
 
         public void DeleteAllEntries()
@@ -134,6 +134,11 @@ namespace UnitTests.Repositories
         }
 
         public List<StoredPassword> PrefixSearch(string prefixDomain)
+        {
+            throw new NotImplementedException();
+        }
+
+        public StoredPassword GetEntry(string domain)
         {
             throw new NotImplementedException();
         }

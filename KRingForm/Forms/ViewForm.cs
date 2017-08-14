@@ -35,6 +35,7 @@ namespace KRingForm.Forms
             _entry = entry;
 
             domainBox.Text = _entry.Domain;
+            usernameBox.Text = _entry.Username;
 
             _isPasswordCopied = false;
 

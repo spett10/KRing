@@ -18,17 +18,18 @@ namespace KRingForm.Forms
 
         private bool _generateClicked = false;
 
-        public EditPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback, ActiveCallback activity, string domain)
+        public EditPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback, ActiveCallback activity, StoredPassword entry)
         {
             InitializeComponent();
             _passwordRep = repository;
             _callback = callback;
-            _editTarget = domain;
+            _editTarget = entry.Domain;
             _activity = activity;
 
             _generator = new PasswordGenerator();
-
-            domainBox.Text = domain;
+            
+            domainBox.Text = entry.Domain;
+            usernameBox.Text = entry.Username;
         }
 
         private void editButton_Click(object sender, EventArgs e)
@@ -43,7 +44,7 @@ namespace KRingForm.Forms
             }
             else
             {
-                var newEntry = new StoredPassword(_editTarget, plaintextPassword);
+                var newEntry = new StoredPassword(_editTarget, usernameBox.Text, plaintextPassword);
                 
                 _passwordRep.UpdateEntry(newEntry);
 

@@ -160,7 +160,9 @@ namespace KRingForm
             {
                 var selectedDomain = GetCurrentDomain(_currentIndex);
 
-                var editForm = new EditPasswordForm(_passwordRep, UpdateList, Notify, selectedDomain);
+                var entry = _passwordRep.GetEntry(selectedDomain);
+
+                var editForm = new EditPasswordForm(_passwordRep, UpdateList, Notify, entry);
                 editForm.Show();
             }
             catch (Exception)
@@ -215,9 +217,7 @@ namespace KRingForm
             {
                 var selectedDomain = GetCurrentDomain(_currentIndex);
 
-                var password = _passwordRep.GetPasswordFromDomain(selectedDomain);
-
-                var entry = new StoredPassword(selectedDomain, password);
+                var entry = _passwordRep.GetEntry(selectedDomain);
 
                 var viewForm = new ViewForm(entry, Notify);
                 viewForm.Show();

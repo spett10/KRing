@@ -34,6 +34,7 @@ namespace KRingForm.Forms
             Notify();
 
             var domainName = domainBox.Text;
+            var username = usernameBox.Text;
             var plaintextPassword = passwordBox.Text.ToCharArray();
             
             if(domainName == String.Empty || plaintextPassword.Length < 1)
@@ -48,7 +49,7 @@ namespace KRingForm.Forms
                 }
                 else
                 {
-                    var dbEntry = new StoredPassword(domainName, plaintextPassword);
+                    var dbEntry = new StoredPassword(domainName, username, plaintextPassword);
 
                     _passwordRep.AddEntry(dbEntry);
                     

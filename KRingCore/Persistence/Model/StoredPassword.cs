@@ -9,6 +9,7 @@ namespace KRingCore.Persistence.Model
     public class StoredPassword
     {
         public string Domain { get; private set; }
+        public string Username { get; private set; }
         public string PlaintextPassword
         {   get
             {
@@ -33,9 +34,18 @@ namespace KRingCore.Persistence.Model
             Password.PopulateWithString(password);
         }
 
-        public StoredPassword(string domain, char[] password)
+        public StoredPassword(string domain, string username, string password)
         {
             Domain = domain;
+            Username = username;
+            Password = new SecureString();
+            Password.PopulateWithString(password);
+        }
+
+        public StoredPassword(string domain, string username, char[] password)
+        {
+            Domain = domain;
+            Username = username;
             Password = new SecureString();
             foreach(var c in password)
             {

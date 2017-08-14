@@ -251,13 +251,14 @@ namespace UnitTests
             var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
 
             var dummyPassword = new char[12];
+            var dummyUsername = "John Doe";
 
             var passwords = new List<StoredPassword>
             {
-                new StoredPassword("Google", dummyPassword),
-                new StoredPassword("Goog", dummyPassword),
-                new StoredPassword("Glog", dummyPassword),
-                new StoredPassword("Facebook", dummyPassword)
+                new StoredPassword("Google", dummyUsername, dummyPassword),
+                new StoredPassword("Goog", dummyUsername, dummyPassword),
+                new StoredPassword("Glog", dummyUsername, dummyPassword),
+                new StoredPassword("Facebook", dummyUsername, dummyPassword)
             };
 
             foreach(var pswd in passwords)
@@ -278,13 +279,14 @@ namespace UnitTests
             var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
 
             var dummyPassword = new char[12];
+            var dummyUsername = "John Doe";
 
             var passwords = new List<StoredPassword>
             {
-                new StoredPassword("Google", dummyPassword),
-                new StoredPassword("Goog", dummyPassword),
-                new StoredPassword("Glog", dummyPassword),
-                new StoredPassword("Facebook", dummyPassword)
+                new StoredPassword("Google", dummyUsername, dummyPassword),
+                new StoredPassword("Goog", dummyUsername, dummyPassword),
+                new StoredPassword("Glog", dummyUsername, dummyPassword),
+                new StoredPassword("Facebook",  dummyUsername, dummyPassword)
             };
 
             foreach (var pswd in passwords)
@@ -295,6 +297,34 @@ namespace UnitTests
             var result = repository.PrefixSearch("Amazon");
 
             var success = result.Count == 0;
+
+            Assert.IsTrue(success);
+        }
+
+        [TestMethod]
+        public void GetEntry_StringOverload_ShouldReturnCorrect()
+        {
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+
+            var dummyPassword = new char[12];
+            var dummyUsername = "John Doe";
+
+            var passwords = new List<StoredPassword>
+            {
+                new StoredPassword("Google", "Jane", dummyPassword),
+                new StoredPassword("Goog", dummyUsername, dummyPassword),
+                new StoredPassword("Glog", dummyUsername, dummyPassword),
+                new StoredPassword("Facebook",  dummyUsername, dummyPassword)
+            };
+
+            foreach (var pswd in passwords)
+            {
+                repository.AddEntry(pswd);
+            }
+
+            var result = repository.GetEntry("Google");
+
+            var success = result.Domain == "Google" && result.Username == "Jane";
 
             Assert.IsTrue(success);
         }

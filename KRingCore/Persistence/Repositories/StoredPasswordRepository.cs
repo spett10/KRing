@@ -213,13 +213,16 @@ namespace KRingCore.Persistence.Repositories
                     {
                         /* Encrypt */
                         var rawDomain = Encoding.UTF8.GetBytes(entr.Domain);
+                        var rawUsername = Encoding.UTF8.GetBytes(entr.Username);
                         var rawPassword = entr.PlaintextPassword;
                         var rawPass = Encoding.UTF8.GetBytes(rawPassword);
 
                         var ivForDomain = CryptoHashing.GenerateSalt(_ivLength);
+                        var ivForUsername = CryptoHashing.GenerateSalt(_ivLength);
                         var ivForPass = CryptoHashing.GenerateSalt(_ivLength);
 
                         var domainCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawDomain, ivForDomain, _encrKey, _macKey);
+                        var usernameCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawUsername, ivForUsername, _encrKey, _macKey);
                         var passCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawPass, ivForPass, _encrKey, _macKey);
 
                         /* write domain, tag, iv */
@@ -227,7 +230,12 @@ namespace KRingCore.Persistence.Repositories
                         await streamWriter.WriteLineAsync(domainCipher.GetTagAsBase64());
                         await streamWriter.WriteLineAsync(Convert.ToBase64String(ivForDomain));
 
-                        /* write password, tag */
+                        /* write username, tag, iv */
+                        await streamWriter.WriteLineAsync(usernameCipher.GetCipherAsBase64());
+                        await streamWriter.WriteLineAsync(usernameCipher.GetTagAsBase64());
+                        await streamWriter.WriteLineAsync(Convert.ToBase64String(ivForDomain));
+
+                        /* write password, tag, iv */
                         await streamWriter.WriteLineAsync(passCipher.GetCipherAsBase64());
                         await streamWriter.WriteLineAsync(passCipher.GetTagAsBase64());
                         await streamWriter.WriteLineAsync(Convert.ToBase64String(ivForPass));
@@ -254,19 +262,27 @@ namespace KRingCore.Persistence.Repositories
                     {
                         /* encrypt */
                         var rawDomain = Encoding.UTF8.GetBytes(entr.Domain);
+                        var rawUsername = Encoding.UTF8.GetBytes(entr.Username);
                         var rawPassword = entr.PlaintextPassword;
                         var rawPass = Encoding.UTF8.GetBytes(rawPassword);
 
                         var ivForDomain = CryptoHashing.GenerateSalt(_ivLength);
+                        var ivForUsername = CryptoHashing.GenerateSalt(_ivLength);
                         var ivForPass = CryptoHashing.GenerateSalt(_ivLength);
 
                         var domainCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawDomain, ivForDomain, _encrKey, _macKey);
+                        var usernameCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawUsername, ivForUsername, _encrKey, _macKey);
                         var passCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawPass, ivForPass, _encrKey, _macKey);
 
                         /* write domain, tag, iv */
                         streamWriter.WriteLine(domainCipher.GetCipherAsBase64());
                         streamWriter.WriteLine(domainCipher.GetTagAsBase64());
                         streamWriter.WriteLine(Convert.ToBase64String(ivForDomain));
+
+                        /* write username, tag, iv */
+                        streamWriter.WriteLine(usernameCipher.GetCipherAsBase64());
+                        streamWriter.WriteLine(usernameCipher.GetTagAsBase64());
+                        streamWriter.WriteLine(Convert.ToBase64String(ivForUsername));
 
                         /* write password, tag */
                         streamWriter.WriteLine(passCipher.GetCipherAsBase64());
@@ -303,6 +319,12 @@ namespace KRingCore.Persistence.Repositories
 
                         var domainCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTagBase64);
 
+                        var usernameBase64 = await streamReader.ReadLineAsync();
+                        var usernameTagBase64 = await streamReader.ReadLineAsync();
+                        var usernameIvTask = streamReader.ReadLineAsync();
+
+                        var usernameCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(usernameBase64, usernameTagBase64);
+
                         var passwordBase64 = await streamReader.ReadLineAsync();
                         var passwordTag = await streamReader.ReadLineAsync();
                         var passwordIvTask = streamReader.ReadLineAsync();
@@ -313,12 +335,14 @@ namespace KRingCore.Persistence.Repositories
                         {
                             /* DECRYPT */
                             var domainIv = Convert.FromBase64String(await domainIvTask);
+                            var usernameIv = Convert.FromBase64String(await usernameIvTask);
                             var passwordIv = Convert.FromBase64String(await passwordIvTask);
 
                             var domain = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(domainCipher, _encrKey, domainIv, _macKey);
+                            var username = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(usernameCipher, _encrKey, usernameIv, _macKey);
                             var password = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
 
-                            StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(password));
+                            StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(username), Encoding.UTF8.GetString(password));
                             entries.Add(newEntry);
 
                             DecryptionErrorOccured = false;
@@ -357,6 +381,12 @@ namespace KRingCore.Persistence.Repositories
 
                         var domainCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTagBase64);
 
+                        var usernameBase64 = streamReader.ReadLine();
+                        var usernameTagBase64 = streamReader.ReadLine();
+                        var usernameIv = Convert.FromBase64String(streamReader.ReadLine());
+
+                        var usernameCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(usernameBase64, usernameTagBase64);
+
                         var passwordBase64 = streamReader.ReadLine();
                         var passwordTag = streamReader.ReadLine();
                         var passwordIv = Convert.FromBase64String(streamReader.ReadLine());
@@ -367,10 +397,11 @@ namespace KRingCore.Persistence.Repositories
                         {
                             /* DECRYPT */
                             var domain = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(domainCipher, _encrKey, domainIv, _macKey);
+                            var username = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(usernameCipher, _encrKey, usernameIv, _macKey);
                             var password = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
 
                             /* CREATE DBENTRY */
-                            StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(password));
+                            StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(username), Encoding.UTF8.GetString(password));
                             entries.Add(newEntry);
 
                             DecryptionErrorOccured = false;
@@ -415,6 +446,11 @@ namespace KRingCore.Persistence.Repositories
         private async Task UpdateConfigAsync(int count)
         {
             await _dataConfig.UpdateConfigAsync(count);
+        }
+
+        public StoredPassword GetEntry(string domain)
+        {
+            return _entries.Where(e => e.Domain == domain).FirstOrDefault();
         }
     }
 }

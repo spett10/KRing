@@ -40,12 +40,14 @@
             this.mediumSizeButton = new System.Windows.Forms.RadioButton();
             this.largeSizeButton = new System.Windows.Forms.RadioButton();
             this.sizeLabel = new System.Windows.Forms.Label();
+            this.usernameLabel = new System.Windows.Forms.Label();
+            this.usernameBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // domainLabel
             // 
             this.domainLabel.AutoSize = true;
-            this.domainLabel.Location = new System.Drawing.Point(99, 7);
+            this.domainLabel.Location = new System.Drawing.Point(103, 15);
             this.domainLabel.Name = "domainLabel";
             this.domainLabel.Size = new System.Drawing.Size(43, 13);
             this.domainLabel.TabIndex = 0;
@@ -53,16 +55,16 @@
             // 
             // domainBox
             // 
-            this.domainBox.Location = new System.Drawing.Point(71, 23);
+            this.domainBox.Location = new System.Drawing.Point(63, 31);
             this.domainBox.MaxLength = 80;
             this.domainBox.Name = "domainBox";
-            this.domainBox.Size = new System.Drawing.Size(100, 20);
+            this.domainBox.Size = new System.Drawing.Size(124, 20);
             this.domainBox.TabIndex = 0;
             // 
             // passwordLabel
             // 
             this.passwordLabel.AutoSize = true;
-            this.passwordLabel.Location = new System.Drawing.Point(99, 60);
+            this.passwordLabel.Location = new System.Drawing.Point(96, 96);
             this.passwordLabel.Name = "passwordLabel";
             this.passwordLabel.Size = new System.Drawing.Size(53, 13);
             this.passwordLabel.TabIndex = 1;
@@ -70,15 +72,15 @@
             // 
             // passwordBox
             // 
-            this.passwordBox.Location = new System.Drawing.Point(50, 76);
+            this.passwordBox.Location = new System.Drawing.Point(47, 112);
             this.passwordBox.MaxLength = 80;
             this.passwordBox.Name = "passwordBox";
-            this.passwordBox.Size = new System.Drawing.Size(140, 20);
+            this.passwordBox.Size = new System.Drawing.Size(154, 20);
             this.passwordBox.TabIndex = 1;
             // 
             // addButton
             // 
-            this.addButton.Location = new System.Drawing.Point(131, 157);
+            this.addButton.Location = new System.Drawing.Point(131, 184);
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(75, 23);
             this.addButton.TabIndex = 2;
@@ -89,7 +91,7 @@
             // 
             // generateButton
             // 
-            this.generateButton.Location = new System.Drawing.Point(50, 157);
+            this.generateButton.Location = new System.Drawing.Point(50, 184);
             this.generateButton.Name = "generateButton";
             this.generateButton.Size = new System.Drawing.Size(75, 23);
             this.generateButton.TabIndex = 3;
@@ -100,7 +102,7 @@
             // smallSizeButton
             // 
             this.smallSizeButton.AutoSize = true;
-            this.smallSizeButton.Location = new System.Drawing.Point(72, 125);
+            this.smallSizeButton.Location = new System.Drawing.Point(72, 152);
             this.smallSizeButton.Name = "smallSizeButton";
             this.smallSizeButton.Size = new System.Drawing.Size(31, 17);
             this.smallSizeButton.TabIndex = 4;
@@ -111,7 +113,7 @@
             // mediumSizeButton
             // 
             this.mediumSizeButton.AutoSize = true;
-            this.mediumSizeButton.Location = new System.Drawing.Point(109, 125);
+            this.mediumSizeButton.Location = new System.Drawing.Point(109, 152);
             this.mediumSizeButton.Name = "mediumSizeButton";
             this.mediumSizeButton.Size = new System.Drawing.Size(37, 17);
             this.mediumSizeButton.TabIndex = 5;
@@ -123,7 +125,7 @@
             // 
             this.largeSizeButton.AutoSize = true;
             this.largeSizeButton.Checked = true;
-            this.largeSizeButton.Location = new System.Drawing.Point(153, 125);
+            this.largeSizeButton.Location = new System.Drawing.Point(153, 152);
             this.largeSizeButton.Name = "largeSizeButton";
             this.largeSizeButton.Size = new System.Drawing.Size(37, 17);
             this.largeSizeButton.TabIndex = 6;
@@ -135,18 +137,37 @@
             // sizeLabel
             // 
             this.sizeLabel.AutoSize = true;
-            this.sizeLabel.Location = new System.Drawing.Point(111, 109);
+            this.sizeLabel.Location = new System.Drawing.Point(111, 136);
             this.sizeLabel.Name = "sizeLabel";
             this.sizeLabel.Size = new System.Drawing.Size(27, 13);
             this.sizeLabel.TabIndex = 7;
             this.sizeLabel.Text = "Size";
+            // 
+            // usernameLabel
+            // 
+            this.usernameLabel.AutoSize = true;
+            this.usernameLabel.Location = new System.Drawing.Point(100, 54);
+            this.usernameLabel.Name = "usernameLabel";
+            this.usernameLabel.Size = new System.Drawing.Size(55, 13);
+            this.usernameLabel.TabIndex = 8;
+            this.usernameLabel.Text = "Username";
+            // 
+            // usernameBox
+            // 
+            this.usernameBox.Location = new System.Drawing.Point(63, 70);
+            this.usernameBox.MaxLength = 80;
+            this.usernameBox.Name = "usernameBox";
+            this.usernameBox.Size = new System.Drawing.Size(124, 20);
+            this.usernameBox.TabIndex = 9;
             // 
             // AddPasswordForm
             // 
             this.AcceptButton = this.addButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(254, 200);
+            this.ClientSize = new System.Drawing.Size(254, 217);
+            this.Controls.Add(this.usernameBox);
+            this.Controls.Add(this.usernameLabel);
             this.Controls.Add(this.sizeLabel);
             this.Controls.Add(this.largeSizeButton);
             this.Controls.Add(this.mediumSizeButton);
@@ -177,5 +198,7 @@
         private System.Windows.Forms.RadioButton mediumSizeButton;
         private System.Windows.Forms.RadioButton largeSizeButton;
         private System.Windows.Forms.Label sizeLabel;
+        private System.Windows.Forms.Label usernameLabel;
+        private System.Windows.Forms.TextBox usernameBox;
     }
 }
