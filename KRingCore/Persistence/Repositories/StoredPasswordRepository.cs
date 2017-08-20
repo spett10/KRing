@@ -233,7 +233,7 @@ namespace KRingCore.Persistence.Repositories
                         /* write username, tag, iv */
                         await streamWriter.WriteLineAsync(usernameCipher.GetCipherAsBase64());
                         await streamWriter.WriteLineAsync(usernameCipher.GetTagAsBase64());
-                        await streamWriter.WriteLineAsync(Convert.ToBase64String(ivForDomain));
+                        await streamWriter.WriteLineAsync(Convert.ToBase64String(ivForUsername));
 
                         /* write password, tag, iv */
                         await streamWriter.WriteLineAsync(passCipher.GetCipherAsBase64());
@@ -315,28 +315,28 @@ namespace KRingCore.Persistence.Repositories
                         /* READ */
                         var domainBase64 = await streamReader.ReadLineAsync();
                         var domainTagBase64 = await streamReader.ReadLineAsync();
-                        var domainIvTask = streamReader.ReadLineAsync();
+                        var domainIvTask = await streamReader.ReadLineAsync();
 
                         var domainCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTagBase64);
 
                         var usernameBase64 = await streamReader.ReadLineAsync();
                         var usernameTagBase64 = await streamReader.ReadLineAsync();
-                        var usernameIvTask = streamReader.ReadLineAsync();
+                        var usernameIvTask = await streamReader.ReadLineAsync();
 
                         var usernameCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(usernameBase64, usernameTagBase64);
 
                         var passwordBase64 = await streamReader.ReadLineAsync();
                         var passwordTag = await streamReader.ReadLineAsync();
-                        var passwordIvTask = streamReader.ReadLineAsync();
+                        var passwordIvTask = await streamReader.ReadLineAsync();
 
                         var passwordCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(passwordBase64, passwordTag);
 
                         try
                         {
                             /* DECRYPT */
-                            var domainIv = Convert.FromBase64String(await domainIvTask);
-                            var usernameIv = Convert.FromBase64String(await usernameIvTask);
-                            var passwordIv = Convert.FromBase64String(await passwordIvTask);
+                            var domainIv = Convert.FromBase64String(domainIvTask);
+                            var usernameIv = Convert.FromBase64String(usernameIvTask);
+                            var passwordIv = Convert.FromBase64String(passwordIvTask);
 
                             var domain = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(domainCipher, _encrKey, domainIv, _macKey);
                             var username = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(usernameCipher, _encrKey, usernameIv, _macKey);
@@ -347,7 +347,7 @@ namespace KRingCore.Persistence.Repositories
 
                             DecryptionErrorOccured = false;
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
                             DecryptionErrorOccured = true;
                         }
@@ -397,7 +397,7 @@ namespace KRingCore.Persistence.Repositories
                         {
                             /* DECRYPT */
                             var domain = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(domainCipher, _encrKey, domainIv, _macKey);
-                            var username = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(usernameCipher, _encrKey, usernameIv, _macKey);
+                            var username = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(usernameCipher, _encrKey, usernameIv, _macKey); //iv is same as for domain
                             var password = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
 
                             /* CREATE DBENTRY */
@@ -406,7 +406,7 @@ namespace KRingCore.Persistence.Repositories
 
                             DecryptionErrorOccured = false;
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
                             DecryptionErrorOccured = true;
                         }

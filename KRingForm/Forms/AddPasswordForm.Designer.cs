@@ -76,14 +76,14 @@
             this.passwordBox.MaxLength = 80;
             this.passwordBox.Name = "passwordBox";
             this.passwordBox.Size = new System.Drawing.Size(154, 20);
-            this.passwordBox.TabIndex = 1;
+            this.passwordBox.TabIndex = 2;
             // 
             // addButton
             // 
             this.addButton.Location = new System.Drawing.Point(131, 184);
             this.addButton.Name = "addButton";
             this.addButton.Size = new System.Drawing.Size(75, 23);
-            this.addButton.TabIndex = 2;
+            this.addButton.TabIndex = 7;
             this.addButton.Text = "Add";
             this.buttonToolTip.SetToolTip(this.addButton, "Adds the password and domain to encrypted memory.");
             this.addButton.UseVisualStyleBackColor = true;
@@ -94,7 +94,7 @@
             this.generateButton.Location = new System.Drawing.Point(50, 184);
             this.generateButton.Name = "generateButton";
             this.generateButton.Size = new System.Drawing.Size(75, 23);
-            this.generateButton.TabIndex = 3;
+            this.generateButton.TabIndex = 6;
             this.generateButton.Text = "Generate";
             this.generateButton.UseVisualStyleBackColor = true;
             this.generateButton.Click += new System.EventHandler(this.generateButton_Click);
@@ -105,7 +105,7 @@
             this.smallSizeButton.Location = new System.Drawing.Point(72, 152);
             this.smallSizeButton.Name = "smallSizeButton";
             this.smallSizeButton.Size = new System.Drawing.Size(31, 17);
-            this.smallSizeButton.TabIndex = 4;
+            this.smallSizeButton.TabIndex = 3;
             this.smallSizeButton.Text = "8";
             this.smallSizeButton.UseVisualStyleBackColor = true;
             this.smallSizeButton.CheckedChanged += new System.EventHandler(this.smallSizeButton_CheckedChanged);
@@ -116,7 +116,7 @@
             this.mediumSizeButton.Location = new System.Drawing.Point(109, 152);
             this.mediumSizeButton.Name = "mediumSizeButton";
             this.mediumSizeButton.Size = new System.Drawing.Size(37, 17);
-            this.mediumSizeButton.TabIndex = 5;
+            this.mediumSizeButton.TabIndex = 4;
             this.mediumSizeButton.Text = "12";
             this.mediumSizeButton.UseVisualStyleBackColor = true;
             this.mediumSizeButton.CheckedChanged += new System.EventHandler(this.mediumSizeButton_CheckedChanged);
@@ -128,7 +128,7 @@
             this.largeSizeButton.Location = new System.Drawing.Point(153, 152);
             this.largeSizeButton.Name = "largeSizeButton";
             this.largeSizeButton.Size = new System.Drawing.Size(37, 17);
-            this.largeSizeButton.TabIndex = 6;
+            this.largeSizeButton.TabIndex = 5;
             this.largeSizeButton.TabStop = true;
             this.largeSizeButton.Text = "16";
             this.largeSizeButton.UseVisualStyleBackColor = true;
@@ -158,7 +158,7 @@
             this.usernameBox.MaxLength = 80;
             this.usernameBox.Name = "usernameBox";
             this.usernameBox.Size = new System.Drawing.Size(124, 20);
-            this.usernameBox.TabIndex = 9;
+            this.usernameBox.TabIndex = 1;
             // 
             // AddPasswordForm
             // 

@@ -59,7 +59,7 @@
             this.domainBox.Name = "domainBox";
             this.domainBox.ReadOnly = true;
             this.domainBox.Size = new System.Drawing.Size(124, 20);
-            this.domainBox.TabIndex = 1;
+            this.domainBox.TabIndex = 0;
             // 
             // passwordLabel
             // 
@@ -76,7 +76,7 @@
             this.passwordBox.Name = "passwordBox";
             this.passwordBox.ReadOnly = true;
             this.passwordBox.Size = new System.Drawing.Size(154, 20);
-            this.passwordBox.TabIndex = 3;
+            this.passwordBox.TabIndex = 2;
             // 
             // copyButton
             // 
@@ -107,7 +107,7 @@
             this.revealButton.Location = new System.Drawing.Point(95, 129);
             this.revealButton.Name = "revealButton";
             this.revealButton.Size = new System.Drawing.Size(75, 23);
-            this.revealButton.TabIndex = 6;
+            this.revealButton.TabIndex = 3;
             this.revealButton.Text = "Reveal";
             this.buttonToolTip.SetToolTip(this.revealButton, "Reveals the password in plaintext for 5 seconds. Beware that people can be lookin" +
         "g over your shoulder etc.");
@@ -133,7 +133,7 @@
             this.usernameBox.Name = "usernameBox";
             this.usernameBox.ReadOnly = true;
             this.usernameBox.Size = new System.Drawing.Size(124, 20);
-            this.usernameBox.TabIndex = 8;
+            this.usernameBox.TabIndex = 1;
             // 
             // ViewForm
             // 
