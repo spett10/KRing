@@ -4,6 +4,7 @@ using KRingCore.Persistence.Repositories;
 using KRingForm.Forms;
 using KRingCore.Persistence.Model;
 using KRingCore.Extensions;
+using KRingCore.Core.Services;
 using KRingCore.Core;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,7 @@ namespace KRingForm
 
         private readonly User _user;
         private readonly IStoredPasswordRepository _passwordRep;
+        private readonly IPasswordImporter _passwordImporter; 
 
         private int _currentIndex;
         private bool _unsavedChanges;
@@ -51,6 +53,7 @@ namespace KRingForm
             securePassword.PopulateWithString(user.PlaintextPassword);
 
             _passwordRep = new StoredPasswordRepository(securePassword, _user.Cookie.EncryptionKeySalt, _user.Cookie.MacKeySalt);
+            _passwordImporter = new PlaintextPasswordImporter();
 
             UpdateList(OperationType.NoOperation);
 
@@ -316,6 +319,81 @@ namespace KRingForm
             var result = _passwordRep.PrefixSearch(searchString);
 
             UpdateList(result);
+        }
+
+        private void importButton_Click(object sender, EventArgs e)
+        {
+            var fileDialogue = new OpenFileDialog();
+            fileDialogue.FileOk += FileDialogue_FileOk;
+            fileDialogue.ShowDialog();
+        }
+
+        private void FileDialogue_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var fileDialogue = sender as OpenFileDialog;
+            System.Diagnostics.Debug.WriteLine(fileDialogue.FileName);
+
+            var importedPasswords = _passwordImporter.ImportPasswords(fileDialogue.FileName);
+            Program.Log("Import Passwords", "Imported passwords, count: " + importedPasswords.Count);
+
+            bool duplicateFound = false;
+
+            var listOfDuplicates = new List<string>();
+
+            foreach(var entry in importedPasswords)
+            {
+                System.Diagnostics.Debug.WriteLine(entry.Domain + ", " + entry.Username + ", " + entry.PlaintextPassword);
+                try
+                {
+                    _passwordRep.AddEntry(entry);
+                }
+                catch(ArgumentException)
+                {
+                    listOfDuplicates.Add(entry.Domain);
+                    duplicateFound = true;
+                }
+            }
+
+            var onlyDuplicates = false;
+
+            if(duplicateFound)
+            {
+                string info = "One or more domains were found to be duplicates. This is not allowed. The duplicates were: ";
+
+                bool moreThanOne = listOfDuplicates.Count > 1;
+                bool lastYet = false;
+                int count = 1;
+
+                foreach(var str in listOfDuplicates)
+                {
+                    info += str;
+                    lastYet = listOfDuplicates.Count == count;
+                    if (moreThanOne && !lastYet)
+                    {
+                        info += ", ";
+                    }
+
+                    count++;
+                }
+
+                var infoDialogue = new InformationPopup(info);
+
+                infoDialogue.Show();
+
+                if (moreThanOne)
+                {
+                    onlyDuplicates = listOfDuplicates.Count == importedPasswords.Count;
+                }
+            }
+
+            if(!onlyDuplicates)
+            {
+                UpdateList(OperationType.AddPassword);
+            }
+            else
+            {
+                UpdateList(OperationType.NoOperation);
+            }
         }
     }
 }

@@ -42,6 +42,7 @@
             this.SearchBar = new System.Windows.Forms.TextBox();
             this.SearchBarLabel = new System.Windows.Forms.Label();
             this.SearchButton = new System.Windows.Forms.Button();
+            this.importButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // passwordListBox
@@ -158,12 +159,23 @@
             this.SearchButton.UseVisualStyleBackColor = true;
             this.SearchButton.Click += new System.EventHandler(this.SearchButton_Click);
             // 
+            // importButton
+            // 
+            this.importButton.Location = new System.Drawing.Point(222, 198);
+            this.importButton.Name = "importButton";
+            this.importButton.Size = new System.Drawing.Size(75, 23);
+            this.importButton.TabIndex = 9;
+            this.importButton.Text = "Import..";
+            this.importButton.UseVisualStyleBackColor = true;
+            this.importButton.Click += new System.EventHandler(this.importButton_Click);
+            // 
             // PasswordList
             // 
             this.AcceptButton = this.SearchButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(308, 381);
+            this.Controls.Add(this.importButton);
             this.Controls.Add(this.SearchButton);
             this.Controls.Add(this.SearchBarLabel);
             this.Controls.Add(this.SearchBar);
@@ -198,5 +210,6 @@
         private System.Windows.Forms.TextBox SearchBar;
         private System.Windows.Forms.Label SearchBarLabel;
         private System.Windows.Forms.Button SearchButton;
+        private System.Windows.Forms.Button importButton;
     }
 }
