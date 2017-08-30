@@ -123,9 +123,11 @@ namespace UnitTests
             string domain2 = "FooBaz";
             string domain3 = "Testing";
 
-            repository.AddEntry(new StoredPassword(domain1, _plaintextPassword));
-            repository.AddEntry(new StoredPassword(domain2, _plaintextPassword));
-            repository.AddEntry(new StoredPassword(domain3, _plaintextPassword));
+            string username = "John Doe";
+
+            repository.AddEntry(new StoredPassword(domain1, username, _plaintextPassword));
+            repository.AddEntry(new StoredPassword(domain2, username, _plaintextPassword));
+            repository.AddEntry(new StoredPassword(domain3, username, _plaintextPassword));
 
             repository.WriteEntriesToDb();
 
