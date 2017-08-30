@@ -14,61 +14,87 @@ namespace KRingCore.Core.Services
     /// </summary>
     public class PlaintextPasswordImporter : IPasswordImporter
     {
-        public bool CanAccessFile(string filename)
-        {
-            return true; //TODO
-        }
-
         public List<StoredPassword> ImportPasswords(string filename)
         {
-            if(CanAccessFile(filename))
+            using (FileStream fileStream = new FileStream(filename, FileMode.Open))
+            using (StreamReader streamReader = new StreamReader(fileStream))
             {
-                using (FileStream fileStream = new FileStream(filename, FileMode.Open))
-                using (StreamReader streamReader = new StreamReader(fileStream))
+                try
                 {
-                    try
+                    var contents = streamReader.ReadToEnd();
+                    var splitContents = contents.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+
+                    var count = splitContents.Count();
+                    var entriesPerRoundtrip = 3;
+                    var roundtrips = count / entriesPerRoundtrip;
+
+                    var list = new List<StoredPassword>();
+
+                    for (int i = 0; i < roundtrips; i++)
                     {
-                        var contents = streamReader.ReadToEnd();
-                        var splitContents = contents.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+                        var currentEntry = splitContents.Skip(i * entriesPerRoundtrip).Take(entriesPerRoundtrip).ToArray();
 
-                        var count = splitContents.Count();
-                        var entriesPerRoundtrip = 3;
-                        var roundtrips = count / entriesPerRoundtrip;
+                        var domain = _extractDomain(currentEntry);
+                        var username = _extractUsername(currentEntry);
+                        var password = _extractPassword(currentEntry);
 
-                        var list = new List<StoredPassword>();
+                        var entry = new StoredPassword(domain, username, password);
 
-                        for(int i = 0; i < roundtrips; i++)
-                        {
-                            var currentEntry = splitContents.Skip(i * entriesPerRoundtrip).Take(entriesPerRoundtrip).ToArray();
-
-                            var domain = currentEntry[0];
-                            var username = currentEntry[1];
-                            var password = currentEntry[2];
-
-                            var entry = new StoredPassword(domain, username, password);
-
-                            list.Add(entry);
-                        }
-
-                        return list;
+                        list.Add(entry);
                     }
-                    catch(Exception e)
-                    {
-                        throw new FormatException("File does not contain a valid format.");
-                    }
+
+                    return list;
+                }
+                catch (Exception e)
+                {
+                    throw new FormatException("File does not contain a valid format.");
                 }
             }
-            else
+        }
+
+        public async Task<List<StoredPassword>> ImportPasswordsAsync(string filename)
+        {
+            using (FileStream fileStream = new FileStream(filename, FileMode.Open))
+            using (StreamReader streamReader = new StreamReader(fileStream))
             {
-                throw new ArgumentException("Cannot access " + filename);
+                try
+                {
+                    var contents = await streamReader.ReadToEndAsync();
+                    var splitContents = contents.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+
+                    var count = splitContents.Count();
+                    var entriesPerRoundtrip = 3;
+                    var roundtrips = count / entriesPerRoundtrip;
+
+                    var list = new List<StoredPassword>();
+
+                    for (int i = 0; i < roundtrips; i++)
+                    {
+                        var currentEntry = splitContents.Skip(i * entriesPerRoundtrip).Take(entriesPerRoundtrip).ToArray();
+
+                        var domain = _extractDomain(currentEntry);
+                        var username = _extractUsername(currentEntry);
+                        var password = _extractPassword(currentEntry);
+
+                        var entry = new StoredPassword(domain, username, password);
+
+                        list.Add(entry);
+                    }
+
+                    return list;
+                }
+                catch (Exception e)
+                {
+                    throw new FormatException("File does not contain a valid format.");
+                }
             }
         }
 
-        public Task<List<StoredPassword>> ImportPasswordsAsync(string filename)
-        {
-            //TODO
-            throw new NotImplementedException();
-        }
+        private delegate string ExtractTokenFromEntry(string[] array);
+
+        private ExtractTokenFromEntry _extractDomain = a => { return a[0]; };
+        private ExtractTokenFromEntry _extractUsername = a => { return a[1]; };
+        private ExtractTokenFromEntry _extractPassword = a => { return a[2]; };
     }
 
     

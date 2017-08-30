@@ -69,6 +69,7 @@
     <Compile Include="Persistence\Logging\FlatFileErrorLog.cs" />
     <Compile Include="Persistence\Model\StoredPassword.cs" />
     <Compile Include="Persistence\Repositories\ProfileRepository.cs" />
+    <Compile Include="Persistence\Repositories\ReadToEndStoredPasswordRepository.cs" />
     <Compile Include="Persistence\Repositories\StoredPasswordRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

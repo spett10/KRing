@@ -15,5 +15,7 @@ Require master password to confirm?
 	Require password when reloading? 
 12. folder structures for the main view. 
 13. Remove the empty debug folder when we build release (post build scripting)
+14. Add more tests to new functionalities such as plaintextpasswordimporter, ReadToEndStoredPasswordRepository etc.
+	-In doing so, isolate the streamreader potentially? So we can easier mock it? So we dont have to write to actual files..
 
 BUGS:

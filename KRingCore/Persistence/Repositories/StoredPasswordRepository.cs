@@ -29,8 +29,6 @@ namespace KRingCore.Persistence.Repositories
         private readonly int _keyLength = 32;
         private readonly int _ivLength = 16;
 
-        private readonly SecureString _password;
-
         public int EntryCount => _entries.Count;
         public bool DecryptionErrorOccured { get; private set; }
         public bool EncryptionErrorOccured { get; private set; }
@@ -59,7 +57,6 @@ namespace KRingCore.Persistence.Repositories
             _saltForEncrKey = encrKeySalt;
             _saltForMacKey = macKeySalt;
 
-            _password = password;
             _encrKey = DeriveKey(password, _saltForEncrKey);
             _macKey = DeriveKey(password, _saltForMacKey);
             
@@ -86,7 +83,6 @@ namespace KRingCore.Persistence.Repositories
             _saltForEncrKey = encrKeySalt;
             _saltForMacKey = macKeySalt;
 
-            _password = password;
             _encrKey = DeriveKey(password, _saltForEncrKey);
             _macKey = DeriveKey(password, _saltForMacKey);
 

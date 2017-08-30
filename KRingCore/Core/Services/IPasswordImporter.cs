@@ -6,7 +6,6 @@ namespace KRingCore.Core.Services
 {
     public interface IPasswordImporter
     {
-        bool CanAccessFile(string filename);
         List<StoredPassword> ImportPasswords(string filename);
         Task<List<StoredPassword>> ImportPasswordsAsync(string filename);
     }
