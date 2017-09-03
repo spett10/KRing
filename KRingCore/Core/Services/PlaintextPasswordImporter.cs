@@ -45,7 +45,7 @@ namespace KRingCore.Core.Services
 
                     return list;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     throw new FormatException("File does not contain a valid format.");
                 }
@@ -83,7 +83,7 @@ namespace KRingCore.Core.Services
 
                     return list;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     throw new FormatException("File does not contain a valid format.");
                 }

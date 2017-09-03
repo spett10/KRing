@@ -23,7 +23,6 @@ namespace KRingCore.Persistence.Repositories
         private readonly IDataConfig _dataConfig;
         private readonly IStoredPasswordReader _passwordReader;
 
-        private readonly int _count;
         private List<StoredPassword> _entries;
         
         private byte[] _saltForEncrKey;
@@ -47,36 +46,24 @@ namespace KRingCore.Persistence.Repositories
         {
 #if DEBUG
             _dataConfig = new DataConfig(
-                               ConfigurationManager.AppSettings["relativedbPathDebug"],
-                               ConfigurationManager.AppSettings["relativeconfigPathDebug"]);
+                               ConfigurationManager.AppSettings["relativedbPathDebug"]);
 #else
             _dataConfig = new DataConfig(
-                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"],
-                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeconfigPath"]);
+                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"]);
 #endif
 
             DecryptionErrorOccured = false;
             EncryptionErrorOccured = false;
 
-            _count = _dataConfig.GetStorageCount();
             _saltForEncrKey = encrKeySalt;
             _saltForMacKey = macKeySalt;
 
             _encrKey = DeriveKey(password, _saltForEncrKey);
             _macKey = DeriveKey(password, _saltForMacKey);
 
-            _passwordReader = new ReadToEndStoredPasswordRepository(password, _encrKey, _macKey);
-            
+            _passwordReader = new ReadToEndStoredPasswordReader(password, _encrKey, _macKey);
 
-            if (IsDbEmpty())
-            {
-                _entries = new List<StoredPassword>();
-                DeleteAllEntries();
-            }
-            else
-            {
-                _entries = LoadEntriesFromDb();
-            }            
+            _entries = LoadEntriesFromDb();  
         }
 
         public StoredPasswordRepository(SecureString password, byte[] encrKeySalt, byte[] macKeySalt, IDataConfig config)
@@ -86,7 +73,6 @@ namespace KRingCore.Persistence.Repositories
             DecryptionErrorOccured = false;
             EncryptionErrorOccured = false;
 
-            _count = _dataConfig.GetStorageCount();
             _saltForEncrKey = new byte[_ivLength];
             _saltForEncrKey = encrKeySalt;
             _saltForMacKey = macKeySalt;
@@ -94,17 +80,9 @@ namespace KRingCore.Persistence.Repositories
             _encrKey = DeriveKey(password, _saltForEncrKey);
             _macKey = DeriveKey(password, _saltForMacKey);
 
-            _passwordReader = new ReadToEndStoredPasswordRepository(password, _encrKey, _macKey);
+            _passwordReader = new ReadToEndStoredPasswordReader(password, _encrKey, _macKey);
 
-            if (IsDbEmpty())
-            {
-                _entries = new List<StoredPassword>();
-                DeleteAllEntries();
-            }
-            else
-            {
-                _entries = LoadEntriesFromDb();
-            }
+            _entries = LoadEntriesFromDb();
         }
 
         ~StoredPasswordRepository()
@@ -206,7 +184,7 @@ namespace KRingCore.Persistence.Repositories
 
         public bool IsDbEmpty()
         {
-            return this._count <= 0;
+            return _entries.Count() <= 0;
         } 
 
         public async Task WriteEntriesToDbAsync()
@@ -247,10 +225,9 @@ namespace KRingCore.Persistence.Repositories
                         await streamWriter.WriteLineAsync(passCipher.GetTagAsBase64());
                         await streamWriter.WriteLineAsync(Convert.ToBase64String(ivForPass));
 
-                        UpdateConfig(_entries.Count);
                         EncryptionErrorOccured = false;                        
                     }
-                    catch(Exception e)
+                    catch(Exception)
                     {
                         EncryptionErrorOccured = true;
                     }
@@ -298,75 +275,29 @@ namespace KRingCore.Persistence.Repositories
 
                         EncryptionErrorOccured = false;
                     }
-                    catch(Exception e)
+                    catch(Exception)
                     {
                         EncryptionErrorOccured = true;
                     }                    
                 }
             }
-            
-            UpdateConfig(_entries.Count);
         }
 
         public async Task<List<StoredPassword>> LoadEntriesFromDbAsync()
         {
             try
             {
-                List<StoredPassword> entries = new List<StoredPassword>();
-
-                using (FileStream fs = new FileStream(_dataConfig.dbPath, FileMode.Open))
-                using (StreamReader streamReader = new StreamReader(fs))
-                {
-                    for (int i = 0; i < _count; i++)
-                    {
-                        /* READ */
-                        var domainBase64 = await streamReader.ReadLineAsync();
-                        var domainTagBase64 = await streamReader.ReadLineAsync();
-                        var domainIvTask = await streamReader.ReadLineAsync();
-
-                        var domainCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTagBase64);
-
-                        var usernameBase64 = await streamReader.ReadLineAsync();
-                        var usernameTagBase64 = await streamReader.ReadLineAsync();
-                        var usernameIvTask = await streamReader.ReadLineAsync();
-
-                        var usernameCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(usernameBase64, usernameTagBase64);
-
-                        var passwordBase64 = await streamReader.ReadLineAsync();
-                        var passwordTag = await streamReader.ReadLineAsync();
-                        var passwordIvTask = await streamReader.ReadLineAsync();
-
-                        var passwordCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(passwordBase64, passwordTag);
-
-                        try
-                        {
-                            /* DECRYPT */
-                            var domainIv = Convert.FromBase64String(domainIvTask);
-                            var usernameIv = Convert.FromBase64String(usernameIvTask);
-                            var passwordIv = Convert.FromBase64String(passwordIvTask);
-
-                            var domain = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(domainCipher, _encrKey, domainIv, _macKey);
-                            var username = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(usernameCipher, _encrKey, usernameIv, _macKey);
-                            var password = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
-
-                            StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(username), Encoding.UTF8.GetString(password));
-                            entries.Add(newEntry);
-
-                            DecryptionErrorOccured = false;
-                        }
-                        catch (Exception e)
-                        {
-                            DecryptionErrorOccured = true;
-                        }
-
-                    }
-                }
-                
-                return entries;
+                _entries = await _passwordReader.LoadEntriesFromDbAsync();
+                return _entries;
             }
-            catch(Exception)
+            catch (Exception)
             {
+                _entries = new List<StoredPassword>();
                 throw new Exception("Could not load passwords - possibly data is corrupted!");
+            }
+            finally
+            {
+                DecryptionErrorOccured = _passwordReader.DecryptionErrorOccured;
             }
         } 
 
@@ -377,8 +308,9 @@ namespace KRingCore.Persistence.Repositories
                 _entries = _passwordReader.LoadEntriesFromDb();
                 return _entries;
             }
-            catch(Exception e)
+            catch(Exception)
             {
+                _entries = new List<StoredPassword>();
                 throw new Exception("Could not load passwords - possibly data is corrupted!");
             }
             finally
@@ -395,23 +327,11 @@ namespace KRingCore.Persistence.Repositories
         private void DeleteDb()
         {
             FileUtil.FilePurge(_dataConfig.dbPath, "-");
-            _dataConfig.ClearConfig();
         }
 
         private async Task DeleteDbAsync()
         {
             await FileUtil.FilePurgeAsync(_dataConfig.dbPath, "-");
-            await _dataConfig.ClearConfigAsync();
-        }
-
-        private void UpdateConfig(int count)
-        {
-            _dataConfig.UpdateConfig(count);
-        }
-
-        private async Task UpdateConfigAsync(int count)
-        {
-            await _dataConfig.UpdateConfigAsync(count);
         }
 
         public StoredPassword GetEntry(string domain)

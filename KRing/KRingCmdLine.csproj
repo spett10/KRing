@@ -93,12 +93,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\Debug\config.txt" />
     <Content Include="Data\Debug\db.txt" />
     <Content Include="Data\Debug\profile.txt" />
-    <Content Include="Data\Release\config.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Data\Release\db.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

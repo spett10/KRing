@@ -22,7 +22,7 @@ namespace KRingCore.Persistence.Repositories
     /// and also have an implementation that is the "old" way of just reading them. no wait, delete the old way
     /// when this works, we dont want the config file i guess.
     /// </summary>
-    public class ReadToEndStoredPasswordRepository : ReleasePathDependent, IStoredPasswordReader
+    public class ReadToEndStoredPasswordReader : ReleasePathDependent, IStoredPasswordReader
     {
         private readonly string _dbPath;
         private byte[] _encrKey;
@@ -34,7 +34,7 @@ namespace KRingCore.Persistence.Repositories
 
         public bool EncryptionErrorOccured { get; private set; }
 
-        public ReadToEndStoredPasswordRepository(SecureString password, byte[] encrKey, byte[] macKey)
+        public ReadToEndStoredPasswordReader(SecureString password, byte[] encrKey, byte[] macKey)
         {
 #if DEBUG
             _dbPath = ConfigurationManager.AppSettings["relativedbPathDebug"];
@@ -48,7 +48,7 @@ namespace KRingCore.Persistence.Repositories
             _macKey = macKey;
         }
 
-        public ReadToEndStoredPasswordRepository(SecureString password, byte[] encrKey, byte[] macKey, string dbPath)
+        public ReadToEndStoredPasswordReader(SecureString password, byte[] encrKey, byte[] macKey, string dbPath)
         {
             _dbPath = dbPath;
 
@@ -59,23 +59,12 @@ namespace KRingCore.Persistence.Repositories
             _macKey = macKey;
         }
 
-        ~ReadToEndStoredPasswordRepository()
+        ~ReadToEndStoredPasswordReader()
         {
             CryptoHashing.ZeroOutArray(ref _encrKey);
             CryptoHashing.ZeroOutArray(ref _macKey);
         }
 
-        public bool IsDbEmpty()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// TODO: Make a container class that has the entire string inside it, and make it implement
-        /// IEnumerable - and it could return a single object per entry with all the fields readily available?
-        /// Then you could simply read the string, create the object, and then do a foreach, extract the properties and insert into the passwordlist. 
-        /// </summary>
-        /// <returns></returns>
         public List<StoredPassword> LoadEntriesFromDb()
         {
             var entries = new List<StoredPassword>();
@@ -87,7 +76,7 @@ namespace KRingCore.Persistence.Repositories
                 {
                     var contents = streamReader.ReadToEnd();
 
-                    var loadedEntries = new InMemoryDatabase(contents, _encrKey, _macKey);
+                    var loadedEntries = new NewLineSeperatedDb(contents, _encrKey, _macKey);
 
                     var entr = loadedEntries.ToList();
 
@@ -98,7 +87,7 @@ namespace KRingCore.Persistence.Repositories
 
                     DecryptionErrorOccured = false;
                 }
-                catch(Exception e)
+                catch(Exception)
                 {
                     DecryptionErrorOccured = true;
                 }
@@ -107,36 +96,42 @@ namespace KRingCore.Persistence.Repositories
             return entries;
         }
 
-        public Task<List<StoredPassword>> LoadEntriesFromDbAsync()
+        public async Task<List<StoredPassword>> LoadEntriesFromDbAsync()
         {
-            throw new NotImplementedException();
-        }
+            var entries = new List<StoredPassword>();
 
-        public List<StoredPassword> PrefixSearch(string prefixDomain)
-        {
-            throw new NotImplementedException();
-        }
+            using (FileStream fileStream = new FileStream(_dbPath, FileMode.Open))
+            using (StreamReader streamReader = new StreamReader(fileStream))
+            {
+                try
+                {
+                    var contents = await streamReader.ReadToEndAsync();
 
-        public void UpdateEntry(StoredPassword updatedEntry)
-        {
-            throw new NotImplementedException();
-        }
+                    var loadedEntries = new NewLineSeperatedDb(contents, _encrKey, _macKey);
 
-        public void WriteEntriesToDb()
-        {
-            throw new NotImplementedException();
-        }
+                    var entr = loadedEntries.ToList();
 
-        public Task WriteEntriesToDbAsync()
-        {
-            throw new NotImplementedException();
+                    foreach (StoredPassword e in loadedEntries)
+                    {
+                        entries.Add(e);
+                    }
+
+                    DecryptionErrorOccured = false;
+                }
+                catch (Exception)
+                {
+                    DecryptionErrorOccured = true;
+                }
+            }
+
+            return entries;
         }
         
         /// <summary>
         /// TODO: More fitting name.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        private class InMemoryDatabase : IEnumerable<StoredPassword>
+        private class NewLineSeperatedDb : IEnumerable<StoredPassword>
         {
             private readonly List<StoredPassword> _entries;
             private const int _linesPerEntry = 9;
@@ -155,7 +150,7 @@ namespace KRingCore.Persistence.Repositories
             private byte[] _encrKey;
             private byte[] _macKey;
 
-            public InMemoryDatabase(string db, byte[] encrKey, byte[] macKey)
+            public NewLineSeperatedDb(string db, byte[] encrKey, byte[] macKey)
             {
                 var str = db.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
                 var count = str.Count();
@@ -174,7 +169,7 @@ namespace KRingCore.Persistence.Repositories
                 }
             }
 
-            ~InMemoryDatabase()
+            ~NewLineSeperatedDb()
             {
                 CryptoHashing.ZeroOutArray(ref _encrKey);
                 CryptoHashing.ZeroOutArray(ref _macKey);

@@ -21,4 +21,11 @@ Require master password to confirm?
 
 Remove warnings. 
 
+Make a format a single class. Then inside it it exposes a reader and a write - 
+this way you have the same format for both reading and writing.
+
+Then you encapsulate this in the repository.
+
+Then you can test without files i guess? By mkocking that with dependency injection and all that. 
+
 BUGS:

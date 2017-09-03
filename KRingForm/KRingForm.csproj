@@ -171,17 +171,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Data\Debug\config.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Data\Debug\db.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\Debug\log.txt" />
     <Content Include="Data\Debug\profile.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Data\Release\config.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\Release\db.txt">

@@ -127,9 +127,6 @@ namespace KRingCore.Core
 
     public class Aes256AuthenticatedCipher
     {
-        private string domainBase64;
-        private string domainTagBase64;
-
         public struct AuthenticatedCiphertext
         {
             public byte[] ciphertext;

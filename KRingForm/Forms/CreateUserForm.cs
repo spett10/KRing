@@ -11,9 +11,7 @@ using KRingCore.Core;
 namespace KRingForm
 {
     public partial class CreateUserForm : Form
-    {
-        private List<IPasswordRule> _rules;
-        
+    {        
         public CreateUserForm()
         {
             InitializeComponent();
