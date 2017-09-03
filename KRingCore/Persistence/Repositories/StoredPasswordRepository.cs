@@ -15,9 +15,14 @@ using System.Threading.Tasks;
 
 namespace KRingCore.Persistence.Repositories
 {
+    /// <summary>
+    /// TODO: only read from database in constructor, when called, and if changes have been made (i.e. we wrote) 
+    /// </summary>
     public class StoredPasswordRepository : ReleasePathDependent, IStoredPasswordRepository
     {
         private readonly IDataConfig _dataConfig;
+        private readonly IStoredPasswordReader _passwordReader;
+
         private readonly int _count;
         private List<StoredPassword> _entries;
         
@@ -59,8 +64,11 @@ namespace KRingCore.Persistence.Repositories
 
             _encrKey = DeriveKey(password, _saltForEncrKey);
             _macKey = DeriveKey(password, _saltForMacKey);
+
+            _passwordReader = new ReadToEndStoredPasswordRepository(password, _encrKey, _macKey);
             
-            if(IsDbEmpty())
+
+            if (IsDbEmpty())
             {
                 _entries = new List<StoredPassword>();
                 DeleteAllEntries();
@@ -85,6 +93,8 @@ namespace KRingCore.Persistence.Repositories
 
             _encrKey = DeriveKey(password, _saltForEncrKey);
             _macKey = DeriveKey(password, _saltForMacKey);
+
+            _passwordReader = new ReadToEndStoredPasswordRepository(password, _encrKey, _macKey);
 
             if (IsDbEmpty())
             {
@@ -158,6 +168,7 @@ namespace KRingCore.Persistence.Repositories
             DeleteDb();
         }
         
+
         public List<StoredPassword> GetEntries()
         {
             return _entries;
@@ -195,7 +206,7 @@ namespace KRingCore.Persistence.Repositories
 
         public bool IsDbEmpty()
         {
-            return _count <= 0;
+            return this._count <= 0;
         } 
 
         public async Task WriteEntriesToDbAsync()
@@ -363,57 +374,16 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
-                List<StoredPassword> entries = new List<StoredPassword>();
-
-                using (FileStream fs = new FileStream(_dataConfig.dbPath, FileMode.Open))
-                using (StreamReader streamReader = new StreamReader(fs))
-                {
-                    for (int i = 0; i < _count; i++)
-                    {
-                        /* READ */
-                        var domainBase64 = streamReader.ReadLine();
-                        var domainTagBase64 = streamReader.ReadLine();
-                        var domainIv = Convert.FromBase64String(streamReader.ReadLine());
-
-                        var domainCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTagBase64);
-
-                        var usernameBase64 = streamReader.ReadLine();
-                        var usernameTagBase64 = streamReader.ReadLine();
-                        var usernameIv = Convert.FromBase64String(streamReader.ReadLine());
-
-                        var usernameCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(usernameBase64, usernameTagBase64);
-
-                        var passwordBase64 = streamReader.ReadLine();
-                        var passwordTag = streamReader.ReadLine();
-                        var passwordIv = Convert.FromBase64String(streamReader.ReadLine());
-
-                        var passwordCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(passwordBase64, passwordTag);
-
-                        try
-                        {
-                            /* DECRYPT */
-                            var domain = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(domainCipher, _encrKey, domainIv, _macKey);
-                            var username = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(usernameCipher, _encrKey, usernameIv, _macKey); //iv is same as for domain
-                            var password = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
-
-                            /* CREATE DBENTRY */
-                            StoredPassword newEntry = new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(username), Encoding.UTF8.GetString(password));
-                            entries.Add(newEntry);
-
-                            DecryptionErrorOccured = false;
-                        }
-                        catch (Exception e)
-                        {
-                            DecryptionErrorOccured = true;
-                        }
-
-                    }
-                }
-                return entries;
+                _entries = _passwordReader.LoadEntriesFromDb();
+                return _entries;
             }
             catch(Exception e)
             {
                 throw new Exception("Could not load passwords - possibly data is corrupted!");
+            }
+            finally
+            {
+                DecryptionErrorOccured = _passwordReader.DecryptionErrorOccured;
             }
         }
         

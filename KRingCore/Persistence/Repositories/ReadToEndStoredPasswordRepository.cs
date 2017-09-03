@@ -22,27 +22,19 @@ namespace KRingCore.Persistence.Repositories
     /// and also have an implementation that is the "old" way of just reading them. no wait, delete the old way
     /// when this works, we dont want the config file i guess.
     /// </summary>
-    public class ReadToEndStoredPasswordRepository : ReleasePathDependent, IStoredPasswordRepository
+    public class ReadToEndStoredPasswordRepository : ReleasePathDependent, IStoredPasswordReader
     {
         private readonly string _dbPath;
-
-        private readonly int _count;
-        private List<StoredPassword> _entries;
-
-        private byte[] _saltForEncrKey;
-        private byte[] _saltForMacKey;
         private byte[] _encrKey;
         private byte[] _macKey;
 
         private const int _keyLength = 32;
 
-        public int EntryCount => throw new NotImplementedException();
-
         public bool DecryptionErrorOccured { get; private set; }
 
         public bool EncryptionErrorOccured { get; private set; }
 
-        public ReadToEndStoredPasswordRepository(SecureString password, byte[] encrKeySalt, byte[] macKeySalt)
+        public ReadToEndStoredPasswordRepository(SecureString password, byte[] encrKey, byte[] macKey)
         {
 #if DEBUG
             _dbPath = ConfigurationManager.AppSettings["relativedbPathDebug"];
@@ -52,71 +44,25 @@ namespace KRingCore.Persistence.Repositories
             DecryptionErrorOccured = false;
             EncryptionErrorOccured = false;
 
-            _count = 0;
+            _encrKey = encrKey;
+            _macKey = macKey;
+        }
 
-            _saltForEncrKey = encrKeySalt;
-            _saltForMacKey = macKeySalt;
+        public ReadToEndStoredPasswordRepository(SecureString password, byte[] encrKey, byte[] macKey, string dbPath)
+        {
+            _dbPath = dbPath;
 
-            _encrKey = CryptoHashing.DeriveKeyFromPasswordAndSalt(password, _saltForEncrKey, _keyLength);
-            _macKey = CryptoHashing.DeriveKeyFromPasswordAndSalt(password, _saltForMacKey, _keyLength);
-
-            _entries = LoadEntriesFromDb();
+            DecryptionErrorOccured = false;
+            EncryptionErrorOccured = false;
+            
+            _encrKey = encrKey;
+            _macKey = macKey;
         }
 
         ~ReadToEndStoredPasswordRepository()
         {
             CryptoHashing.ZeroOutArray(ref _encrKey);
             CryptoHashing.ZeroOutArray(ref _macKey);
-        }
-
-        public void AddEntry(StoredPassword newDbEntry)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteAllEntries()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteEntry(string domain)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteEntry(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool ExistsEntry(string domain)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<StoredPassword> GetEntries()
-        {
-            throw new NotImplementedException();
-        }
-
-        public StoredPassword GetEntry(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public StoredPassword GetEntry(string domain)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetPasswordFromCount(int count)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string GetPasswordFromDomain(string domain)
-        {
-            throw new NotImplementedException();
         }
 
         public bool IsDbEmpty()
@@ -141,16 +87,18 @@ namespace KRingCore.Persistence.Repositories
                 {
                     var contents = streamReader.ReadToEnd();
 
-                    var rawEntries = new InMemoryDatabase<StoredPassword>(contents, _encrKey, _macKey);
+                    var loadedEntries = new InMemoryDatabase(contents, _encrKey, _macKey);
 
-                    foreach(StoredPassword e in rawEntries)
+                    var entr = loadedEntries.ToList();
+
+                    foreach(StoredPassword e in loadedEntries)
                     {
-                        _entries.Add(e);
+                        entries.Add(e);
                     }
 
                     DecryptionErrorOccured = false;
                 }
-                catch
+                catch(Exception e)
                 {
                     DecryptionErrorOccured = true;
                 }
@@ -188,9 +136,9 @@ namespace KRingCore.Persistence.Repositories
         /// TODO: More fitting name.
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        private class InMemoryDatabase<T> : IEnumerable
+        private class InMemoryDatabase : IEnumerable<StoredPassword>
         {
-            private readonly List<string[]> _dbRaw;
+            private readonly List<StoredPassword> _entries;
             private const int _linesPerEntry = 9;
 
             private delegate string ExtractTokenFromEntry(string[] array);
@@ -204,8 +152,6 @@ namespace KRingCore.Persistence.Repositories
             private ExtractTokenFromEntry _extractPasswordTag = a => { return a[7]; };
             private ExtractTokenFromEntry _extractPasswordIv = a => { return a[8]; };
 
-            private int _index;
-
             private byte[] _encrKey;
             private byte[] _macKey;
 
@@ -216,7 +162,7 @@ namespace KRingCore.Persistence.Repositories
                 var _linesPerEntry = 9;
                 var roundtrips = count / _linesPerEntry;
 
-                _dbRaw = new List<string[]>();
+                _entries = new List<StoredPassword>();
 
                 _encrKey = encrKey;
                 _macKey = macKey;
@@ -224,10 +170,8 @@ namespace KRingCore.Persistence.Repositories
                 for(int i = 0; i < roundtrips; i++)
                 {
                     var currentEntry = str.Skip(i * _linesPerEntry).Take(_linesPerEntry).ToArray();
-                    _dbRaw.Add(currentEntry);
+                    _entries.Add(ParseEntry(currentEntry));
                 }
-
-                _index = 0;
             }
 
             ~InMemoryDatabase()
@@ -236,12 +180,8 @@ namespace KRingCore.Persistence.Repositories
                 CryptoHashing.ZeroOutArray(ref _macKey);
             }
 
-            public IEnumerator GetEnumerator()
+            private StoredPassword ParseEntry(string[] entry)
             {
-                var entry = _dbRaw[_index];
-
-                _index++;
-
                 var domainBase64 = _extractDomain(entry);
                 var domainTag = _extractDomainTag(entry);
                 var domainIvBase64 = _extractDomainIv(entry);
@@ -267,7 +207,20 @@ namespace KRingCore.Persistence.Repositories
                 var username = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(usernameCipher, _encrKey, usernameIv, _macKey);
                 var password = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
 
-                yield return new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(username), Encoding.UTF8.GetString(password));
+                return new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(username), Encoding.UTF8.GetString(password));
+            }
+
+            public IEnumerator<StoredPassword> GetEnumerator()
+            {
+                foreach(var stpswd in this._entries)
+                {
+                    yield return stpswd;
+                }
+            }
+
+            System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+            {
+                return this.GetEnumerator();
             }
         }
     }
