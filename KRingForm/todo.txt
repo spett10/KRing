@@ -16,16 +16,8 @@ Require master password to confirm?
 12. folder structures for the main view. 
 13. Remove the empty debug folder when we build release (post build scripting)
 14. Add more tests to new functionalities such as plaintextpasswordimporter, ReadToEndStoredPasswordRepository etc.
-	-In doing so, isolate the streamreader potentially? So we can easier mock it? So we dont have to write to actual files..
-
-
-Remove warnings. 
-
-Make a format a single class. Then inside it it exposes a reader and a write - 
-this way you have the same format for both reading and writing.
-
-Then you encapsulate this in the repository.
-
-Then you can test without files i guess? By mkocking that with dependency injection and all that. 
+15. Do the same extraction with the cryptography as you did with read and writing in terms of formats?
+	Make a class that takes encryption and decryption as generics. So for now we can have it take
+	the authenticatedcipher in, but this allows us in the future to easily swap it out. 
 
 BUGS:

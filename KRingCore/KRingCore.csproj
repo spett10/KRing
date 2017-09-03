@@ -64,13 +64,17 @@
     <Compile Include="Persistence\DataConfig.cs" />
     <Compile Include="Persistence\FileUtil.cs" />
     <Compile Include="Persistence\Interfaces\IDataConfig.cs" />
+    <Compile Include="Persistence\Interfaces\IStoredPasswordIO.cs" />
     <Compile Include="Persistence\Interfaces\IProfileRepository.cs" />
     <Compile Include="Persistence\Interfaces\IStoredPasswordReader.cs" />
     <Compile Include="Persistence\Interfaces\IStoredPasswordRepository.cs" />
+    <Compile Include="Persistence\Interfaces\IStoredPasswordWriter.cs" />
     <Compile Include="Persistence\Logging\FlatFileErrorLog.cs" />
     <Compile Include="Persistence\Model\StoredPassword.cs" />
+    <Compile Include="Persistence\Repositories\NsvStoredPasswordIO.cs" />
+    <Compile Include="Persistence\Repositories\NsvStoredPasswordWriter.cs" />
     <Compile Include="Persistence\Repositories\ProfileRepository.cs" />
-    <Compile Include="Persistence\Repositories\ReadToEndStoredPasswordRepository.cs" />
+    <Compile Include="Persistence\Repositories\ReadToEndStoredPasswordReader.cs" />
     <Compile Include="Persistence\Repositories\StoredPasswordRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

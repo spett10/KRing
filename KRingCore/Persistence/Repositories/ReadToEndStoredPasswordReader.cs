@@ -24,7 +24,7 @@ namespace KRingCore.Persistence.Repositories
     /// </summary>
     public class ReadToEndStoredPasswordReader : ReleasePathDependent, IStoredPasswordReader
     {
-        private readonly string _dbPath;
+        private readonly IDataConfig _config;
         private byte[] _encrKey;
         private byte[] _macKey;
 
@@ -32,29 +32,11 @@ namespace KRingCore.Persistence.Repositories
 
         public bool DecryptionErrorOccured { get; private set; }
 
-        public bool EncryptionErrorOccured { get; private set; }
-
-        public ReadToEndStoredPasswordReader(SecureString password, byte[] encrKey, byte[] macKey)
+        public ReadToEndStoredPasswordReader(SecureString password, byte[] encrKey, byte[] macKey, IDataConfig config)
         {
-#if DEBUG
-            _dbPath = ConfigurationManager.AppSettings["relativedbPathDebug"];
-#else
-            _dbPath = base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"];
-#endif
-            DecryptionErrorOccured = false;
-            EncryptionErrorOccured = false;
-
-            _encrKey = encrKey;
-            _macKey = macKey;
-        }
-
-        public ReadToEndStoredPasswordReader(SecureString password, byte[] encrKey, byte[] macKey, string dbPath)
-        {
-            _dbPath = dbPath;
+            _config = config;
 
             DecryptionErrorOccured = false;
-            EncryptionErrorOccured = false;
-            
             _encrKey = encrKey;
             _macKey = macKey;
         }
@@ -69,7 +51,7 @@ namespace KRingCore.Persistence.Repositories
         {
             var entries = new List<StoredPassword>();
 
-            using (FileStream fileStream = new FileStream(_dbPath, FileMode.Open))
+            using (FileStream fileStream = new FileStream(_config.dbPath, FileMode.Open))
             using (StreamReader streamReader = new StreamReader(fileStream))
             {
                 try
@@ -100,7 +82,7 @@ namespace KRingCore.Persistence.Repositories
         {
             var entries = new List<StoredPassword>();
 
-            using (FileStream fileStream = new FileStream(_dbPath, FileMode.Open))
+            using (FileStream fileStream = new FileStream(_config.dbPath, FileMode.Open))
             using (StreamReader streamReader = new StreamReader(fileStream))
             {
                 try

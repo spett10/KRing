@@ -8,7 +8,6 @@ namespace KRingCore.Persistence.Interfaces
     {
         List<StoredPassword> LoadEntriesFromDb();
         bool DecryptionErrorOccured { get; }
-        bool EncryptionErrorOccured { get; }
         Task<List<StoredPassword>> LoadEntriesFromDbAsync();
     }
 }

@@ -21,7 +21,7 @@ namespace KRingCore.Persistence.Repositories
     public class StoredPasswordRepository : ReleasePathDependent, IStoredPasswordRepository
     {
         private readonly IDataConfig _dataConfig;
-        private readonly IStoredPasswordReader _passwordReader;
+        private readonly IStoredPasswordIO _passwordIO;
 
         private List<StoredPassword> _entries;
         
@@ -61,7 +61,7 @@ namespace KRingCore.Persistence.Repositories
             _encrKey = DeriveKey(password, _saltForEncrKey);
             _macKey = DeriveKey(password, _saltForMacKey);
 
-            _passwordReader = new ReadToEndStoredPasswordReader(password, _encrKey, _macKey);
+            _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
 
             _entries = LoadEntriesFromDb();  
         }
@@ -80,7 +80,7 @@ namespace KRingCore.Persistence.Repositories
             _encrKey = DeriveKey(password, _saltForEncrKey);
             _macKey = DeriveKey(password, _saltForMacKey);
 
-            _passwordReader = new ReadToEndStoredPasswordReader(password, _encrKey, _macKey);
+            _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
 
             _entries = LoadEntriesFromDb();
         }
@@ -189,105 +189,33 @@ namespace KRingCore.Persistence.Repositories
 
         public async Task WriteEntriesToDbAsync()
         {
-            using (FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create))
-            using (StreamWriter streamWriter = new StreamWriter(fileStream))
+            try
             {
-                foreach(var entr in _entries)
-                {
-                    try
-                    {
-                        /* Encrypt */
-                        var rawDomain = Encoding.UTF8.GetBytes(entr.Domain);
-                        var rawUsername = Encoding.UTF8.GetBytes(entr.Username);
-                        var rawPassword = entr.PlaintextPassword;
-                        var rawPass = Encoding.UTF8.GetBytes(rawPassword);
-
-                        var ivForDomain = CryptoHashing.GenerateSalt(_ivLength);
-                        var ivForUsername = CryptoHashing.GenerateSalt(_ivLength);
-                        var ivForPass = CryptoHashing.GenerateSalt(_ivLength);
-
-                        var domainCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawDomain, ivForDomain, _encrKey, _macKey);
-                        var usernameCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawUsername, ivForUsername, _encrKey, _macKey);
-                        var passCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawPass, ivForPass, _encrKey, _macKey);
-
-                        /* write domain, tag, iv */
-                        await streamWriter.WriteLineAsync(domainCipher.GetCipherAsBase64());
-                        await streamWriter.WriteLineAsync(domainCipher.GetTagAsBase64());
-                        await streamWriter.WriteLineAsync(Convert.ToBase64String(ivForDomain));
-
-                        /* write username, tag, iv */
-                        await streamWriter.WriteLineAsync(usernameCipher.GetCipherAsBase64());
-                        await streamWriter.WriteLineAsync(usernameCipher.GetTagAsBase64());
-                        await streamWriter.WriteLineAsync(Convert.ToBase64String(ivForUsername));
-
-                        /* write password, tag, iv */
-                        await streamWriter.WriteLineAsync(passCipher.GetCipherAsBase64());
-                        await streamWriter.WriteLineAsync(passCipher.GetTagAsBase64());
-                        await streamWriter.WriteLineAsync(Convert.ToBase64String(ivForPass));
-
-                        EncryptionErrorOccured = false;                        
-                    }
-                    catch(Exception)
-                    {
-                        EncryptionErrorOccured = true;
-                    }
-                }
-            }            
+                await _passwordIO.Writer.WriteEntriesToDbAsync(_entries);
+            }
+            catch (Exception)
+            {
+                EncryptionErrorOccured = _passwordIO.Writer.EncryptionErrorOccured;
+            }
         }
 
         public void WriteEntriesToDb()
         {
-            using(FileStream fileStream = new FileStream(_dataConfig.dbPath, FileMode.Create))
-            using (StreamWriter streamWriter = new StreamWriter(fileStream))
+            try
             {
-                foreach (var entr in _entries)
-                {
-                    try
-                    {
-                        /* encrypt */
-                        var rawDomain = Encoding.UTF8.GetBytes(entr.Domain);
-                        var rawUsername = Encoding.UTF8.GetBytes(entr.Username);
-                        var rawPassword = entr.PlaintextPassword;
-                        var rawPass = Encoding.UTF8.GetBytes(rawPassword);
-
-                        var ivForDomain = CryptoHashing.GenerateSalt(_ivLength);
-                        var ivForUsername = CryptoHashing.GenerateSalt(_ivLength);
-                        var ivForPass = CryptoHashing.GenerateSalt(_ivLength);
-
-                        var domainCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawDomain, ivForDomain, _encrKey, _macKey);
-                        var usernameCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawUsername, ivForUsername, _encrKey, _macKey);
-                        var passCipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawPass, ivForPass, _encrKey, _macKey);
-
-                        /* write domain, tag, iv */
-                        streamWriter.WriteLine(domainCipher.GetCipherAsBase64());
-                        streamWriter.WriteLine(domainCipher.GetTagAsBase64());
-                        streamWriter.WriteLine(Convert.ToBase64String(ivForDomain));
-
-                        /* write username, tag, iv */
-                        streamWriter.WriteLine(usernameCipher.GetCipherAsBase64());
-                        streamWriter.WriteLine(usernameCipher.GetTagAsBase64());
-                        streamWriter.WriteLine(Convert.ToBase64String(ivForUsername));
-
-                        /* write password, tag */
-                        streamWriter.WriteLine(passCipher.GetCipherAsBase64());
-                        streamWriter.WriteLine(passCipher.GetTagAsBase64());
-                        streamWriter.WriteLine(Convert.ToBase64String(ivForPass));
-
-                        EncryptionErrorOccured = false;
-                    }
-                    catch(Exception)
-                    {
-                        EncryptionErrorOccured = true;
-                    }                    
-                }
+                _passwordIO.Writer.WriteEntriesToDb(_entries);
             }
+            catch(Exception)
+            {
+                EncryptionErrorOccured = _passwordIO.Writer.EncryptionErrorOccured;
+            }                    
         }
 
         public async Task<List<StoredPassword>> LoadEntriesFromDbAsync()
         {
             try
             {
-                _entries = await _passwordReader.LoadEntriesFromDbAsync();
+                _entries = await _passwordIO.Reader.LoadEntriesFromDbAsync();
                 return _entries;
             }
             catch (Exception)
@@ -297,7 +225,7 @@ namespace KRingCore.Persistence.Repositories
             }
             finally
             {
-                DecryptionErrorOccured = _passwordReader.DecryptionErrorOccured;
+                DecryptionErrorOccured = _passwordIO.Reader.DecryptionErrorOccured;
             }
         } 
 
@@ -305,7 +233,7 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
-                _entries = _passwordReader.LoadEntriesFromDb();
+                _entries = _passwordIO.Reader.LoadEntriesFromDb();
                 return _entries;
             }
             catch(Exception)
@@ -315,7 +243,7 @@ namespace KRingCore.Persistence.Repositories
             }
             finally
             {
-                DecryptionErrorOccured = _passwordReader.DecryptionErrorOccured;
+                DecryptionErrorOccured = _passwordIO.Reader.DecryptionErrorOccured;
             }
         }
         
