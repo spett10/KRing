@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using KRingCore.Extensions;
 using System.IO;
-using KRingCore.Persistence.Model;
+using static KRingCore.Core.AesHmacAuthenticatedCipher;
 
 namespace KRingCore.Core
 {
@@ -125,7 +121,91 @@ namespace KRingCore.Core
         }
     }
 
-    public class Aes256AuthenticatedCipher
+    /// <summary>
+    /// Base class for an authenticated cipher. Needs a symmetric encryption algorithm and a keyed hash algorithm. 
+    /// Uses CBC and PKCS7 mode by default. The idea is that we can extend it in the future, say, going to another HMAC
+    /// if the used one is not good enough, or away from some symmetric algorithm. 
+    /// 
+    /// TODO: How do we extract the ciphermode and the padding? We cant use enum in constrants.. More delegates? There are just so many.
+    /// Maybe an interface in, that has 3 delegates, one for ciphermode, one for padding, one for hmaccreation, then we only have one argument. 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="V"></typeparam>
+    public abstract class AuthenticatedCipherCbcPkcs7<T, V> where T: SymmetricAlgorithm, new() where V : KeyedHashAlgorithm
+    {
+        internal static AuthenticatedCiphertext EncryptThenTag(byte[] plaintext, byte[] encrKey, byte[] iv, byte[] hmacKey, Func<byte[], V> keyedHashCreator)
+        {
+            if (CryptoHashing.CompareByteArrays(encrKey, hmacKey))
+            {
+                throw new ArgumentException("Using same key for encryption and mac is insecure");
+            }
+
+            var cipher = new AuthenticatedCiphertext();
+
+            using (T symmetric = new T())
+            {
+                symmetric.Mode = CipherMode.CBC;
+                symmetric.Padding = PaddingMode.PKCS7;
+                symmetric.Key = encrKey;
+                symmetric.IV = iv;
+
+                using (MemoryStream ms = new MemoryStream())
+                using (var encryptor = symmetric.CreateEncryptor())
+                using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                {
+                    cs.Write(plaintext, 0, plaintext.Length);
+                    cs.FlushFinalBlock();
+                    cipher.ciphertext = ms.ToArray();
+                }
+            }
+
+            using (V keyedHash = keyedHashCreator(hmacKey))
+            {
+                cipher.tag = keyedHash.ComputeHash(cipher.ciphertext);
+            }
+
+            return cipher;
+        }
+
+        internal static byte[] VerifyThenDecrypt(AuthenticatedCiphertext ciphertext, byte[] encrKey, byte[] iv, byte[] hmacKey, Func<byte[], V> keyedHashCreator)
+        {
+            if (CryptoHashing.CompareByteArrays(encrKey, hmacKey))
+            {
+                throw new ArgumentException("Using same key for encryption and mac is insecure");
+            }
+
+            using (var hmac = keyedHashCreator(hmacKey))
+            {
+                var computedHash = hmac.ComputeHash(ciphertext.ciphertext);
+                if (!CryptoHashing.CompareByteArrays(computedHash, ciphertext.tag))
+                {
+                    throw new CryptographicException("Invalid HMAC");
+                }
+            }
+
+            using (T symmetric = new T())
+            {
+                symmetric.Mode = CipherMode.CBC;
+                symmetric.Padding = PaddingMode.PKCS7;
+                symmetric.Key = encrKey;
+                symmetric.IV = iv;
+
+                using (MemoryStream ms = new MemoryStream())
+                using (var encryptor = symmetric.CreateDecryptor())
+                using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                {
+                    cs.Write(ciphertext.ciphertext, 0, ciphertext.ciphertext.Length);
+                    cs.FlushFinalBlock();
+                    return ms.ToArray();
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// A concrete implementation of the generic base class. Uses AES and HMACSHA256. 
+    /// </summary>
+    public class AesHmacAuthenticatedCipher : AuthenticatedCipherCbcPkcs7<AesCryptoServiceProvider, HMACSHA256>
     {
         public struct AuthenticatedCiphertext
         {
@@ -157,70 +237,12 @@ namespace KRingCore.Core
 
         public static AuthenticatedCiphertext CBCEncryptThenHMac(byte[] plaintext, byte[] encryptionIv, byte[] encrKey, byte[] macKey)
         {
-            if (CryptoHashing.CompareByteArrays(encrKey, macKey))
-            {
-                throw new ArgumentException("Using same key for encryption and mac is insecure");
-            }
-
-            var cipher = new AuthenticatedCiphertext();
-
-            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
-            {
-                aes.Mode = CipherMode.CBC;
-                aes.Padding = PaddingMode.PKCS7;
-                aes.Key = encrKey;
-                aes.IV = encryptionIv;
-
-                using (MemoryStream ms = new MemoryStream())
-                using (var encryptor = aes.CreateEncryptor())
-                using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
-                {
-                    cs.Write(plaintext, 0, plaintext.Length);
-                    cs.FlushFinalBlock();
-                    cipher.ciphertext = ms.ToArray();
-                }
-            }
-
-            using (var hmac = new HMACSHA256(macKey))
-            {
-                cipher.tag = hmac.ComputeHash(cipher.ciphertext);
-            }
-
-            return cipher;
+            return EncryptThenTag(plaintext, encrKey, encryptionIv, macKey, x => new HMACSHA256(x));
         }
 
         public static byte[] VerifyMacThenCBCDecrypt(AuthenticatedCiphertext ciphertext, byte[] encrKey, byte[] encrIv, byte[] hmacKey)
         {
-            if (CryptoHashing.CompareByteArrays(encrKey, hmacKey))
-            {
-                throw new ArgumentException("Using same key for encryption and mac is insecure");
-            }
-
-            using (var hmac = new HMACSHA256(hmacKey))
-            {
-                var computedHash = hmac.ComputeHash(ciphertext.ciphertext);
-                if(!CryptoHashing.CompareByteArrays(computedHash, ciphertext.tag))
-                {
-                    throw new CryptographicException("Invalid HMAC");
-                }
-            }
-
-            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
-            {
-                aes.Mode = CipherMode.CBC;
-                aes.Padding = PaddingMode.PKCS7;
-                aes.Key = encrKey;
-                aes.IV = encrIv;
-
-                using (MemoryStream ms = new MemoryStream())
-                using (var encryptor = aes.CreateDecryptor())
-                using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
-                {
-                    cs.Write(ciphertext.ciphertext, 0, ciphertext.ciphertext.Length);
-                    cs.FlushFinalBlock();
-                    return ms.ToArray();
-                }
-            }
+            return VerifyThenDecrypt(ciphertext, encrKey, encrIv, hmacKey, x => new HMACSHA256(x));
         }
     }
 }

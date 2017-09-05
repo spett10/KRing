@@ -171,18 +171,18 @@ namespace KRingCore.Persistence.Repositories
                 var passwordTag = _extractPasswordTag(entry);
                 var passwordIvBase64 = _extractPasswordIv(entry);
 
-                var domainCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTag);
-                var usernameCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(usernameBase64, usernameTag);
-                var passwordCipher = new Aes256AuthenticatedCipher.AuthenticatedCiphertext(passwordBase64, passwordTag);
+                var domainCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTag);
+                var usernameCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(usernameBase64, usernameTag);
+                var passwordCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(passwordBase64, passwordTag);
 
                 var domainIv = Convert.FromBase64String(domainIvBase64);
                 var usernameIv = Convert.FromBase64String(usernameIvBase64);
                 var passwordIv = Convert.FromBase64String(passwordIvBase64);
 
                 /* Decrypt and check tag. If tag is not valid, the used methods throws errors */
-                var domain = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(domainCipher, _encrKey, domainIv, _macKey);
-                var username = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(usernameCipher, _encrKey, usernameIv, _macKey);
-                var password = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
+                var domain = AesHmacAuthenticatedCipher.VerifyMacThenCBCDecrypt(domainCipher, _encrKey, domainIv, _macKey);
+                var username = AesHmacAuthenticatedCipher.VerifyMacThenCBCDecrypt(usernameCipher, _encrKey, usernameIv, _macKey);
+                var password = AesHmacAuthenticatedCipher.VerifyMacThenCBCDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
 
                 return new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(username), Encoding.UTF8.GetString(password));
             }

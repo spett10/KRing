@@ -47,9 +47,9 @@ namespace UnitTests
             var hmacKEy = Encoding.UTF8.GetBytes("MELLOW SUBMARINEMELLOW SUBMARINE");
             var iv = CryptoHashing.GenerateSalt();
 
-            var cipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawPlaintext, iv, encrkey, hmacKEy);
+            var cipher = AesHmacAuthenticatedCipher.CBCEncryptThenHMac(rawPlaintext, iv, encrkey, hmacKEy);
 
-            var decryptedRaw = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(cipher, encrkey, iv, hmacKEy);
+            var decryptedRaw = AesHmacAuthenticatedCipher.VerifyMacThenCBCDecrypt(cipher, encrkey, iv, hmacKEy);
 
             var plaintextAfterDecryption = Encoding.UTF8.GetString(decryptedRaw);
 
@@ -67,12 +67,12 @@ namespace UnitTests
             var hmacKEy = Encoding.UTF8.GetBytes("MELLOW SUBMARINEMELLOW SUBMARINE");
             var iv = CryptoHashing.GenerateSalt();
 
-            var cipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawPlaintext, key, iv, hmacKEy);
+            var cipher = AesHmacAuthenticatedCipher.CBCEncryptThenHMac(rawPlaintext, key, iv, hmacKEy);
 
             /* FIDDLE */
             cipher.ciphertext[0] ^= byte.MaxValue;
 
-            var decryptedRaw = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(cipher, key, iv, hmacKEy);
+            var decryptedRaw = AesHmacAuthenticatedCipher.VerifyMacThenCBCDecrypt(cipher, key, iv, hmacKEy);
         }
 
         [TestMethod]
@@ -86,12 +86,12 @@ namespace UnitTests
             var hmacKEy = Encoding.UTF8.GetBytes("MELLOW SUBMARINEMELLOW SUBMARINE");
             var iv = CryptoHashing.GenerateSalt();
 
-            var cipher = Aes256AuthenticatedCipher.CBCEncryptThenHMac(rawPlaintext, key, iv, hmacKEy);
+            var cipher = AesHmacAuthenticatedCipher.CBCEncryptThenHMac(rawPlaintext, key, iv, hmacKEy);
 
             /* FIDDLE */
             cipher.tag[0] ^= byte.MaxValue;
 
-            var decryptedRaw = Aes256AuthenticatedCipher.VerifyMacThenCBCDecrypt(cipher, key, iv, hmacKEy);
+            var decryptedRaw = AesHmacAuthenticatedCipher.VerifyMacThenCBCDecrypt(cipher, key, iv, hmacKEy);
         }
 
 

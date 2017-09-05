@@ -16,8 +16,6 @@ Require master password to confirm?
 12. folder structures for the main view. 
 13. Remove the empty debug folder when we build release (post build scripting)
 14. Add more tests to new functionalities such as plaintextpasswordimporter, ReadToEndStoredPasswordRepository etc.
-15. Do the same extraction with the cryptography as you did with read and writing in terms of formats?
-	Make a class that takes encryption and decryption as generics. So for now we can have it take
-	the authenticatedcipher in, but this allows us in the future to easily swap it out. 
-
+15. Finish the refactoring of crypto stuff by extracting the ciphermode, padding and hmac creator as described in the todo in the base class.
+16. Move the cryptohashing to the security folder, seperate the classes within to seperate files.
 BUGS:
