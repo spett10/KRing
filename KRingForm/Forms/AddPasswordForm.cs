@@ -1,12 +1,10 @@
 ﻿using KRingCore.Persistence.Interfaces;
 using KRingCore.Persistence.Model;
-using KRingCore.Core;
 using KRingCore.Extensions;
-using KRingCore.Persistence.Repositories;
 using System;
 using System.Windows.Forms;
 using static KRingForm.PasswordList;
-using KRing.Core;
+using KRingCore.Security;
 
 namespace KRingForm.Forms
 {

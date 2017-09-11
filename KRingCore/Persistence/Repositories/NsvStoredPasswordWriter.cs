@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.IO;
 using KRingCore.Persistence.Interfaces;
 using System.Text;
-using KRingCore.Core;
+using KRingCore.Security;
 using KRingCore.Persistence.Model;
 using System.Collections.Generic;
 using KRingCore.Interfaces;

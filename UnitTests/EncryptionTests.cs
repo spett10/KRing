@@ -1,8 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using KRingCore.Core;
+using KRingCore.Security;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests

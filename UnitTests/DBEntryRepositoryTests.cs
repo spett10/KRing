@@ -7,7 +7,7 @@ using KRingCore.Persistence.Model;
 using System.Security;
 using UnitTests.Config;
 using System.Configuration;
-using KRingCore.Core;
+using KRingCore.Security;
 using System.Collections.Generic;
 
 namespace UnitTests

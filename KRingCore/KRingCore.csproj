@@ -48,7 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\ActionType.cs" />
-    <Compile Include="Core\CryptoHashing.cs" />
+    <Compile Include="Security\AesHmacAuthenticatedCipher.cs" />
+    <Compile Include="Security\AuthenticatedCipherCbcPkcs7.cs" />
+    <Compile Include="Security\CryptoHashing.cs" />
     <Compile Include="Core\Interfaces\IPasswordRule.cs" />
     <Compile Include="Core\Interfaces\IPasswordUI.cs" />
     <Compile Include="Core\Model\SecurityData.cs" />
@@ -82,9 +84,7 @@
     <None Include="App.config" />
     <None Include="assemblysigning.pfx" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Security\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

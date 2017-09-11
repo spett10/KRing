@@ -2,10 +2,9 @@
 using KRingCore.Persistence.Interfaces;
 using KRingCore.Core.Model;
 using System.Security;
-using KRingCore.Core;
 using KRingCore.Extensions;
-using System.Diagnostics;
 using System.Threading.Tasks;
+using KRingCore.Security;
 
 namespace UnitTests
 {

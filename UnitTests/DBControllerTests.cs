@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Security;
 using KRingCore.Extensions;
 using KRingCore.Core.Model;
-using KRingCore.Core;
+using KRingCore.Security;
 using UnitTests.Repositories;
 
 namespace UnitTests

@@ -1,16 +1,13 @@
 ﻿using KRingCore.Core;
-using KRingCore.Extensions;
 using KRingCore.Persistence.Model;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using KRingCore.Security;
 using System.Linq;
 using System.Security;
 using System.Configuration;
 using KRingCore.Persistence.Interfaces;
-using KRingCore.Persistence;
 using KRingCore.Interfaces;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace KRingCore.Persistence.Repositories

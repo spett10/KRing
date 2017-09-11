@@ -1,5 +1,6 @@
 ﻿using System.Security;
 using KRingCore.Extensions;
+using KRingCore.Security;
 
 namespace KRingCore.Core.Model
 {

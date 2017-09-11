@@ -6,10 +6,9 @@ using KRingCore.Persistence.Model;
 using KRingCore.Core;
 using KRingCore.Interfaces;
 using System.Security;
-using System.Configuration;
 using System.IO;
 using System.Linq;
-using System.Collections;
+using KRingCore.Security;
 using System.Text;
 
 namespace KRingCore.Persistence.Repositories

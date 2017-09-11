@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using KRingCore.Core.Model;
-using KRingCore.Core;
+using KRingCore.Security;
 using KRingCore.Extensions;
 using KRingCore.Persistence.Repositories;
 using System.Security;
@@ -48,7 +48,7 @@ namespace UnitTests
             var isValidPassword = CryptoHashing.CompareSaltedHash(password, readUser.Cookie.PasswordHashSalt, readUser.Cookie.HashedPassword); //think when we read the users password is not the password but the hashed password
             Assert.IsTrue(isValidPassword);
             
-            var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.EncryptionKeySalt, _user.Cookie.EncryptionKeySalt);
+            var keysaltIsEqual = CryptoHashing.CompareByteArraysNoTimeLeak(readUser.Cookie.EncryptionKeySalt, _user.Cookie.EncryptionKeySalt);
             Assert.AreEqual(keysaltIsEqual, true);
             
             Assert.AreEqual(_user.Cookie.HashedPassword, readUser.Cookie.HashedPassword);
@@ -116,7 +116,7 @@ namespace UnitTests
 
             Assert.AreEqual(otherUser.Cookie.HashedPassword, readUser.Cookie.HashedPassword);
 
-            var keysaltIsEqual = CryptoHashing.CompareByteArrays(readUser.Cookie.EncryptionKeySalt, otherUser.Cookie.EncryptionKeySalt);
+            var keysaltIsEqual = CryptoHashing.CompareByteArraysNoTimeLeak(readUser.Cookie.EncryptionKeySalt, otherUser.Cookie.EncryptionKeySalt);
             Assert.AreEqual(keysaltIsEqual, true);
 
             Assert.AreEqual(readUser.Cookie.HashedPassword, otherUser.Cookie.HashedPassword);

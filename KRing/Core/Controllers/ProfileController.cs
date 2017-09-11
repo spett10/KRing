@@ -6,6 +6,7 @@ using KRingCore.Extensions;
 using KRingCore.Core.Interfaces;
 using KRingCore.Persistence.Interfaces;
 using KRingCore.Persistence.Repositories;
+using KRingCore.Security;
 using KRing.Interfaces;
 
 namespace KRing.Core.Controllers

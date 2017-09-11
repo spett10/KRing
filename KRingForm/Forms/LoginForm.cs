@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using KRingCore.Core;
 using KRingCore.Core.Model;
+using KRingCore.Security;
 using static KRingForm.Program;
 
 namespace KRingForm

@@ -15,7 +15,7 @@ Require master password to confirm?
 	Require password when reloading? 
 12. folder structures for the main view. 
 13. Remove the empty debug folder when we build release (post build scripting)
+	-Do it with powershell? Make a powershell script that does all the cleanup, make bostbuild point to it. 
 14. Add more tests to new functionalities such as plaintextpasswordimporter, ReadToEndStoredPasswordRepository etc.
 15. Finish the refactoring of crypto stuff by extracting the ciphermode, padding and hmac creator as described in the todo in the base class.
-16. Move the cryptohashing to the security folder, seperate the classes within to seperate files.
 BUGS:

@@ -6,6 +6,7 @@ using KRingCore.Core.Model;
 using KRing.Interfaces;
 using KRingCore.Core.Interfaces;
 using KRingCore.Persistence.Model;
+using KRingCore.Security;
 
 namespace UnitTests
 {
