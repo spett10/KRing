@@ -53,6 +53,7 @@
             this.passwordListBox.Size = new System.Drawing.Size(204, 316);
             this.passwordListBox.TabIndex = 0;
             this.passwordListBox.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
+            this.passwordListBox.DoubleClick += new System.EventHandler(this.viewButton_Click);
             // 
             // addButton
             // 
