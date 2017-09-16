@@ -15,9 +15,18 @@ namespace KRingCore.Security
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="V"></typeparam>
-    public abstract class AuthenticatedCipherCbcPkcs7<T, V> where T : SymmetricAlgorithm, new() where V : KeyedHashAlgorithm
+    public abstract class AuthenticatedCipher<T, V> where T : SymmetricAlgorithm, new() where V : KeyedHashAlgorithm
     {
-        internal static AuthenticatedCiphertext EncryptThenTag(byte[] plaintext, byte[] encrKey, byte[] iv, byte[] hmacKey, Func<byte[], V> keyedHashCreator)
+        private readonly CipherMode _cipherMode;
+        private readonly PaddingMode _paddingMode;
+
+        public AuthenticatedCipher(CipherMode mode, PaddingMode padding)
+        {
+            _cipherMode = mode;
+            _paddingMode = padding;
+        }
+
+        internal AuthenticatedCiphertext EncryptThenTag(byte[] plaintext, byte[] encrKey, byte[] iv, byte[] hmacKey, Func<byte[], V> keyedHashCreator)
         {
             if (CryptoHashing.CompareByteArraysNoTimeLeak(encrKey, hmacKey))
             {
@@ -28,8 +37,8 @@ namespace KRingCore.Security
 
             using (T symmetric = new T())
             {
-                symmetric.Mode = CipherMode.CBC;
-                symmetric.Padding = PaddingMode.PKCS7;
+                symmetric.Mode = _cipherMode;
+                symmetric.Padding = _paddingMode;
                 symmetric.Key = encrKey;
                 symmetric.IV = iv;
 
@@ -51,7 +60,7 @@ namespace KRingCore.Security
             return cipher;
         }
 
-        internal static byte[] VerifyThenDecrypt(AuthenticatedCiphertext ciphertext, byte[] encrKey, byte[] iv, byte[] hmacKey, Func<byte[], V> keyedHashCreator)
+        internal byte[] VerifyThenDecrypt(AuthenticatedCiphertext ciphertext, byte[] encrKey, byte[] iv, byte[] hmacKey, Func<byte[], V> keyedHashCreator)
         {
             if (CryptoHashing.CompareByteArraysNoTimeLeak(encrKey, hmacKey))
             {
@@ -69,8 +78,8 @@ namespace KRingCore.Security
 
             using (T symmetric = new T())
             {
-                symmetric.Mode = CipherMode.CBC;
-                symmetric.Padding = PaddingMode.PKCS7;
+                symmetric.Mode = _cipherMode;
+                symmetric.Padding = _paddingMode;
                 symmetric.Key = encrKey;
                 symmetric.IV = iv;
 

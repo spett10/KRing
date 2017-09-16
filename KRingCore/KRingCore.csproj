@@ -49,7 +49,7 @@
   <ItemGroup>
     <Compile Include="Core\ActionType.cs" />
     <Compile Include="Security\AesHmacAuthenticatedCipher.cs" />
-    <Compile Include="Security\AuthenticatedCipherCbcPkcs7.cs" />
+    <Compile Include="Security\AuthenticatedCipher.cs" />
     <Compile Include="Security\CryptoHashing.cs" />
     <Compile Include="Core\Interfaces\IPasswordRule.cs" />
     <Compile Include="Core\Interfaces\IPasswordUI.cs" />

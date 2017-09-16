@@ -6,8 +6,12 @@ namespace KRingCore.Security
     /// <summary>
     /// A concrete implementation of the generic base class. Uses AES and HMACSHA256. 
     /// </summary>
-    public class AesHmacAuthenticatedCipher : AuthenticatedCipherCbcPkcs7<AesCryptoServiceProvider, HMACSHA256>
+    public class AesHmacAuthenticatedCipher : AuthenticatedCipher<AesCryptoServiceProvider, HMACSHA256>
     {
+        public AesHmacAuthenticatedCipher(CipherMode cipherMode, PaddingMode paddingMode) : base(cipherMode, paddingMode)
+        {
+        }
+
         public struct AuthenticatedCiphertext
         {
             public byte[] ciphertext;
@@ -36,12 +40,12 @@ namespace KRingCore.Security
             }
         }
 
-        public static AuthenticatedCiphertext CBCEncryptThenHMac(byte[] plaintext, byte[] encryptionIv, byte[] encrKey, byte[] macKey)
+        public AuthenticatedCiphertext EncryptThenHMac(byte[] plaintext, byte[] encryptionIv, byte[] encrKey, byte[] macKey)
         {
             return EncryptThenTag(plaintext, encrKey, encryptionIv, macKey, x => new HMACSHA256(x));
         }
 
-        public static byte[] VerifyMacThenCBCDecrypt(AuthenticatedCiphertext ciphertext, byte[] encrKey, byte[] encrIv, byte[] hmacKey)
+        public byte[] VerifyMacThenDecrypt(AuthenticatedCiphertext ciphertext, byte[] encrKey, byte[] encrIv, byte[] hmacKey)
         {
             return VerifyThenDecrypt(ciphertext, encrKey, encrIv, hmacKey, x => new HMACSHA256(x));
         }

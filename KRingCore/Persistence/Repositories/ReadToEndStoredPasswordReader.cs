@@ -170,6 +170,8 @@ namespace KRingCore.Persistence.Repositories
                 var passwordTag = _extractPasswordTag(entry);
                 var passwordIvBase64 = _extractPasswordIv(entry);
 
+                var cipher = new AesHmacAuthenticatedCipher(System.Security.Cryptography.CipherMode.CBC, System.Security.Cryptography.PaddingMode.PKCS7);
+
                 var domainCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(domainBase64, domainTag);
                 var usernameCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(usernameBase64, usernameTag);
                 var passwordCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(passwordBase64, passwordTag);
@@ -179,9 +181,9 @@ namespace KRingCore.Persistence.Repositories
                 var passwordIv = Convert.FromBase64String(passwordIvBase64);
 
                 /* Decrypt and check tag. If tag is not valid, the used methods throws errors */
-                var domain = AesHmacAuthenticatedCipher.VerifyMacThenCBCDecrypt(domainCipher, _encrKey, domainIv, _macKey);
-                var username = AesHmacAuthenticatedCipher.VerifyMacThenCBCDecrypt(usernameCipher, _encrKey, usernameIv, _macKey);
-                var password = AesHmacAuthenticatedCipher.VerifyMacThenCBCDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
+                var domain = cipher.VerifyMacThenDecrypt(domainCipher, _encrKey, domainIv, _macKey);
+                var username = cipher.VerifyMacThenDecrypt(usernameCipher, _encrKey, usernameIv, _macKey);
+                var password = cipher.VerifyMacThenDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
 
                 return new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(username), Encoding.UTF8.GetString(password));
             }

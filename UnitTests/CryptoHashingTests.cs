@@ -47,9 +47,11 @@ namespace UnitTests
             var hmacKEy = Encoding.UTF8.GetBytes("MELLOW SUBMARINEMELLOW SUBMARINE");
             var iv = CryptoHashing.GenerateSalt();
 
-            var cipher = AesHmacAuthenticatedCipher.CBCEncryptThenHMac(rawPlaintext, iv, encrkey, hmacKEy);
+            var crypto = new AesHmacAuthenticatedCipher(CipherMode.CBC, PaddingMode.PKCS7);
 
-            var decryptedRaw = AesHmacAuthenticatedCipher.VerifyMacThenCBCDecrypt(cipher, encrkey, iv, hmacKEy);
+            var cipher = crypto.EncryptThenHMac(rawPlaintext, iv, encrkey, hmacKEy);
+
+            var decryptedRaw = crypto.VerifyMacThenDecrypt(cipher, encrkey, iv, hmacKEy);
 
             var plaintextAfterDecryption = Encoding.UTF8.GetString(decryptedRaw);
 
@@ -67,12 +69,14 @@ namespace UnitTests
             var hmacKEy = Encoding.UTF8.GetBytes("MELLOW SUBMARINEMELLOW SUBMARINE");
             var iv = CryptoHashing.GenerateSalt();
 
-            var cipher = AesHmacAuthenticatedCipher.CBCEncryptThenHMac(rawPlaintext, key, iv, hmacKEy);
+            var crypto = new AesHmacAuthenticatedCipher(CipherMode.CBC, PaddingMode.PKCS7);
+
+            var cipher = crypto.EncryptThenHMac(rawPlaintext, key, iv, hmacKEy);
 
             /* FIDDLE */
             cipher.ciphertext[0] ^= byte.MaxValue;
 
-            var decryptedRaw = AesHmacAuthenticatedCipher.VerifyMacThenCBCDecrypt(cipher, key, iv, hmacKEy);
+            var decryptedRaw = crypto.VerifyMacThenDecrypt(cipher, key, iv, hmacKEy);
         }
 
         [TestMethod]
@@ -86,67 +90,14 @@ namespace UnitTests
             var hmacKEy = Encoding.UTF8.GetBytes("MELLOW SUBMARINEMELLOW SUBMARINE");
             var iv = CryptoHashing.GenerateSalt();
 
-            var cipher = AesHmacAuthenticatedCipher.CBCEncryptThenHMac(rawPlaintext, key, iv, hmacKEy);
+            var crypto = new AesHmacAuthenticatedCipher(CipherMode.CBC, PaddingMode.PKCS7);
+
+            var cipher = crypto.EncryptThenHMac(rawPlaintext, key, iv, hmacKEy);
 
             /* FIDDLE */
             cipher.tag[0] ^= byte.MaxValue;
 
-            var decryptedRaw = AesHmacAuthenticatedCipher.VerifyMacThenCBCDecrypt(cipher, key, iv, hmacKEy);
+            var decryptedRaw = crypto.VerifyMacThenDecrypt(cipher, key, iv, hmacKEy);
         }
-
-
-        //[TestMethod]
-        //public void AesGCM_GiveCorrectKeyAndIv_ShouldBeEqual()
-        //{
-        //    var plaintext = "Foo Bar Baz";
-        //    var rawPlaintext = Encoding.UTF8.GetBytes(plaintext);
-
-        //    var key = Encoding.UTF8.GetBytes("YELLOW SUBMARINEYELLOW SUBMARINE");
-        //    var iv = CryptoHashing.GenerateSalt(12);
-
-        //    var cipher = Aes256AuthenticatedCipher.Encrypt(rawPlaintext, key, iv);
-
-        //    var decryptedRaw = Aes256AuthenticatedCipher.Decrypt(cipher, key, iv);
-
-        //    var plaintextAfterDecryption = Encoding.UTF8.GetString(decryptedRaw);
-
-        //    Assert.IsTrue(plaintext.Equals(plaintextAfterDecryption));
-        //}
-
-        //[TestMethod]
-        //[ExpectedException(typeof(CryptographicException))]
-        //public void AesGCM_FiddleWithData_ShouldThrowException()
-        //{
-        //    var plaintext = "Foo Bar Baz";
-        //    var rawPlaintext = Encoding.UTF8.GetBytes(plaintext);
-
-        //    var key = Encoding.UTF8.GetBytes("YELLOW SUBMARINEYELLOW SUBMARINE");
-        //    var iv = CryptoHashing.GenerateSalt(12);
-
-        //    var cipher = Aes256AuthenticatedCipher.Encrypt(rawPlaintext, key, iv);
-
-        //    /* FIDDLE */
-        //    cipher.ciphertext[0] ^= byte.MaxValue;
-
-        //    var decryptedRaw = Aes256AuthenticatedCipher.Decrypt(cipher, key, iv);
-        //}
-
-        //[TestMethod]
-        //[ExpectedException(typeof(CryptographicException))]
-        //public void AesGCM_FiddleWithTag_ShouldThrowException()
-        //{
-        //    var plaintext = "Foo Bar Baz";
-        //    var rawPlaintext = Encoding.UTF8.GetBytes(plaintext);
-
-        //    var key = Encoding.UTF8.GetBytes("YELLOW SUBMARINEYELLOW SUBMARINE");
-        //    var iv = CryptoHashing.GenerateSalt(12);
-
-        //    var cipher = Aes256AuthenticatedCipher.Encrypt(rawPlaintext, key, iv);
-
-        //    /* FIDDLE */
-        //    cipher.tag[0] ^= byte.MaxValue;
-
-        //    var decryptedRaw = Aes256AuthenticatedCipher.Decrypt(cipher, key, iv);
-        //}
     }
 }
