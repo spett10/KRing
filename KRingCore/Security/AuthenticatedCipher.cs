@@ -84,8 +84,8 @@ namespace KRingCore.Security
                 symmetric.IV = iv;
 
                 using (MemoryStream ms = new MemoryStream())
-                using (var encryptor = symmetric.CreateDecryptor())
-                using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
+                using (var decryptor = symmetric.CreateDecryptor())
+                using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Write))
                 {
                     cs.Write(ciphertext.ciphertext, 0, ciphertext.ciphertext.Length);
                     cs.FlushFinalBlock();

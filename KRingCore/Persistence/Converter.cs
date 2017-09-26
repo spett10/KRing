@@ -127,5 +127,18 @@ namespace KRingCore.Persistence
             return Convert.FromBase64String(input);
         }
 
+        public static string AppendSequenceNumber(string sequence, char delimiter, int number)
+        {
+            return sequence + delimiter + number.ToString();
+        }
+
+        public static string RemoveSequenceNumber(string sequence, char delimiter, out int number)
+        {
+            var parts = sequence.Split(delimiter);
+            var sequenceNumber = parts[1];
+            number = Int32.Parse(parts[1]);
+            return parts[0];
+        }
+
     }
 }

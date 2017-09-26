@@ -36,6 +36,9 @@
     <AssemblyOriginatorKeyFile>assemblysigning.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle">
+      <HintPath>..\..\..\..\bouncyCastle\bccrypto-csharp-1.8.1\crypto\bin\Release\lib\net20\BouncyCastle.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />

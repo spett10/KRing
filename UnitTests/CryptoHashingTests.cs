@@ -3,6 +3,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
 using System.Security.Cryptography;
 using KRingCore.Security;
+using System.Diagnostics;
+using System.Linq;
 
 namespace UnitTests
 {
@@ -98,6 +100,24 @@ namespace UnitTests
             cipher.tag[0] ^= byte.MaxValue;
 
             var decryptedRaw = crypto.VerifyMacThenDecrypt(cipher, key, iv, hmacKEy);
+        }
+
+        [TestMethod]
+        public void TestPBKDF2HMACSHA256_TestVectors()
+        {
+            //Test vector taken from RFC6070
+            var plain = Encoding.ASCII.GetBytes("password");
+            var salt = Encoding.ASCII.GetBytes("salt");
+            var iterations = 1;
+            var keylength = 20*8;
+
+            var result = BitConverter.ToString(CryptoHashing.PBKDF2HMACSHA256(plain, salt, iterations, keylength));
+            result = result.ToLowerInvariant().Replace("-", "");
+            var expected = "120fb6cffcf8b32c43e7225256c4f837a86548c9";
+
+            Debug.WriteLine(result);
+
+            Assert.IsTrue(result.SequenceEqual(expected));
         }
     }
 }

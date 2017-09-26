@@ -2,8 +2,11 @@
 using System.Security;
 using System.Security.Cryptography;
 using KRingCore.Extensions;
+using Org.BouncyCastle.Crypto.Generators;
 using System.IO;
 using static KRingCore.Security.AesHmacAuthenticatedCipher;
+using Org.BouncyCastle.Crypto.Digests;
+using Org.BouncyCastle.Crypto.Parameters;
 
 namespace KRingCore.Security
 {
@@ -118,6 +121,13 @@ namespace KRingCore.Security
             {
                 array[i] = 0;
             }
+        }
+
+        public static byte[] PBKDF2HMACSHA256(byte[] password, byte[] salt, int rounds, int keylength)
+        {
+            Pkcs5S2ParametersGenerator gen = new Pkcs5S2ParametersGenerator(new Sha256Digest());
+            gen.Init(password, salt, rounds);            
+            return ((KeyParameter)gen.GenerateDerivedMacParameters(keylength)).GetKey();
         }
     }
 }

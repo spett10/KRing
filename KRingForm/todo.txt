@@ -1,5 +1,7 @@
 ﻿1. Make App.config point to different files dependent on build (debug vs release) http://stackoverflow.com/questions/3004210/app-config-transformation-for-projects-which-are-not-web-projects-in-visual-stud
 2. Config datapoint - Enable you to point to a folder that is the storage - this way, you can put the folder in dropbox, and have 2 computers point to the same data folder, its synced automatically, not dangerous since everything is encrypted. Brilliant
+	-save the path in a config, alter it at runtime. 
+	-do it under a setting button in the main view 
 3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
 4. consider having a k1 that is derived from user password and salt (update for each time?). Then, use that to encrypt/decrypt the symmetric key used for encrypting the passwords.
 Then we can change password for the user, but not need to change the key used for encrypting all the entries, so we dont need to reencrypt. 
@@ -15,5 +17,44 @@ Require master password to confirm?
 	Require password when reloading? 
 12. folder structures for the main view in passwordlist
 14. Add more tests to new functionalities such as plaintextpasswordimporter, ReadToEndStoredPasswordRepository etc.
-15. Finish the refactoring of crypto stuff by extracting the ciphermode, padding and hmac creator as described in the todo in the base class.
+15. the passwordlist form is dragabble. whether or not it should be, the buttons etc do not follow.
+	perhaps increase the base size? In general the ux is very limited. 
+16. Add a message counter to all lines written to the underlying format (i.e. to the encrypted message? after some delimiter).
+	As it is know, people could swap elements around, and since the encryption key is the same for all elements per save, and the same for the mac key,
+	an attacker could swap elements to make it appear as though keys should be in a certain order when they shold not be .
+	we can reuse the import tool for migration. 
+17. Find a higher number of iterations for key derivation. See what effects it has on the ui - switch to async methods if it does not help? 
+	Otherwise add a loading bar or something. 
+		-How do we migrate users for this? If we set the iteration higher, authentication will fail. They would have to make a new user, and import all over again... 
+		-So a prerequisite would be to enable delete user functionality. 
+
+		-Or in a transition period, have it try a series of values in a dictionary, and then update afterwards with the highest one? Then patch that out afterwards.. 
+			-Put into config - last used and new used iteration count. Then populate these fields at startup, and use accordingly. 
+
+		-Make the config permanent, so once can always update the "new higehst" along the way and be safe. 
+18. Find another key streching algoritm - maybe integrate bouncy castle? Since PBKDF2 =  Rfc2898 apparently is based on HMACSHA1 in dotnet, which only outputs 160 bits,
+	but we ask for 256? Do we only get 160 bits of entropy? Its still more than 128 which is the minimal required, but we might not get the 256 bit security we want. 
+
+	Read more about PBKDF2 here: TLDR: its not wrong what we do, but its not great either. 
+	https://security.stackexchange.com/questions/53115/how-to-know-which-output-length-to-request-from-pbkdf2
+
+	a) Bouncycastle has been downloaded (source) with the correct checksum, and compiled on my machine. The source had a .snk with it, so we can use signing
+	out of the box it seems - we do not have to sign it ourselves, but can reference their snk?
+
+	b) Next step is using it here in kring and seeing if can with their snk? It is quite the dll to reference since we only need few things from there,
+	but its dynamically linked and we only use some of it, so it should be fine. So, reference it in KRing core, and use another key strecthing algorithm as stated above 
+
+19. Check if bouncycastle has somethinb better than pbkdf2? Then, get the source, compile it yourself so you can sign it? Then you can still sign the other assemblies. 
+	-bouncy castle has PBEwithHmacSHA-256 and others: http://www.bouncycastle.org/csharp/
+
+	https://www.lastpass.com/how-it-works used the above + aes256, so we should aim for the same
+
+
+20. How to add 2factor? Email? Sms? but how to authenticate that what we get is good? Send a challenge or something, how do others do it? could be cool
+
 BUGS:
+
+
+links:
+
+good discussion about masterpassword usage (which KRing essentially is, if anyone knows your master password, all bets are off )https://security.stackexchange.com/questions/48174/if-i-use-a-good-master-password-in-firefox-is-security-improved-when-i-remember
