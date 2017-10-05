@@ -67,6 +67,8 @@ namespace KRingForm
             _unsavedChanges = false;
             HideSaveButton();
             _exitWithoutSaving = false;
+
+            Notify();
         }
 
         public void NotExiting()
