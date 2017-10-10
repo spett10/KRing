@@ -32,29 +32,18 @@ Require master password to confirm?
 			-Put into config - last used and new used iteration count. Then populate these fields at startup, and use accordingly. 
 
 		-Make the config permanent, so once can always update the "new higehst" along the way and be safe. 
-18. Find another key streching algoritm - maybe integrate bouncy castle? Since PBKDF2 =  Rfc2898 apparently is based on HMACSHA1 in dotnet, which only outputs 160 bits,
-	but we ask for 256? Do we only get 160 bits of entropy? Its still more than 128 which is the minimal required, but we might not get the 256 bit security we want. 
-
-	Read more about PBKDF2 here: TLDR: its not wrong what we do, but its not great either. 
-	https://security.stackexchange.com/questions/53115/how-to-know-which-output-length-to-request-from-pbkdf2
-
-	a) Bouncycastle has been downloaded (source) with the correct checksum, and compiled on my machine. The source had a .snk with it, so we can use signing
-	out of the box it seems - we do not have to sign it ourselves, but can reference their snk?
-
-	b) Next step is using it here in kring and seeing if can with their snk? It is quite the dll to reference since we only need few things from there,
-	but its dynamically linked and we only use some of it, so it should be fine. So, reference it in KRing core, and use another key strecthing algorithm as stated above 
-
-19. Check if bouncycastle has somethinb better than pbkdf2? Then, get the source, compile it yourself so you can sign it? Then you can still sign the other assemblies. 
-	-bouncy castle has PBEwithHmacSHA-256 and others: http://www.bouncycastle.org/csharp/
-
-	https://www.lastpass.com/how-it-works used the above + aes256, so we should aim for the same
-
-
+18. Use new key derivation algorithm we got from bouncy castle. How do we migrate? Guess we import. Then make export functionality. Can we encrypt and decrypt the exported stuff using a one time password sort of deal? So its less stupid? Then we could export,
+delete user, create again, then import. 
+19. We need some solution for enabling upscaling of parameters in future... That does not require manual migration. 
 20. How to add 2factor? Email? Sms? but how to authenticate that what we get is good? Send a challenge or something, how do others do it? could be cool
+
 
 BUGS:
 
 
 links:
-
+Read more about PBKDF2 here: TLDR: its not wrong what we do, but its not great either. 
+	https://security.stackexchange.com/questions/53115/how-to-know-which-output-length-to-request-from-pbkdf2
+		https://www.lastpass.com/how-it-works used the above + aes256, so we should aim for the same
+			-bouncy castle has PBEwithHmacSHA-256 and others: http://www.bouncycastle.org/csharp/
 good discussion about masterpassword usage (which KRing essentially is, if anyone knows your master password, all bets are off )https://security.stackexchange.com/questions/48174/if-i-use-a-good-master-password-in-firefox-is-security-improved-when-i-remember
