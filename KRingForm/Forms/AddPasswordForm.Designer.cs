@@ -42,6 +42,7 @@
             this.sizeLabel = new System.Windows.Forms.Label();
             this.usernameLabel = new System.Windows.Forms.Label();
             this.usernameBox = new System.Windows.Forms.TextBox();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // domainLabel
@@ -200,5 +201,6 @@
         private System.Windows.Forms.Label sizeLabel;
         private System.Windows.Forms.Label usernameLabel;
         private System.Windows.Forms.TextBox usernameBox;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }

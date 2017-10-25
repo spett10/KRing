@@ -29,7 +29,6 @@ namespace KRingCore.Security
 
         }
 
-        /* Assumes base64 encoding  of input strings */
         public static bool CompareSaltedHash(string password, byte[] salt, string hashedPassword)
         {
             Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(password, salt, iterations);

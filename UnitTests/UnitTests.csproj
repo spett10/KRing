@@ -57,6 +57,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ConfigurationTests.cs" />
     <Compile Include="Config\MockingDataConfig.cs" />
     <Compile Include="EncryptionTests.cs" />
     <Compile Include="Repositories\MockingDBEntryRepository.cs" />

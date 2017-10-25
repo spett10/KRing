@@ -26,7 +26,7 @@ namespace KRingCore.Security
             _paddingMode = padding;
         }
 
-        internal AuthenticatedCiphertext EncryptThenTag(byte[] plaintext, byte[] encrKey, byte[] iv, byte[] hmacKey, Func<byte[], V> keyedHashCreator)
+        protected AuthenticatedCiphertext EncryptThenTag(byte[] plaintext, byte[] encrKey, byte[] iv, byte[] hmacKey, Func<byte[], V> keyedHashCreator)
         {
             if (CryptoHashing.CompareByteArraysNoTimeLeak(encrKey, hmacKey))
             {
@@ -60,7 +60,7 @@ namespace KRingCore.Security
             return cipher;
         }
 
-        internal byte[] VerifyThenDecrypt(AuthenticatedCiphertext ciphertext, byte[] encrKey, byte[] iv, byte[] hmacKey, Func<byte[], V> keyedHashCreator)
+        protected byte[] VerifyThenDecrypt(AuthenticatedCiphertext ciphertext, byte[] encrKey, byte[] iv, byte[] hmacKey, Func<byte[], V> keyedHashCreator)
         {
             if (CryptoHashing.CompareByteArraysNoTimeLeak(encrKey, hmacKey))
             {
