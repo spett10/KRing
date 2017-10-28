@@ -43,6 +43,7 @@
             this.SearchBarLabel = new System.Windows.Forms.Label();
             this.SearchButton = new System.Windows.Forms.Button();
             this.importButton = new System.Windows.Forms.Button();
+            this.exportButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // passwordListBox
@@ -116,7 +117,7 @@
             // 
             // saveButton
             // 
-            this.saveButton.Location = new System.Drawing.Point(222, 227);
+            this.saveButton.Location = new System.Drawing.Point(221, 268);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(75, 23);
             this.saveButton.TabIndex = 6;
@@ -162,7 +163,7 @@
             // 
             // importButton
             // 
-            this.importButton.Location = new System.Drawing.Point(222, 198);
+            this.importButton.Location = new System.Drawing.Point(221, 210);
             this.importButton.Name = "importButton";
             this.importButton.Size = new System.Drawing.Size(75, 23);
             this.importButton.TabIndex = 9;
@@ -170,12 +171,23 @@
             this.importButton.UseVisualStyleBackColor = true;
             this.importButton.Click += new System.EventHandler(this.importButton_Click);
             // 
+            // exportButton
+            // 
+            this.exportButton.Location = new System.Drawing.Point(222, 239);
+            this.exportButton.Name = "exportButton";
+            this.exportButton.Size = new System.Drawing.Size(75, 23);
+            this.exportButton.TabIndex = 10;
+            this.exportButton.Text = "Export..";
+            this.exportButton.UseVisualStyleBackColor = true;
+            this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
+            // 
             // PasswordList
             // 
             this.AcceptButton = this.SearchButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(308, 381);
+            this.Controls.Add(this.exportButton);
             this.Controls.Add(this.importButton);
             this.Controls.Add(this.SearchButton);
             this.Controls.Add(this.SearchBarLabel);
@@ -212,5 +224,6 @@
         private System.Windows.Forms.Label SearchBarLabel;
         private System.Windows.Forms.Button SearchButton;
         private System.Windows.Forms.Button importButton;
+        private System.Windows.Forms.Button exportButton;
     }
 }

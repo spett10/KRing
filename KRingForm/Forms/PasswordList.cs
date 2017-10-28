@@ -12,6 +12,9 @@ using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using System.Security;
+using System.Windows.Controls;
+
+//TODO: order eventhandlers, and other stuff, under regions. 
 
 namespace KRingForm
 {
@@ -33,7 +36,7 @@ namespace KRingForm
     {
         public delegate void UpdateListCallback(OperationType operation);
         public delegate void ExitingCallback();
-
+        
         private readonly User _user;
         private readonly IStoredPasswordRepository _passwordRep;
         private readonly IPasswordImporter _passwordImporter; 
@@ -333,7 +336,6 @@ namespace KRingForm
         private void FileDialogue_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var fileDialogue = sender as OpenFileDialog;
-            System.Diagnostics.Debug.WriteLine(fileDialogue.FileName);
 
             var importedPasswords = _passwordImporter.ImportPasswords(fileDialogue.FileName);
             Program.Log("Import Passwords", "Imported passwords, count: " + importedPasswords.Count);
@@ -396,6 +398,27 @@ namespace KRingForm
             {
                 UpdateList(OperationType.NoOperation);
             }
+        }
+
+        private void exportButton_Click(object sender, EventArgs e)
+        {
+            //TODO: i think the flow would be better if we first ask for password, then for the file? seems more natural. 
+
+            var saveFileDialogue = new SaveFileDialog();
+            saveFileDialogue.Filter = "Text File (*.txt)|*.txt";
+            saveFileDialogue.Title = "Export passwords encrypted";
+            saveFileDialogue.FileOk += SaveFile_Ok;
+            saveFileDialogue.ShowDialog();
+        }
+
+        private void SaveFile_Ok(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var dialogue = sender as SaveFileDialog;
+            var exportPasswordForm = new ExportPasswords(dialogue, 
+                                                        this._passwordRep.GetEntries(), 
+                                                        Notify, 
+                                                        new StreamWriterToEnd());
+            exportPasswordForm.Show();
         }
     }
 }

@@ -45,9 +45,12 @@ But how can that help transition? If we write in the data format what key deriva
 the hashing iteration to be something like.. 1. and then generate a lot of hashes really fast. then he could log in, but not decrypt, since the generated symmetric key would not be valid since the iteration count was altered.
 still seems sketchy as fuck. 
 
+22. Make the activity thingie a singleton that has a notify call instead of passing it to every single form. 
+23. make custom .net control that is a textbox that returns a securestring, not plaintext. listen to keystrokes, add to securestring one by one? PasswordBox exists for WPF, but not for windows forms apparently, and we cant use it here. 
+
 Todo: 
 1) make the count of iterations configurable. hardcode the algoritm. We have to transatition anyways, trying both algs is too much work
-2) Make an export functionality so its easier to transition - export encrypted under a key. then an import for the same format that decrypts. 
+2) import the exported encrypted stuff. 
 3) export, then build the new stuff with the new algorithm for both authentication and key derivation, import the xported stuff, save, you are good to go. 
 
 when we have export import in a secure manner, the rest should be fine? Just always keep export import fixed with regards to parameters,

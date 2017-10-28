@@ -10,6 +10,7 @@ using System.Security;
 using System.Text;
 using KRingCore.Security;
 using KRingCore.Persistence.Interfaces;
+using System.Security.Cryptography;
 
 namespace KRingCore.Core.Services
 {
@@ -51,7 +52,11 @@ namespace KRingCore.Core.Services
 
                 return list;
             }
-            catch (Exception e)
+            catch(CryptographicException c)
+            {
+                throw c;
+            }
+            catch (Exception)
             {
                 throw new FormatException("File does not contain a valid format.");
             }
