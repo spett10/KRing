@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="ConfigurationTests.cs" />
     <Compile Include="Config\MockingDataConfig.cs" />
+    <Compile Include="EncryptingExporterImporterTests.cs" />
     <Compile Include="EncryptionTests.cs" />
     <Compile Include="Repositories\MockingDBEntryRepository.cs" />
     <Compile Include="Repositories\MockingProfileRepository.cs" />
@@ -92,6 +93,7 @@
     <Content Include="Data\Debug\profile.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\export.txt" />
     <Content Include="Data\Release\db.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

@@ -37,6 +37,7 @@ delete user, create again, then import.
 19. We need some solution for enabling upscaling of parameters in future... That does not require manual migration. 
 20. How to add 2factor? Email? Sms? but how to authenticate that what we get is good? Send a challenge or something, how do others do it? could be cool
 
+21. Encrypt config? i think its possible easily in .net, not sure about windows forms. 
 
 Can some of the above problems be solved by simply wiriting the different algorithms in the data we store? 
 similar to JWKS. then we know what algorithm and parameters where used, and we can use that. 
@@ -48,6 +49,9 @@ Todo:
 1) make the count of iterations configurable. hardcode the algoritm. We have to transatition anyways, trying both algs is too much work
 2) Make an export functionality so its easier to transition - export encrypted under a key. then an import for the same format that decrypts. 
 3) export, then build the new stuff with the new algorithm for both authentication and key derivation, import the xported stuff, save, you are good to go. 
+
+when we have export import in a secure manner, the rest should be fine? Just always keep export import fixed with regards to parameters,
+then the rest can change as it wants to. It should be independant at least. 
 
 BUGS:
 

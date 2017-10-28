@@ -36,59 +36,71 @@ namespace KRingForm
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            
 
-            isLoggedIn = false;
-            userCreated = false;
+            try
+            {
 
-            /* Check if a user exists; If not, create new user, if it does, show logon format */
-            if (!DoesUserExist())
-            {
-                try
-                {
-                    Application.Run(new CreateUserForm());
-                }
-                catch(Exception e)
-                {
-                    _messageToUser("Error: " + e.Message);
-                    Log("Main", e.Message);
-                }
-            }
-            
-            /* Try to loging */
-            if(DoesUserExist() || userCreated)
-            {
-                try
-                {
-                    Application.Run(new LoginForm(SavedUser, loginCallback));
-                }
-                catch (Exception e)
-                {
-                    _messageToUser("Error: " + e.Message);
-                    Log("Main", e.Message);
-                }
-            }
-                     
+                isLoggedIn = false;
+                userCreated = false;
 
-            /* Run the passwordlist if successful login */
-            if(isLoggedIn)
-            {
-                try
+                /* Check if a user exists; If not, create new user, if it does, show logon format */
+                if (!DoesUserExist())
                 {
-                    Application.Run(new PasswordList(SavedUser));
-                }
+                    try
+                    {
+                        Application.Run(new CreateUserForm());
+                    }
                     catch (Exception e)
-                {
-                    _messageToUser("Error: " + e.Message);
-                    Log("Main", e.Message);
+                    {
+                        _messageToUser("Error: " + e.Message);
+                        Log("Main", e.Message);
+                    }
                 }
-            }
 
-            /* If passwordlist was closed and the user was inactive, show dialogue */
-            if(userInactiveLogout)
+                /* Try to loging */
+                if (DoesUserExist() || userCreated)
+                {
+                    try
+                    {
+                        Application.Run(new LoginForm(SavedUser, loginCallback));
+                    }
+                    catch (Exception e)
+                    {
+                        _messageToUser("Error: " + e.Message);
+                        Log("Main", e.Message);
+                    }
+                }
+
+
+                /* Run the passwordlist if successful login */
+                if (isLoggedIn)
+                {
+                    try
+                    {
+                        Application.Run(new PasswordList(SavedUser));
+                    }
+                    catch (Exception e)
+                    {
+                        _messageToUser("Error: " + e.Message);
+                        Log("Main", e.Message);
+                    }
+                }
+
+                /* If passwordlist was closed and the user was inactive, show dialogue */
+                if (userInactiveLogout)
+                {
+                    Application.Run(new InactiveDialogue());
+                    Log("Main", "User timed out");
+                }
+
+            }
+            catch
             {
-                Application.Run(new InactiveDialogue());
-                Log("Main", "User timed out");
+                //Supress any unforseen errors. 
+            }
+            finally
+            {
+                //TODO: try to force garbage collection? Call some handle that tries to wipe memory. Anything. 
             }
         }
 

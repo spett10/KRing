@@ -9,50 +9,53 @@ using KRingCore.Extensions;
 using System.Security;
 using System.Text;
 using KRingCore.Security;
+using KRingCore.Persistence.Interfaces;
 
 namespace KRingCore.Core.Services
 {
-    public class DecryptingPasswordImporter : IDecryptingPasswordExporter
+    public class DecryptingPasswordImporter : IDecryptingPasswordImporter
     {
-        public List<StoredPassword> ImportPasswords(string filename, SecureString password)
+        public List<StoredPassword> ImportPasswords(string filename, SecureString password, IStreamReadToEnd streamReader)
         {
-            using (FileStream fileStream = new FileStream(filename, FileMode.Open))
-            using (StreamReader streamReader = new StreamReader(fileStream))
+            if (String.IsNullOrEmpty(filename) || password == null)
             {
-                try
-                {
-                    var contents = streamReader.ReadToEnd();
-                    ExportedEncryptedPasswords passwords = JsonConvert.DeserializeObject<ExportedEncryptedPasswords>(contents);
+                throw new ArgumentException("Invalid argument");
+            }
 
-                    var iterations = Configuration.PBKDF2DeriveIterations;
-                    var raw = Encoding.UTF8.GetBytes(password.ConvertToUnsecureString());
-                    var encrKey = CryptoHashing.PBKDF2HMACSHA256(raw,
-                                                                 Convert.FromBase64String(passwords.EncryptionKeyIvBase64),
-                                                                 iterations,
-                                                                 256);
-                    var macKey = CryptoHashing.PBKDF2HMACSHA256(raw,
-                                                                Convert.FromBase64String(passwords.MacKeyIvBase64),
+            try
+            {
+                var contents = streamReader.ReadToEnd(filename);
+                ExportedEncryptedPasswords passwords = JsonConvert.DeserializeObject<ExportedEncryptedPasswords>(contents);
+
+                var iterations = Configuration.ExportImportIterations;
+                var raw = Encoding.UTF8.GetBytes(password.ConvertToUnsecureString());
+                var encrKey = CryptoHashing.PBKDF2HMACSHA256(raw,
+                                                                Convert.FromBase64String(passwords.EncryptionKeyIvBase64),
                                                                 iterations,
                                                                 256);
+                var macKey = CryptoHashing.PBKDF2HMACSHA256(raw,
+                                                            Convert.FromBase64String(passwords.MacKeyIvBase64),
+                                                            iterations,
+                                                            256);
 
-                    var cipher = new AesHmacAuthenticatedCipher(System.Security.Cryptography.CipherMode.CBC, System.Security.Cryptography.PaddingMode.PKCS7);
-                    var passwordsCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(passwords.EncryptedPasswordsBase64, passwords.TagBase64);
-                    var encrIv = Convert.FromBase64String(passwords.EncryptionIvBase64);
+                var cipher = new AesHmacAuthenticatedCipher(System.Security.Cryptography.CipherMode.CBC, System.Security.Cryptography.PaddingMode.PKCS7);
+                var passwordsCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(passwords.EncryptedPasswordsBase64, passwords.TagBase64);
+                var encrIv = Convert.FromBase64String(passwords.EncryptionIvBase64);
 
-                    var plaintextJson = Encoding.UTF8.GetString(cipher.VerifyMacThenDecrypt(passwordsCipher, encrKey, encrIv, macKey));
+                var plaintextJson = Encoding.UTF8.GetString(cipher.VerifyMacThenDecrypt(passwordsCipher, encrKey, encrIv, macKey));
 
-                    macKey.ZeroOut();
-                    encrKey.ZeroOut();
+                macKey.ZeroOut();
+                encrKey.ZeroOut();
 
-                    List<StoredPassword> list = JsonConvert.DeserializeObject<List<StoredPassword>>(plaintextJson);
+                List<StoredPassword> list = JsonConvert.DeserializeObject<List<StoredPassword>>(plaintextJson);
 
-                    return list;
-                }
-                catch (Exception)
-                {
-                    throw new FormatException("File does not contain a valid format.");
-                }
+                return list;
             }
+            catch (Exception e)
+            {
+                throw new FormatException("File does not contain a valid format.");
+            }
+
         }
 
         public Task<List<StoredPassword>> ImportPasswordsAsync(string filename, SecureString password)

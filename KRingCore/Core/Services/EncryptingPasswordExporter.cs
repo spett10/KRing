@@ -18,7 +18,7 @@ namespace KRingCore.Core.Services
         {
             var json = JsonConvert.SerializeObject(passwords);
 
-            var iterations = Configuration.PBKDF2DeriveIterations;
+            var iterations = Configuration.ExportImportIterations;
             var raw = Encoding.UTF8.GetBytes(password.ConvertToUnsecureString());
             //TODO: move the below values to config
             var encrKeySalt = CryptoHashing.GenerateSalt(64);

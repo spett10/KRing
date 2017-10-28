@@ -10,6 +10,7 @@ namespace KRingCore.Core
         public static int OLD_PBKDF2DeriveIterations { get; private set; }
         public static int OLD_PBKDF2LoginIterations { get; private set; }
         public static bool TryOldValues { get; private set; }
+        public static int ExportImportIterations { get; private set; }
 
         static Configuration()
         {
@@ -17,6 +18,7 @@ namespace KRingCore.Core
             Configuration.PBKDF2DeriveIterations = Int32.Parse(ConfigurationManager.AppSettings["PBKDF2DeriveIterations"]);
             Configuration.OLD_PBKDF2LoginIterations = Int32.Parse(ConfigurationManager.AppSettings["OLD_PBKDF2LoginIterations"]);
             Configuration.OLD_PBKDF2DeriveIterations = Int32.Parse(ConfigurationManager.AppSettings["OLD_PBKDF2DeriveIterations"]);
+            Configuration.ExportImportIterations = Int32.Parse(ConfigurationManager.AppSettings["ExportImportIterations"]);
 
             var tryOldValues = Int32.Parse(ConfigurationManager.AppSettings["TryOldValues"]);
             if (tryOldValues == 1)

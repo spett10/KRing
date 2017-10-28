@@ -8,8 +8,8 @@ namespace KRingCore.Persistence.Model
     /* Noone else should know about this class as it stands.. */
     public class StoredPassword
     {
-        public string Domain { get; private set; }
-        public string Username { get; private set; }
+        public string Domain { get; set; }
+        public string Username { get; set; }
         public string PlaintextPassword
         {   get
             {
@@ -26,6 +26,11 @@ namespace KRingCore.Persistence.Model
         }
 
         private SecureString Password { get; set; }
+
+        public StoredPassword()
+        {
+
+        }
 
         public StoredPassword(string domain, string password)
         {
@@ -66,6 +71,16 @@ namespace KRingCore.Persistence.Model
         ~StoredPassword()
         {
             Password.Dispose();
+        }
+
+        public static bool operator ==(StoredPassword a, StoredPassword b)
+        {
+            return a.Domain == b.Domain && a.PlaintextPassword == b.PlaintextPassword && a.Username == b.Username;
+        }
+
+        public static bool operator !=(StoredPassword a, StoredPassword b)
+        {
+            return !(a == b);
         }
     }
 

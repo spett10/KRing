@@ -11,6 +11,11 @@ namespace KRingCore.Core.Services
     {
         public static bool Authenticate(byte[] secret, byte[] salt, byte[] saltedSecret)
         {
+            if(secret == null ||salt == null || saltedSecret == null)
+            {
+                throw new ArgumentException("Null Argument Given");
+            }
+
             var iterations = Configuration.PBKDF2LoginIterations;
             var correctSecret = ComputeAndCompareHash(secret, salt, saltedSecret, iterations);
 
