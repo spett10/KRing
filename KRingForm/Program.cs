@@ -80,9 +80,9 @@ namespace KRingForm
                         Application.Run(new PasswordList(SavedUser));
                     }
                     catch (Exception e)
-                    {
-                        _messageToUser("Error: " + e.Message);
-                        Log("Main", e.Message);
+                    {   
+                        //TODO: show something to user, i.e. fatal exception occured. 
+                        Log("Main", "PasswordList got exception");
                     }
                 }
 

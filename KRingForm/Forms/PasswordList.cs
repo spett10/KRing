@@ -1,18 +1,16 @@
 ﻿using KRingCore.Core.Model;
+using KRingCore.Core.Services;
+using KRingCore.Extensions;
 using KRingCore.Persistence.Interfaces;
+using KRingCore.Persistence.Model;
 using KRingCore.Persistence.Repositories;
 using KRingForm.Forms;
-using KRingCore.Persistence.Model;
-using KRingCore.Extensions;
-using KRingCore.Core.Services;
-using KRingCore.Core;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Windows.Forms;
 using System.Security;
-using System.Windows.Controls;
+using System.Windows.Forms;
 
 //TODO: order eventhandlers, and other stuff, under regions. 
 
@@ -36,7 +34,9 @@ namespace KRingForm
     {
         public delegate void UpdateListCallback(OperationType operation);
         public delegate void ExitingCallback();
-        
+        public delegate void ImportCallback(List<StoredPassword> passwords);
+        public delegate void ErrorCallback(string messageToUser);
+
         private readonly User _user;
         private readonly IStoredPasswordRepository _passwordRep;
         private readonly IPasswordImporter _passwordImporter; 
@@ -302,9 +302,12 @@ namespace KRingForm
             {
                 _passwordRep.WriteEntriesToDb();
             }
+#if DEBUG
 
+            Program.userInactiveLogout = false;
+#else
             Program.userInactiveLogout = true;
-
+#endif
             this.Close();
         }
 
@@ -336,22 +339,31 @@ namespace KRingForm
         private void FileDialogue_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var fileDialogue = sender as OpenFileDialog;
+            var importForm = new ImportPasswords(fileDialogue, Notify, ImportPasswords, DisplayErrorMessageToUser, new StreamReaderToEnd());
+            importForm.Show();
+        }
 
-            var importedPasswords = _passwordImporter.ImportPasswords(fileDialogue.FileName);
-            Program.Log("Import Passwords", "Imported passwords, count: " + importedPasswords.Count);
+        private void DisplayErrorMessageToUser(string messageToUser)
+        {
+            Program.Log("Displaying error to user", messageToUser);
+            var informationForm = new InformationPopup(messageToUser);
+            informationForm.Show();
+        }
 
+        private void ImportPasswords(List<StoredPassword> passwords)
+        {
             bool duplicateFound = false;
 
             var listOfDuplicates = new List<string>();
 
-            foreach(var entry in importedPasswords)
+            foreach (var entry in passwords)
             {
                 System.Diagnostics.Debug.WriteLine(entry.Domain + ", " + entry.Username + ", " + entry.PlaintextPassword);
                 try
                 {
                     _passwordRep.AddEntry(entry);
                 }
-                catch(ArgumentException)
+                catch (ArgumentException)
                 {
                     listOfDuplicates.Add(entry.Domain);
                     duplicateFound = true;
@@ -360,7 +372,7 @@ namespace KRingForm
 
             var onlyDuplicates = false;
 
-            if(duplicateFound)
+            if (duplicateFound)
             {
                 string info = "One or more domains were found to be duplicates. This is not allowed. The duplicates were: ";
 
@@ -368,7 +380,7 @@ namespace KRingForm
                 bool lastYet = false;
                 int count = 1;
 
-                foreach(var str in listOfDuplicates)
+                foreach (var str in listOfDuplicates)
                 {
                     info += str;
                     lastYet = listOfDuplicates.Count == count;
@@ -386,11 +398,11 @@ namespace KRingForm
 
                 if (moreThanOne)
                 {
-                    onlyDuplicates = listOfDuplicates.Count == importedPasswords.Count;
+                    onlyDuplicates = listOfDuplicates.Count == passwords.Count;
                 }
             }
 
-            if(!onlyDuplicates)
+            if (!onlyDuplicates)
             {
                 UpdateList(OperationType.AddPassword);
             }

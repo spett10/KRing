@@ -23,5 +23,10 @@ namespace KRingForm.Forms
         {
             this.Close();
         }
+
+        private void informationBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

@@ -50,6 +50,7 @@
             this.informationBox.ReadOnly = true;
             this.informationBox.Size = new System.Drawing.Size(373, 94);
             this.informationBox.TabIndex = 1;
+            this.informationBox.TextChanged += new System.EventHandler(this.informationBox_TextChanged);
             // 
             // InformationPopup
             // 

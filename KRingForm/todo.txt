@@ -47,19 +47,30 @@ still seems sketchy as fuck.
 
 22. Make the activity thingie a singleton that has a notify call instead of passing it to every single form. 
 23. make custom .net control that is a textbox that returns a securestring, not plaintext. listen to keystrokes, add to securestring one by one? PasswordBox exists for WPF, but not for windows forms apparently, and we cant use it here. 
+24. clean up service stuff, some of it belongs in persistence (file io)
 
 Todo: 
 1) make the count of iterations configurable. hardcode the algoritm. We have to transatition anyways, trying both algs is too much work
 2) import the exported encrypted stuff. 
 3) export, then build the new stuff with the new algorithm for both authentication and key derivation, import the xported stuff, save, you are good to go. 
+	-the tag created for export should be a tag on the fields in the exported format, not just the cipher text itself? mac what you mean and all that. 
 
 when we have export import in a secure manner, the rest should be fine? Just always keep export import fixed with regards to parameters,
 then the rest can change as it wants to. It should be independant at least. 
+disable timeout logout during debug? 
 
 BUGS:
 
+INSECURITIES:
+The authentication to log on simply reads the data folder that has the hashed password. Any attacker can substitute
+the values stored here for hashes produced by the same algorithms and parameters, but with a password he knows.
+That would allow an attacker to "log in" - but this would be of little use, since his password would not be the correct one,
+that the actual user used. This means the key derviation at runtime for encryption and macs would not be correct,
+so he would not be able to decrypt correctly, so he would gain no information. However, its still not a good design. Can we
+make this data internal? 
 
-links:
+
+LINKS:
 Read more about PBKDF2 here: TLDR: its not wrong what we do, but its not great either. 
 	https://security.stackexchange.com/questions/53115/how-to-know-which-output-length-to-request-from-pbkdf2
 		https://www.lastpass.com/how-it-works used the above + aes256, so we should aim for the same

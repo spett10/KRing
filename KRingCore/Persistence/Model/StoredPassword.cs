@@ -72,16 +72,6 @@ namespace KRingCore.Persistence.Model
         {
             Password.Dispose();
         }
-
-        public static bool operator ==(StoredPassword a, StoredPassword b)
-        {
-            return a.Domain == b.Domain && a.PlaintextPassword == b.PlaintextPassword && a.Username == b.Username;
-        }
-
-        public static bool operator !=(StoredPassword a, StoredPassword b)
-        {
-            return !(a == b);
-        }
     }
 
 

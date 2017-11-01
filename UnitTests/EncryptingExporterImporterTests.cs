@@ -92,7 +92,12 @@ namespace UnitTests
             Assert.IsTrue(importedList != null);
             for(int i = 0; i < this.passwords.Count; i++)
             {
-                Assert.IsTrue(this.passwords.ElementAt(i) == importedList.ElementAt(i));
+                var left = passwords.ElementAt(i);
+                var right = importedList.ElementAt(i);
+
+                Assert.IsTrue(left.Domain == right.Domain);
+                Assert.IsTrue(left.PlaintextPassword == right.PlaintextPassword);
+                Assert.IsTrue(left.Username == right.Username);
             }
         }
 

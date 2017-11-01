@@ -61,6 +61,7 @@
     <Compile Include="Core\Services\IDecryptingPasswordImporter.cs" />
     <Compile Include="Core\Services\IEncryptingPasswordExporter.cs" />
     <Compile Include="Core\Services\IStreamWriterToEnd.cs" />
+    <Compile Include="Core\Services\StreamReaderToEnd.cs" />
     <Compile Include="Core\Services\StreamWriterToEnd.cs" />
     <Compile Include="Core\Services\UserAuthenticator.cs" />
     <Compile Include="Extensions\ByteArrayExtensions.cs" />
