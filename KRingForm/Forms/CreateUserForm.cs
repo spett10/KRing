@@ -34,12 +34,9 @@ namespace KRingForm
 
             if (IsPasswordStrongEnough(score))
             {
-                var securePassword = new SecureString();
-                securePassword.PopulateWithString(password);
-
                 var profileRep = new ProfileRepository();
 
-                var user = User.NewUserWithFreshSalt(username, securePassword);
+                var user = User.NewUserWithFreshSalt(username, password);
 
                 var writeUserTask = profileRep.WriteUserAsync(user);
 

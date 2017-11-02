@@ -50,8 +50,6 @@ still seems sketchy as fuck.
 24. clean up service stuff, some of it belongs in persistence (file io)
 
 Todo: 
-1) make the count of iterations configurable. hardcode the algoritm. We have to transatition anyways, trying both algs is too much work
-2) import the exported encrypted stuff. 
 3) export, then build the new stuff with the new algorithm for both authentication and key derivation, import the xported stuff, save, you are good to go. 
 	-the tag created for export should be a tag on the fields in the exported format, not just the cipher text itself? mac what you mean and all that. 
 

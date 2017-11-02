@@ -1,6 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Security;
-using KRingCore.Extensions;
 using KRingCore.Core;
 
 namespace UnitTests
@@ -8,19 +6,6 @@ namespace UnitTests
     [TestClass]
     public class PasswordAdvisorTests
     {
-        [TestMethod]
-        public void StrongPasswordShouldBeGood()
-        {
-            var strongPassword = new SecureString();
-
-            strongPassword.PopulateWithString("VeryGoodPassword1234");
-
-            var mockingUI = new MockingUI("TESTUSER", strongPassword);
-
-            var result = PasswordAdvisor.CheckPasswordWithUserInteraction(mockingUI);
-
-            Assert.AreEqual(strongPassword.ConvertToUnsecureString(), result.ConvertToUnsecureString());
-        }
 
         [TestMethod]
         public void VeryWeakPassword()

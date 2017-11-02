@@ -5,6 +5,7 @@ using KRingCore.Security;
 using KRingCore.Extensions;
 using KRingCore.Persistence.Repositories;
 using System.Security;
+using System.Linq;
 
 namespace UnitTests
 {
@@ -32,26 +33,6 @@ namespace UnitTests
             securePassword.PopulateWithString(password);
 
             _user = new User(username, securePassword, cookie);
-        }
-
-        [TestMethod]
-        public void WriteUser_ThenRead_ShouldBeEqual()
-        {
-            var repository = new ProfileRepository();
-
-            repository.WriteUser(_user);
-
-            var readUser = repository.ReadUser();
-
-            var password = "Super Secure";
-
-            var isValidPassword = CryptoHashing.CompareSaltedHash(password, readUser.Cookie.PasswordHashSalt, readUser.Cookie.HashedPassword); //think when we read the users password is not the password but the hashed password
-            Assert.IsTrue(isValidPassword);
-            
-            var keysaltIsEqual = CryptoHashing.CompareByteArraysNoTimeLeak(readUser.Cookie.EncryptionKeySalt, _user.Cookie.EncryptionKeySalt);
-            Assert.AreEqual(keysaltIsEqual, true);
-            
-            Assert.AreEqual(_user.Cookie.HashedPassword, readUser.Cookie.HashedPassword);
         }
 
         [TestMethod]
@@ -108,18 +89,18 @@ namespace UnitTests
             var hashSalt = CryptoHashing.GenerateSalt();
             
             var otherCookie = new SecurityData(passwordSalted, userSalted, encrKeySalt, macKeySalt, hashSalt, hashSalt);
-            var otherUser = new User(username, securePassword, _user.Cookie);
+            var otherUser = new User(username, securePassword, _user.SecurityData);
 
             repository.WriteUser(otherUser);
 
             var readUser = repository.ReadUser();
 
-            Assert.AreEqual(otherUser.Cookie.HashedPassword, readUser.Cookie.HashedPassword);
+            Assert.IsTrue(otherUser.SecurityData.HashedPassword.SequenceEqual(readUser.SecurityData.HashedPassword));
 
-            var keysaltIsEqual = CryptoHashing.CompareByteArraysNoTimeLeak(readUser.Cookie.EncryptionKeySalt, otherUser.Cookie.EncryptionKeySalt);
+            var keysaltIsEqual = CryptoHashing.CompareByteArraysNoTimeLeak(readUser.SecurityData.EncryptionKeySalt, otherUser.SecurityData.EncryptionKeySalt);
             Assert.AreEqual(keysaltIsEqual, true);
 
-            Assert.AreEqual(readUser.Cookie.HashedPassword, otherUser.Cookie.HashedPassword);
+            Assert.IsTrue(readUser.SecurityData.HashedPassword.SequenceEqual(otherUser.SecurityData.HashedPassword));
         }
     }
 }

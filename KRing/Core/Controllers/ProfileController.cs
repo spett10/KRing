@@ -8,6 +8,7 @@ using KRingCore.Persistence.Interfaces;
 using KRingCore.Persistence.Repositories;
 using KRingCore.Security;
 using KRing.Interfaces;
+using KRingCore.Core.Services;
 
 namespace KRing.Core.Controllers
 {
@@ -109,13 +110,13 @@ namespace KRing.Core.Controllers
 
         private Session LogIn(string username, SecureString password)
         {
-            var storedSaltedPassword = _user.Cookie.HashedPassword;
+            var storedSaltedPassword = _user.SecurityData.HashedPassword;
 
             //were do we get the password? Cos we load the wrong things actually.. 
             var rawPass = password.ConvertToUnsecureString();
             password = new SecureString();
             password.PopulateWithString(rawPass);
-            bool isPasswordCorrect = CryptoHashing.CompareSaltedHash(rawPass, _user.Cookie.PasswordHashSalt, storedSaltedPassword);
+            bool isPasswordCorrect = UserAuthenticator.Authenticate(rawPass, _user.SecurityData.PasswordHashSalt, storedSaltedPassword);
 
             bool isCorrectUser = username.Equals(_user.UserName, StringComparison.InvariantCultureIgnoreCase);
 

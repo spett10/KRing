@@ -50,12 +50,12 @@ namespace KRingCore.Persistence.Repositories
             
             using (StreamWriter profileWriter = new StreamWriter(_profilePath))
             {
-                profileWriter.WriteLine(user.Cookie.HashedUsername);
-                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.UsernameHashSalt));
-                profileWriter.WriteLine(user.Cookie.HashedPassword);
-                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.PasswordHashSalt));
-                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.EncryptionKeySalt));
-                profileWriter.WriteLine(Convert.ToBase64String(user.Cookie.MacKeySalt));
+                profileWriter.WriteLine(Convert.ToBase64String(user.SecurityData.HashedUsername));
+                profileWriter.WriteLine(Convert.ToBase64String(user.SecurityData.UsernameHashSalt));
+                profileWriter.WriteLine(Convert.ToBase64String(user.SecurityData.HashedPassword));
+                profileWriter.WriteLine(Convert.ToBase64String(user.SecurityData.PasswordHashSalt));
+                profileWriter.WriteLine(Convert.ToBase64String(user.SecurityData.EncryptionKeySalt));
+                profileWriter.WriteLine(Convert.ToBase64String(user.SecurityData.MacKeySalt));
                 
             }
         }
@@ -70,12 +70,12 @@ namespace KRingCore.Persistence.Repositories
 
             using (StreamWriter profileWriter = new StreamWriter(_profilePath))
             {
-                await profileWriter.WriteLineAsync(user.Cookie.HashedUsername);
-                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.UsernameHashSalt));
-                await profileWriter.WriteLineAsync(user.Cookie.HashedPassword);
-                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.PasswordHashSalt));
-                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.EncryptionKeySalt));
-                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.Cookie.MacKeySalt));
+                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.SecurityData.HashedUsername));
+                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.SecurityData.UsernameHashSalt));
+                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.SecurityData.HashedPassword));
+                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.SecurityData.PasswordHashSalt));
+                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.SecurityData.EncryptionKeySalt));
+                await profileWriter.WriteLineAsync(Convert.ToBase64String(user.SecurityData.MacKeySalt));
             }
         }
 
@@ -83,14 +83,14 @@ namespace KRingCore.Persistence.Repositories
         {
             using (StreamReader profileReader = new StreamReader(_profilePath))
             {
-                var storedUser = profileReader.ReadLine();
+                var storedUser = Convert.FromBase64String(profileReader.ReadLine());
                 if (storedUser == null) { throw new IOException("Empty Profile"); }
 
                 var storedUsernameSalt = profileReader.ReadLine();
                 if(storedUsernameSalt == null) { throw new IOException("Empty Username Salt"); }
                 var userSalt = Convert.FromBase64String(storedUsernameSalt);
 
-                var storedPasswordSalted = profileReader.ReadLine();
+                var storedPasswordSalted = Convert.FromBase64String(profileReader.ReadLine());
                 if (storedPasswordSalted == null) { throw new IOException("Empty Password for profile"); }
 
                 

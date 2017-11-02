@@ -213,10 +213,6 @@
       <Project>{874a2636-5a37-48b6-b057-a78b51251a8b}</Project>
       <Name>KRingCore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KRing\KRingCmdLine.csproj">
-      <Project>{6b3c19cb-bbcc-48d7-b49b-17a43c9845eb}</Project>
-      <Name>KRingCmdLine</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

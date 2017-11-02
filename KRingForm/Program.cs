@@ -1,7 +1,4 @@
-﻿using KRing.Core.Controllers;
-using KRingCore.Core.Model;
-using KRing.Interfaces;
-using KRing.Persistence;
+﻿using KRingCore.Core.Model;
 using KRingCore.Persistence.Logging;
 using KRingCore.Persistence.Repositories;
 using System;

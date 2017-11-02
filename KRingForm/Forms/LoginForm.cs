@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using KRingCore.Core.Model;
 using KRingCore.Security;
 using static KRingForm.Program;
+using KRingCore.Core.Services;
 
 namespace KRingForm
 {
@@ -33,9 +34,9 @@ namespace KRingForm
             else
             {
                 /* Check both username and password, even if username is wrong - dont leak anything timewise (enables enumeration of user) */
-                var correctUsername = CryptoHashing.CompareSaltedHash(userName, savedUser.Cookie.UsernameHashSalt, savedUser.Cookie.HashedUsername);
+                var correctUsername = UserAuthenticator.Authenticate(userName, savedUser.SecurityData.UsernameHashSalt, savedUser.SecurityData.HashedUsername);
 
-                var correctPassword = CryptoHashing.CompareSaltedHash(password, savedUser.Cookie.PasswordHashSalt, savedUser.Cookie.HashedPassword);
+                var correctPassword = UserAuthenticator.Authenticate(password, savedUser.SecurityData.PasswordHashSalt, savedUser.SecurityData.HashedPassword);
 
                 if (!(correctPassword && correctUsername))
                 {
