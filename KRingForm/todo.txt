@@ -19,8 +19,6 @@ Then we can change password for the user, but not need to change the key used fo
 19. We need some solution for enabling upscaling of parameters in future... That does not require manual migration. 
 20. How to add 2factor? Email? Sms? but how to authenticate that what we get is good? Send a challenge or something, how do others do it? could be cool
 
-21. Encrypt config? i think its possible easily in .net, not sure about windows forms. 
-
 Can some of the above problems be solved by simply wiriting the different algorithms in the data we store? 
 similar to JWKS. then we know what algorithm and parameters where used, and we can use that. 
 But how can that help transition? If we write in the data format what key derivation algorithm and iteration that was used? How do we authenticate that though? guess we cant.. an attacker can set
@@ -31,8 +29,7 @@ still seems sketchy as fuck.
 23. make custom .net control that is a textbox that returns a securestring, not plaintext. listen to keystrokes, add to securestring one by one? PasswordBox exists for WPF, but not for windows forms apparently, and we cant use it here. 
 24. clean up service stuff, some of it belongs in persistence (file io)
 
-Todo: 
-3) export, then build the new stuff with the new algorithm for both authentication and key derivation, import the xported stuff, save, you are good to go. 
+Export/Import
 	-the tag created for export should be a tag on the fields in the exported format, not just the cipher text itself? mac what you mean and all that. 
 
 BUGS:

@@ -1,5 +1,7 @@
-﻿using System;
+﻿using KRingCore.Properties;
+using System;
 using System.Configuration;
+using System.Resources;
 
 namespace KRingCore.Core
 {
@@ -14,13 +16,13 @@ namespace KRingCore.Core
 
         static Configuration()
         {
-            Configuration.PBKDF2LoginIterations = Int32.Parse(ConfigurationManager.AppSettings["PBKDF2LoginIterations"]);
-            Configuration.PBKDF2DeriveIterations = Int32.Parse(ConfigurationManager.AppSettings["PBKDF2DeriveIterations"]);
-            Configuration.OLD_PBKDF2LoginIterations = Int32.Parse(ConfigurationManager.AppSettings["OLD_PBKDF2LoginIterations"]);
-            Configuration.OLD_PBKDF2DeriveIterations = Int32.Parse(ConfigurationManager.AppSettings["OLD_PBKDF2DeriveIterations"]);
-            Configuration.ExportImportIterations = Int32.Parse(ConfigurationManager.AppSettings["ExportImportIterations"]);
+            Configuration.PBKDF2LoginIterations = Int32.Parse(Resources.PBKDF2LoginIterations);
+            Configuration.PBKDF2DeriveIterations = Int32.Parse(Resources.PBKDF2DeriveIterations);
+            Configuration.OLD_PBKDF2LoginIterations = Int32.Parse(Resources.OLD_PBKDF2LoginIterations);
+            Configuration.OLD_PBKDF2DeriveIterations = Int32.Parse(Resources.OLD_PBKDF2DeriveIterations);
+            Configuration.ExportImportIterations = Int32.Parse(Resources.ExportImportIterations);
 
-            var tryOldValues = Int32.Parse(ConfigurationManager.AppSettings["TryOldValues"]);
+            var tryOldValues = Int32.Parse(Resources.TryOldValues);
             if (tryOldValues == 1)
             {
                 TryOldValues = true;
