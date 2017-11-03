@@ -40,12 +40,6 @@ namespace KRingCore.Persistence.Repositories
             _macKey = macKey;
         }
 
-        ~ReadToEndStoredPasswordReader()
-        {
-            CryptoHashing.ZeroOutArray(ref _encrKey);
-            CryptoHashing.ZeroOutArray(ref _macKey);
-        }
-
         public List<StoredPassword> LoadEntriesFromDb()
         {
             var entries = new List<StoredPassword>();

@@ -7,6 +7,8 @@ using System.IO;
 using static KRingCore.Security.AesHmacAuthenticatedCipher;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Parameters;
+using KRingCore.Core;
+using System.Text;
 
 namespace KRingCore.Security
 {
@@ -58,19 +60,10 @@ namespace KRingCore.Security
 
         public static byte[] DeriveKeyFromPasswordAndSalt(SecureString password, byte[] salt, int keyLength)
         {
-            var raw = password.ConvertToUnsecureString();
-            Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(raw, salt, iterations);
-            try
-            {
-                return algorithm.GetBytes(keyLength);
-            }
-            finally
-            {
-                //TODO: should this be in the caller instead, and we take a string, or pref. a char array?
-                password = new SecureString();
-                password.PopulateWithString(raw);
-                algorithm.Dispose();
-            }
+            var raw = Encoding.ASCII.GetBytes(password.ConvertToUnsecureString());
+            var iterations = Configuration.PBKDF2DeriveIterations;
+            // This algorithm takes keysize at bits, not bytes, so mult by 8.
+            return PBKDF2HMACSHA256(raw, salt, iterations, keyLength * 8);
         }
 
         public static byte[] GenerateSalt(int size)
@@ -122,11 +115,11 @@ namespace KRingCore.Security
             }
         }
 
-        public static byte[] PBKDF2HMACSHA256(byte[] password, byte[] salt, int rounds, int keylength)
+        public static byte[] PBKDF2HMACSHA256(byte[] password, byte[] salt, int rounds, int keyLengthInBits)
         {
             Pkcs5S2ParametersGenerator gen = new Pkcs5S2ParametersGenerator(new Sha256Digest());
             gen.Init(password, salt, rounds);            
-            return ((KeyParameter)gen.GenerateDerivedMacParameters(keylength)).GetKey();
+            return ((KeyParameter)gen.GenerateDerivedMacParameters(keyLengthInBits)).GetKey();
         }
     }
 }

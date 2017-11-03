@@ -8,13 +8,6 @@ Then we can change password for the user, but not need to change the key used fo
 5. Should we derive a masterkey, then derive the two needed keys from that key? I think that is better practice.
 6. Make an icon for the buld thingie.
 7. Integration / automated UI tests with AutoIT scripting?
-8: Import functionality for everything. Point to a folder to "load". If it has the correct structure and format, overwrite current stored stuff with what we read. 
-Require master password to confirm? 
-9. import functionality just for passwords (not the rest). Support diff formats (plaintext done, encrypted, json structures etc)
-10 export functionality to some different formats as well? The same that we can import? 
-11. backup functionality. or export or something. copy data and import data so we dont have to copy paste.
-	-export to a zip? Not needed. Just export to a folder. And import a folder. If files are not called what they should, then abort. Then its easier to update.
-	Require password when reloading? 
 12. folder structures for the main view in passwordlist
 14. Add more tests to new functionalities such as plaintextpasswordimporter, ReadToEndStoredPasswordRepository etc.
 15. the passwordlist form is dragabble. whether or not it should be, the buttons etc do not follow.
@@ -23,17 +16,6 @@ Require master password to confirm?
 	As it is know, people could swap elements around, and since the encryption key is the same for all elements per save, and the same for the mac key,
 	an attacker could swap elements to make it appear as though keys should be in a certain order when they shold not be .
 	we can reuse the import tool for migration. 
-17. Find a higher number of iterations for key derivation. See what effects it has on the ui - switch to async methods if it does not help? 
-	Otherwise add a loading bar or something. 
-		-How do we migrate users for this? If we set the iteration higher, authentication will fail. They would have to make a new user, and import all over again... 
-		-So a prerequisite would be to enable delete user functionality. 
-
-		-Or in a transition period, have it try a series of values in a dictionary, and then update afterwards with the highest one? Then patch that out afterwards.. 
-			-Put into config - last used and new used iteration count. Then populate these fields at startup, and use accordingly. 
-
-		-Make the config permanent, so once can always update the "new higehst" along the way and be safe. 
-18. Use new key derivation algorithm we got from bouncy castle. How do we migrate? Guess we import. Then make export functionality. Can we encrypt and decrypt the exported stuff using a one time password sort of deal? So its less stupid? Then we could export,
-delete user, create again, then import. 
 19. We need some solution for enabling upscaling of parameters in future... That does not require manual migration. 
 20. How to add 2factor? Email? Sms? but how to authenticate that what we get is good? Send a challenge or something, how do others do it? could be cool
 
@@ -52,10 +34,6 @@ still seems sketchy as fuck.
 Todo: 
 3) export, then build the new stuff with the new algorithm for both authentication and key derivation, import the xported stuff, save, you are good to go. 
 	-the tag created for export should be a tag on the fields in the exported format, not just the cipher text itself? mac what you mean and all that. 
-
-when we have export import in a secure manner, the rest should be fine? Just always keep export import fixed with regards to parameters,
-then the rest can change as it wants to. It should be independant at least. 
-disable timeout logout during debug? 
 
 BUGS:
 

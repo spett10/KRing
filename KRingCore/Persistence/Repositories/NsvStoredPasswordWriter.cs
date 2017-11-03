@@ -26,12 +26,6 @@ namespace KRingCore.Persistence.Repositories
             _macKey = macKey;
         }
 
-        ~NsvStoredPasswordWriter()
-        {
-            CryptoHashing.ZeroOutArray(ref _encrKey);
-            CryptoHashing.ZeroOutArray(ref _macKey);
-        }
-
         public bool EncryptionErrorOccured { get; private set; }
 
         public void WriteEntriesToDb(List<StoredPassword> entries)
