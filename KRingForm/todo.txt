@@ -32,6 +32,9 @@ still seems sketchy as fuck.
 Export/Import
 	-the tag created for export should be a tag on the fields in the exported format, not just the cipher text itself? mac what you mean and all that. 
 
+ORAM:
+instead of decrypting when loading all passwordsi nto memory, have them encrypted in memory and construct an ORAM? 
+
 BUGS:
 
 INSECURITIES:

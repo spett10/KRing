@@ -10,16 +10,14 @@ namespace KRingForm.Forms
         private readonly IStoredPasswordRepository _repository;
         private readonly string _entry;
         private readonly UpdateListCallback _callback;
-        private readonly ActiveCallback _activity;
 
-        public DeletePasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback, ActiveCallback activity, string entry)
+        public DeletePasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback, string entry)
         {
             InitializeComponent();
 
             _repository = repository;
             _entry = entry;
             _callback = callback;
-            _activity = activity;
 
             domainBox.Text = entry;
         }
@@ -40,7 +38,7 @@ namespace KRingForm.Forms
 
         private void Notify()
         {
-            _activity();
+            ActivityManager.Instance.Notify();
         }
     }
 }

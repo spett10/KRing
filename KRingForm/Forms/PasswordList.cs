@@ -71,7 +71,8 @@ namespace KRingForm
             HideSaveButton();
             _exitWithoutSaving = false;
 
-            Notify();
+            ActivityManager.Instance.Init(Notify);
+            ActivityManager.Instance.Notify();
         }
 
         public void NotExiting()
@@ -133,7 +134,7 @@ namespace KRingForm
             this.saveButton.Enabled = true;
         }
 
-        private void Notify()
+        public void Notify()
         {
             ResetInactiveTimer();
         }
@@ -150,7 +151,7 @@ namespace KRingForm
 
             try
             {
-                var addForm = new AddPasswordForm(_passwordRep, UpdateList, Notify);
+                var addForm = new AddPasswordForm(_passwordRep, UpdateList);
                 addForm.Show();
             }
             catch(Exception)
@@ -170,7 +171,7 @@ namespace KRingForm
 
                 var entry = _passwordRep.GetEntry(selectedDomain);
 
-                var editForm = new EditPasswordForm(_passwordRep, UpdateList, Notify, entry);
+                var editForm = new EditPasswordForm(_passwordRep, UpdateList, entry);
                 editForm.Show();
             }
             catch (Exception)
@@ -189,7 +190,7 @@ namespace KRingForm
             {
                 var selectedDomain = GetCurrentDomain(_currentIndex);
 
-                var deleteForm = new DeletePasswordForm(_passwordRep, UpdateList, Notify, selectedDomain);
+                var deleteForm = new DeletePasswordForm(_passwordRep, UpdateList, selectedDomain);
                 deleteForm.Show();
             }
             catch (Exception)
@@ -227,7 +228,7 @@ namespace KRingForm
 
                 var entry = _passwordRep.GetEntry(selectedDomain);
 
-                var viewForm = new ViewForm(entry, Notify);
+                var viewForm = new ViewForm(entry);
                 viewForm.Show();
             }
             catch (Exception)
@@ -339,7 +340,7 @@ namespace KRingForm
         private void FileDialogue_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var fileDialogue = sender as OpenFileDialog;
-            var importForm = new ImportPasswords(fileDialogue, Notify, ImportPasswords, DisplayErrorMessageToUser, new StreamReaderToEnd());
+            var importForm = new ImportPasswords(fileDialogue, ImportPasswords, DisplayErrorMessageToUser, new StreamReaderToEnd());
             importForm.Show();
         }
 
@@ -428,9 +429,45 @@ namespace KRingForm
             var dialogue = sender as SaveFileDialog;
             var exportPasswordForm = new ExportPasswords(dialogue, 
                                                         this._passwordRep.GetEntries(), 
-                                                        Notify, 
                                                         new StreamWriterToEnd());
             exportPasswordForm.Show();
+        }
+    }
+
+    /// <summary>
+    /// Add a layer of indirection so we dont point to passwordlist.notify from all other forms, but to this one place, so its easier to change if needed. 
+    /// </summary>
+    public class ActivityManager
+    {
+        private static ActivityManager _instance;
+
+        private ActiveCallback _callback;
+
+        private ActivityManager()
+        {
+
+        }
+
+        public static ActivityManager Instance
+        {
+            get
+            {
+                if(_instance == null)
+                {
+                    _instance = new ActivityManager();
+                }
+                return _instance;
+            }
+        }
+
+        public void Init(ActiveCallback callback)
+        {
+            _callback = callback;
+        }
+
+        public void Notify()
+        {
+            _callback?.Invoke();
         }
     }
 }

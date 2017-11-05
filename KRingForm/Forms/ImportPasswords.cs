@@ -19,16 +19,14 @@ namespace KRingForm.Forms
     {
         private readonly OpenFileDialog _dialogue;
         private readonly IStreamReadToEnd _streamReader;
-        private readonly ActiveCallback _activity;
         private readonly ImportCallback _callback;
         private readonly ErrorCallback _errorCallback;
 
-        public ImportPasswords(OpenFileDialog dialogue, ActiveCallback activity, ImportCallback importCallback, ErrorCallback errorCallback, IStreamReadToEnd streamReader)
+        public ImportPasswords(OpenFileDialog dialogue, ImportCallback importCallback, ErrorCallback errorCallback, IStreamReadToEnd streamReader)
         {
             InitializeComponent();
 
             _dialogue = dialogue;
-            _activity = activity;
             _streamReader = streamReader;
             _callback = importCallback;
             _errorCallback = errorCallback;
@@ -36,9 +34,9 @@ namespace KRingForm.Forms
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            _activity();
+            Notify();
 
-            if(string.IsNullOrEmpty(this.passwordBox.Text))
+            if (string.IsNullOrEmpty(this.passwordBox.Text))
             {
                 this.passwordEmptyLabel.Visible = true;
             }
@@ -58,8 +56,13 @@ namespace KRingForm.Forms
 
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            _activity();
+            Notify();
             this.Close();
+        }
+
+        private void Notify()
+        {
+            ActivityManager.Instance.Notify();
         }
 
         private void Import(SecureString password)

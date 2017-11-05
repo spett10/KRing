@@ -9,7 +9,6 @@ namespace KRingForm.Forms
     public partial class ViewForm : Form
     {
         private readonly StoredPassword _entry;
-        private readonly ActiveCallback _activity;
 
         private DateTime _revealStartTime;
         private DateTime _revealEndTime;
@@ -27,11 +26,10 @@ namespace KRingForm.Forms
 
         private bool _isPasswordCopied;
 
-        public ViewForm(StoredPassword entry, ActiveCallback activity)
+        public ViewForm(StoredPassword entry)
         {
             InitializeComponent();
-
-            _activity = activity;
+            
             _entry = entry;
 
             domainBox.Text = _entry.Domain;
@@ -90,7 +88,7 @@ namespace KRingForm.Forms
 
         private void Notify()
         {
-            _activity();
+            ActivityManager.Instance.Notify();
         }
 
         private void ViewForm_FormClosing(object sender, FormClosingEventArgs e)

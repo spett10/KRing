@@ -13,16 +13,14 @@ namespace KRingForm.Forms
         private readonly IStoredPasswordRepository _passwordRep;
         private readonly UpdateListCallback _callback;
         private readonly PasswordGenerator _generator;
-        private readonly ActiveCallback _activity;
 
         private bool _generateClicked = false;
 
-        public AddPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback, ActiveCallback activity)
+        public AddPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback)
         {
             InitializeComponent();
             _passwordRep = repository;
             _callback = callback;
-            _activity = activity;
 
             _generator = new PasswordGenerator();
         }
@@ -98,7 +96,7 @@ namespace KRingForm.Forms
 
         private void Notify()
         {
-            _activity();
+            ActivityManager.Instance.Notify();
         }
     }
 

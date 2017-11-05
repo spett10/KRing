@@ -27,23 +27,21 @@ namespace KRingForm.Forms
         private readonly SaveFileDialog _dialogue;
         private readonly List<StoredPassword> _passwords;
         private readonly IStreamWriterToEnd _streamWriter;
-        private readonly ActiveCallback _activity;
 
-        public ExportPasswords(SaveFileDialog dialogue, List<StoredPassword> passwords, ActiveCallback activity, IStreamWriterToEnd streamWriter)
+        public ExportPasswords(SaveFileDialog dialogue, List<StoredPassword> passwords, IStreamWriterToEnd streamWriter)
         {
             InitializeComponent();
             
             _passwords = passwords;
             _dialogue = dialogue;
-            _activity = activity;
             _streamWriter = streamWriter;
         }
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            _activity();
+            Notify();
 
-            if(string.IsNullOrEmpty(this.passwordBox.Text))
+            if (string.IsNullOrEmpty(this.passwordBox.Text))
             {
                 this.passwordEmptyLabel.Visible = true;
             }
@@ -61,9 +59,14 @@ namespace KRingForm.Forms
             }
         }
 
+        private void Notify()
+        {
+            ActivityManager.Instance.Notify();
+        }
+
         private void cancelButton_Click(object sender, EventArgs e)
         {
-            _activity();
+            Notify();
             this.Close();
         }
 
