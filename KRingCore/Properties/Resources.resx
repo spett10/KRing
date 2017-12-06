@@ -117,22 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExportImportIterations" xml:space="preserve">
-    <value>30000</value>
-  </data>
-  <data name="OLD_PBKDF2DeriveIterations" xml:space="preserve">
-    <value>10000</value>
-  </data>
-  <data name="OLD_PBKDF2LoginIterations" xml:space="preserve">
-    <value>10000</value>
-  </data>
-  <data name="PBKDF2DeriveIterations" xml:space="preserve">
-    <value>30000</value>
-  </data>
-  <data name="PBKDF2LoginIterations" xml:space="preserve">
-    <value>30000</value>
-  </data>
-  <data name="TryOldValues" xml:space="preserve">
-    <value>1</value>
-  </data>
 </root>

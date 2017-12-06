@@ -59,59 +59,5 @@ namespace KRingCore.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 30000.
-        /// </summary>
-        internal static string ExportImportIterations {
-            get {
-                return ResourceManager.GetString("ExportImportIterations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 10000.
-        /// </summary>
-        internal static string OLD_PBKDF2DeriveIterations {
-            get {
-                return ResourceManager.GetString("OLD_PBKDF2DeriveIterations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 10000.
-        /// </summary>
-        internal static string OLD_PBKDF2LoginIterations {
-            get {
-                return ResourceManager.GetString("OLD_PBKDF2LoginIterations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 30000.
-        /// </summary>
-        internal static string PBKDF2DeriveIterations {
-            get {
-                return ResourceManager.GetString("PBKDF2DeriveIterations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 30000.
-        /// </summary>
-        internal static string PBKDF2LoginIterations {
-            get {
-                return ResourceManager.GetString("PBKDF2LoginIterations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 1.
-        /// </summary>
-        internal static string TryOldValues {
-            get {
-                return ResourceManager.GetString("TryOldValues", resourceCulture);
-            }
-        }
     }
 }

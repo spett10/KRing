@@ -1,5 +1,4 @@
-﻿1. Make App.config point to different files dependent on build (debug vs release) http://stackoverflow.com/questions/3004210/app-config-transformation-for-projects-which-are-not-web-projects-in-visual-stud
-2. Config datapoint - Enable you to point to a folder that is the storage - this way, you can put the folder in dropbox, and have 2 computers point to the same data folder, its synced automatically, not dangerous since everything is encrypted. Brilliant
+﻿2. Config datapoint - Enable you to point to a folder that is the storage - this way, you can put the folder in dropbox, and have 2 computers point to the same data folder, its synced automatically, not dangerous since everything is encrypted. Brilliant
 	-save the path in a config, alter it at runtime. 
 	-do it under a setting button in the main view 
 3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
@@ -37,9 +36,16 @@ like the password, so it could be a mac on sha256( something? || password || sal
 not the data for the mach - that is derived at runtime and depends on password, so the attacker cant do offline dictionary attacks. the only thing we store is salt (something should be dervierd
 at runtime)
 28. figure out what iterations should be on key derivation experimentally - 1000 ms should be acceptable for the user to wait for. 
-29. We have resources in each project - which one does it then choose at runtime? e.g. what does core look up, what does form look up?
-	-have it one place instead, hardcode it somewhere in sourcecode. we assume the attacker knows the amount of iterations anyways, and having it in resource still means it not configable as it shouldnt be.
-	so move it one place in configuration in core, then reference that everywhere instead. 
+
+30. We need logic for trying both old and new value for key derivation? Since we only do it for auth right now, and that might work,
+but the key derivation at runtime for crypto does not try the old one, so the authentication stuff is pointless.
+The key check in 27 could be used for this, to test both iterations, and then finding out which iteration to use.
+But... This would stil require an update of the program on someones computer, meaning the user has to import and export anyways? and at that point,
+you could just update the numbers directly, since the user has to take the new executable. sure, they could log in using their old data, but that is only for the profile,
+so creating a new user instead would mean you dont have to copy the profile data around (MANUALLY I MIGHT ADD!), then it might be actually more friendly to start
+over with new (same) user and password, then import the passwords? then there is no manual action outside the program. Then there would need to be an export for the profile for this to work.
+
+
 
 Export/Import
 	-the tag created for export should be a tag on the fields in the exported format, not just the cipher text itself? mac what you mean and all that. 

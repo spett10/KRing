@@ -16,21 +16,12 @@ namespace KRingCore.Core
 
         static Configuration()
         {
-            Configuration.PBKDF2LoginIterations = Int32.Parse(Resources.PBKDF2LoginIterations);
-            Configuration.PBKDF2DeriveIterations = Int32.Parse(Resources.PBKDF2DeriveIterations);
-            Configuration.OLD_PBKDF2LoginIterations = Int32.Parse(Resources.OLD_PBKDF2LoginIterations);
-            Configuration.OLD_PBKDF2DeriveIterations = Int32.Parse(Resources.OLD_PBKDF2DeriveIterations);
-            Configuration.ExportImportIterations = Int32.Parse(Resources.ExportImportIterations);
-
-            var tryOldValues = Int32.Parse(Resources.TryOldValues);
-            if (tryOldValues == 1)
-            {
-                TryOldValues = true;
-            }
-            else
-            {
-                TryOldValues = false;
-            }
+            Configuration.PBKDF2LoginIterations = 30000;
+            Configuration.PBKDF2DeriveIterations = 30000;
+            Configuration.OLD_PBKDF2LoginIterations = 10000;
+            Configuration.OLD_PBKDF2DeriveIterations = 10000;
+            Configuration.ExportImportIterations = 30000;
+            Configuration.TryOldValues = true;
         }
     }
 }
