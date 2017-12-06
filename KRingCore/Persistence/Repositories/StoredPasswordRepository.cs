@@ -246,8 +246,6 @@ namespace KRingCore.Persistence.Repositories
         
         private byte[] DeriveKey(SecureString password, byte[] iv)
         {
-            //TODO: we ask for 32 bytes, but the underlying implementation of  Rfc2898 might be based on sha1 and only returns 160 bytes? Then why can we ask for bytes?!
-            // It will gives us more bytes, but https://security.stackexchange.com/questions/53115/how-to-know-which-output-length-to-request-from-pbkdf2
             return CryptoHashing.DeriveKeyFromPasswordAndSalt(password, iv, _keyLength);            
         }
 

@@ -119,5 +119,19 @@ namespace UnitTests
 
             Assert.IsTrue(result.SequenceEqual(expected));
         }
+
+        [TestMethod]
+        public void TestPBKDF2HMACSHA256_ExperimentalDeriveAppropriateTime()
+        {
+            // Used to time key derivation. 
+            var plain = Encoding.ASCII.GetBytes("password");
+            var salt = CryptoHashing.GenerateSalt(32);
+            var iterations = 100000;
+            var keylength = 32 * 8;
+
+            var result = BitConverter.ToString(CryptoHashing.PBKDF2HMACSHA256(plain, salt, iterations, keylength));
+            result = result.ToLowerInvariant().Replace("-", "");
+            Debug.WriteLine(result);
+        }
     }
 }

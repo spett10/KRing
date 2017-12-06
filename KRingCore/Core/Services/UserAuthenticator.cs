@@ -49,7 +49,7 @@ namespace KRingCore.Core.Services
             return HashSecret(secret, salt, iterations);
         }
 
-        private static bool ComputeAndCompareHash(byte[] secret, byte[] salt, byte[] saltedSecret, int iterations)
+        public static bool ComputeAndCompareHash(byte[] secret, byte[] salt, byte[] saltedSecret, int iterations)
         {
             var computedHash = HashSecret(secret, salt, iterations);
             return CryptoHashing.CompareByteArraysNoTimeLeak(computedHash, saltedSecret);

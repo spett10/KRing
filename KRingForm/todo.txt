@@ -24,10 +24,22 @@ similar to JWKS. then we know what algorithm and parameters where used, and we c
 But how can that help transition? If we write in the data format what key derivation algorithm and iteration that was used? How do we authenticate that though? guess we cant.. an attacker can set
 the hashing iteration to be something like.. 1. and then generate a lot of hashes really fast. then he could log in, but not decrypt, since the generated symmetric key would not be valid since the iteration count was altered.
 still seems sketchy as fuck. 
-
-22. Make the activity thingie a singleton that has a notify call instead of passing it to every single form. 
+22. Maybe before we close, make a mac on the log and store at the end, then check at startup, delete log if not valid? 
 23. make custom .net control that is a textbox that returns a securestring, not plaintext. listen to keystrokes, add to securestring one by one? PasswordBox exists for WPF, but not for windows forms apparently, and we cant use it here. 
 24. clean up service stuff, some of it belongs in persistence (file io)
+25. search should use contains instead of startwith
+26. edit should be called update or it should show the old password so yo ucan catually edit it? 
+27. make a key check value as described in cryptographic engineering chapter 21. That is, a vlaue that is mac'd with the dervied key. Then check this value
+when user logs in and the key is derived, and only if it checks out, should you attempt to decrypt and check tag of remaning stored vlaues (passwords).
+This saves time on wrong logons and such. Should depend on salt somehow, so it is updated after each reencryption, such that it is not too 
+open to dictionary attacks. but not ONLY on the salt for gods sake, then its a true dictionary attack enabler. It should be a mac on something the attacker doesnt know,
+like the password, so it could be a mac on sha256( something? || password || salt ). Then an attacker cant dictionary attack it, since you pnly store the mac value,
+not the data for the mach - that is derived at runtime and depends on password, so the attacker cant do offline dictionary attacks. the only thing we store is salt (something should be dervierd
+at runtime)
+28. figure out what iterations should be on key derivation experimentally - 1000 ms should be acceptable for the user to wait for. 
+29. We have resources in each project - which one does it then choose at runtime? e.g. what does core look up, what does form look up?
+	-have it one place instead, hardcode it somewhere in sourcecode. we assume the attacker knows the amount of iterations anyways, and having it in resource still means it not configable as it shouldnt be.
+	so move it one place in configuration in core, then reference that everywhere instead. 
 
 Export/Import
 	-the tag created for export should be a tag on the fields in the exported format, not just the cipher text itself? mac what you mean and all that. 

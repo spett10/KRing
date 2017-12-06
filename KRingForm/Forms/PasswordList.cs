@@ -62,6 +62,7 @@ namespace KRingForm
 
             if (_passwordRep.DecryptionErrorOccured)
             {
+                _passwordRep.DeleteAllEntries();
                 string message = "One or more passwords were corrupted and could not be decrypted. They have thus been deleted";
                 MessageBox.Show(message);
                 Program.Log("PasswordList", message);
@@ -169,6 +170,8 @@ namespace KRingForm
             {
                 var selectedDomain = GetCurrentDomain(_currentIndex);
 
+                if (string.IsNullOrEmpty(selectedDomain)) return;
+
                 var entry = _passwordRep.GetEntry(selectedDomain);
 
                 var editForm = new EditPasswordForm(_passwordRep, UpdateList, entry);
@@ -190,6 +193,8 @@ namespace KRingForm
             {
                 var selectedDomain = GetCurrentDomain(_currentIndex);
 
+                if (string.IsNullOrEmpty(selectedDomain)) return;
+
                 var deleteForm = new DeletePasswordForm(_passwordRep, UpdateList, selectedDomain);
                 deleteForm.Show();
             }
@@ -201,13 +206,18 @@ namespace KRingForm
 
         }
 
+        /// <summary>
+        /// Returns empty string is the index is out of range - dont throw errors as logic control, just check when calling. 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         private string GetCurrentDomain(int index)
         {
             var list = GetListAsStrings();
 
-            if(index >= list.Count)
+            if(index >= list.Count || index < 0)
             {
-                throw new ArgumentException("Index out of range");
+                return string.Empty;
             }
 
             return list.ElementAt(index);
@@ -225,6 +235,8 @@ namespace KRingForm
             try
             {
                 var selectedDomain = GetCurrentDomain(_currentIndex);
+
+                if (string.IsNullOrEmpty(selectedDomain)) return;
 
                 var entry = _passwordRep.GetEntry(selectedDomain);
 
