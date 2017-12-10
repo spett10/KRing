@@ -126,7 +126,7 @@ namespace UnitTests
             // Used to time key derivation. 
             var plain = Encoding.ASCII.GetBytes("password");
             var salt = CryptoHashing.GenerateSalt(32);
-            var iterations = 100000;
+            var iterations = 1048576;
             var keylength = 32 * 8;
 
             var result = BitConverter.ToString(CryptoHashing.PBKDF2HMACSHA256(plain, salt, iterations, keylength));

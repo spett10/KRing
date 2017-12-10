@@ -11,6 +11,11 @@ namespace KRingCore.Core.Model
         public byte[] EncryptionKeySalt { get; set; }
         public byte[] MacKeySalt { get; set; }
 
+        public SecurityData()
+        {
+
+        }
+
         public SecurityData(byte[] hashedpassword, byte[] hashedUsername, byte[] encrKeySalt, byte[] macKeySalt, byte[] passwordHashSalt, byte[] usernameHashSalt)
         {
             HashedPassword = hashedpassword;

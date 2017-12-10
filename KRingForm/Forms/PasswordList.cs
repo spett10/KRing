@@ -38,8 +38,9 @@ namespace KRingForm
         public delegate void ErrorCallback(string messageToUser);
 
         private readonly User _user;
-        private readonly IStoredPasswordRepository _passwordRep;
-        private readonly IPasswordImporter _passwordImporter; 
+        private IStoredPasswordRepository _passwordRep;
+        private readonly IPasswordImporter _passwordImporter;
+        private readonly IProfileRepository _profileRepository;
 
         private int _currentIndex;
         private bool _unsavedChanges;
@@ -47,10 +48,11 @@ namespace KRingForm
 
         private const int secondsToWait = 120;
 
-        public PasswordList(User user)
+        public PasswordList(User user, IProfileRepository profileRepository)
         {
             InitializeComponent();
             _user = user;
+            _profileRepository = profileRepository;
 
             var securePassword = new SecureString();
             securePassword.PopulateWithString(user.PlaintextPassword);
@@ -269,6 +271,17 @@ namespace KRingForm
         {
             Notify();
 
+            /* New salt */
+            this._user.GenerateNewSalt();
+
+            /* New password rep that derives and uses new keys, copy over existing passwords before overwriting. */
+            var passwords = _passwordRep.GetEntries().ToList();
+            _passwordRep = new StoredPasswordRepository(this._user.Password, 
+                                                        this._user.SecurityData.EncryptionKeySalt, 
+                                                        this._user.SecurityData.MacKeySalt, 
+                                                        _passwordRep.GetEntries());
+
+
             /* Start write */
             await _passwordRep.WriteEntriesToDbAsync();
 
@@ -278,6 +291,7 @@ namespace KRingForm
                 Program.Log("Save", "One or more passwords could not be encrypted");
             }
 
+            await _profileRepository.WriteUserAsync(this._user);
             _unsavedChanges = false;
             HideSaveButton();
         }
@@ -298,6 +312,13 @@ namespace KRingForm
                     NotExiting);
                 warning.Show();
             }
+
+            // TODO: when form closes, no matter what, we must:
+            // Derive new salt for password and username hashing. 
+            // Derive new salt for mac and encr key
+            // Derive new set of keyts from above, and use that for encryption before writing
+            // Save salt and other user values in profile (update), so it can be read next upstart
+            // this gives somewhat forward secrecy.
         }
 
         private void ResetInactiveTimer()

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using KRingCore.Persistence.Model;
 using System.Threading.Tasks;
+using System.Security;
 
 namespace KRingCore.Persistence.Interfaces
 {

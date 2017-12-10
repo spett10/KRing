@@ -18,17 +18,19 @@ namespace KRingCore.Persistence.Repositories
     public class StoredPasswordRepository : ReleasePathDependent, IStoredPasswordRepository
     {
         private readonly IDataConfig _dataConfig;
-        private readonly IStoredPasswordIO _passwordIO;
+        private IStoredPasswordIO _passwordIO;
 
         private List<StoredPassword> _entries;
-        
+
+        private SecureString _password;
+
         private byte[] _saltForEncrKey;
         private byte[] _saltForMacKey;
         private byte[] _encrKey;
         private byte[] _macKey;
 
         private readonly int _keyLength = 32;
-        private readonly int _ivLength = 16;
+        private readonly int _ivLength = 16; //TODO why not 256? can aes handle that? 
 
         public int EntryCount => _entries.Count;
         public bool DecryptionErrorOccured { get; private set; }
@@ -54,6 +56,7 @@ namespace KRingCore.Persistence.Repositories
 
             _saltForEncrKey = encrKeySalt;
             _saltForMacKey = macKeySalt;
+            _password = password;
 
             _encrKey = DeriveKey(password, _saltForEncrKey);
             _macKey = DeriveKey(password, _saltForMacKey);
@@ -61,6 +64,38 @@ namespace KRingCore.Persistence.Repositories
             _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
 
             _entries = LoadEntriesFromDb();  
+        }
+
+        /// <summary>
+        /// Used for creating new repository at runtime, e.g. copy over password list at runtime. 
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="encrKeySalt"></param>
+        /// <param name="macKeySalt"></param>
+        /// <param name="passwords"></param>
+        public StoredPasswordRepository(SecureString password, byte[] encrKeySalt, byte[] macKeySalt, List<StoredPassword> passwords)
+        {
+#if DEBUG
+            _dataConfig = new DataConfig(
+                               ConfigurationManager.AppSettings["relativedbPathDebug"]);
+#else
+            _dataConfig = new DataConfig(
+                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"]);
+#endif
+
+            DecryptionErrorOccured = false;
+            EncryptionErrorOccured = false;
+
+            _saltForEncrKey = encrKeySalt;
+            _saltForMacKey = macKeySalt;
+            _password = password;
+
+            _encrKey = DeriveKey(password, _saltForEncrKey);
+            _macKey = DeriveKey(password, _saltForMacKey);
+
+            _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
+
+            _entries = passwords;
         }
 
         public StoredPasswordRepository(SecureString password, byte[] encrKeySalt, byte[] macKeySalt, IDataConfig config)
@@ -73,6 +108,7 @@ namespace KRingCore.Persistence.Repositories
             _saltForEncrKey = new byte[_ivLength];
             _saltForEncrKey = encrKeySalt;
             _saltForMacKey = macKeySalt;
+            _password = password;
 
             _encrKey = DeriveKey(password, _saltForEncrKey);
             _macKey = DeriveKey(password, _saltForMacKey);
@@ -82,6 +118,7 @@ namespace KRingCore.Persistence.Repositories
             _entries = LoadEntriesFromDb();
         }
 
+        //TODO: implement idisposable instead?
         ~StoredPasswordRepository()
         {
             CryptoHashing.ZeroOutArray(ref _encrKey);
@@ -188,6 +225,7 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
+                _passwordIO = new NsvStoredPasswordIO(this._password, this._encrKey, this._macKey, this._dataConfig);
                 await _passwordIO.Writer.WriteEntriesToDbAsync(_entries);
             }
             catch (Exception)
@@ -200,6 +238,7 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
+                _passwordIO = new NsvStoredPasswordIO(this._password, this._encrKey, this._macKey, this._dataConfig);
                 _passwordIO.Writer.WriteEntriesToDb(_entries);
             }
             catch(Exception)

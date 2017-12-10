@@ -7,6 +7,8 @@ namespace KRingCore.Core.Model
 {
     public class User
     {
+        private const int DefaultSaltByteSize = 32;
+
         public string UserName { get; set; }
         public string PlaintextPassword
         {
@@ -23,7 +25,7 @@ namespace KRingCore.Core.Model
                 Password.PopulateWithString(value);
             }
         }
-        private SecureString Password { get; set; }
+        public SecureString Password { get; private set; }
         public SecurityData SecurityData { get; private set; }
 
         private static readonly int HashSaltSize = 64;
@@ -53,6 +55,27 @@ namespace KRingCore.Core.Model
             SecurityData = cookie;
         }
 
+        public void GenerateNewSalt()
+        {
+            var securityData = new SecurityData()
+            {
+                EncryptionKeySalt = CryptoHashing.GenerateSalt(HashSaltSize),
+                MacKeySalt = CryptoHashing.GenerateSalt(HashSaltSize),
+                PasswordHashSalt = CryptoHashing.GenerateSalt(HashSaltSize),
+                UsernameHashSalt = CryptoHashing.GenerateSalt(HashSaltSize),
+            };
+
+            securityData.HashedPassword = UserAuthenticator.
+                                          CreateAuthenticationToken(this.Password.ConvertToUnsecureString(), 
+                                                                    securityData.PasswordHashSalt);
+
+            securityData.HashedUsername = UserAuthenticator.
+                                          CreateAuthenticationToken(this.UserName,
+                                                                    securityData.UsernameHashSalt);
+
+            this.SecurityData = securityData;
+        }
+
         public static User NewUserWithFreshSalt(string newUserName, SecureString password)
         {
             return NewUserWithFreshSalt(newUserName, password.ConvertToUnsecureString());
@@ -66,8 +89,8 @@ namespace KRingCore.Core.Model
             var saltForPassword = CryptoHashing.GenerateSalt(HashSaltSize);
             var saltedPassword = UserAuthenticator.CreateAuthenticationToken(password, saltForPassword);
 
-            var saltForEncrKey = CryptoHashing.GenerateSalt();
-            var saltForMacKey = CryptoHashing.GenerateSalt();
+            var saltForEncrKey = CryptoHashing.GenerateSalt(HashSaltSize);
+            var saltForMacKey = CryptoHashing.GenerateSalt(HashSaltSize);
 
             var cookie = new SecurityData(saltedPassword, saltedUsername, saltForEncrKey, saltForMacKey, saltForPassword, saltForUser);
             return new User(newUserName, password, cookie);

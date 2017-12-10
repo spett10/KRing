@@ -25,6 +25,8 @@ namespace KRingForm
 
         public static bool userInactiveLogout = false;
 
+        private static ProfileRepository _profileRepository;
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -74,7 +76,7 @@ namespace KRingForm
                 {
                     try
                     {
-                        Application.Run(new PasswordList(SavedUser));
+                        Application.Run(new PasswordList(SavedUser, _profileRepository));
                     }
                     catch (Exception e)
                     {   
@@ -108,11 +110,11 @@ namespace KRingForm
 
         static bool DoesUserExist()
         {
-            var profileRepository = new ProfileRepository();
+            _profileRepository = new ProfileRepository();
 
             try
             {
-                SavedUser = profileRepository.ReadUser();
+                SavedUser = _profileRepository.ReadUser();
                 return true;
             }
             catch

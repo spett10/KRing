@@ -14,7 +14,7 @@ namespace KRingCore.Security
 {
     public static class CryptoHashing
     {
-        public static readonly int SaltByteSize = 16;
+        public static readonly int DefaultSaltByteSize = 16;
         private static readonly int iterations = 10000; //could we go further? like.. 20k? 30k? We only have to load them once. 
 
         public static byte[] GenerateSaltedHash(string plaintext, byte[] salt)
@@ -84,7 +84,7 @@ namespace KRingCore.Security
 
         public static byte[] GenerateSalt()
         {
-            return GenerateSalt(SaltByteSize);
+            return GenerateSalt(DefaultSaltByteSize);
         }
 
         /* Since we compare hmac and other sensitive stuff, we want to go through the motions? No reason to leak what index */
