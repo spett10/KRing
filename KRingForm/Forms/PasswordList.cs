@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Security;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 //TODO: order eventhandlers, and other stuff, under regions. 
@@ -42,7 +43,11 @@ namespace KRingForm
         private readonly IPasswordImporter _passwordImporter;
         private readonly IProfileRepository _profileRepository;
 
+        private Task RehashingTask;
+
         private int _currentIndex;
+
+        //TODO: gather this in a state object or a state design pattern or something.
         private bool _unsavedChanges;
         private bool _exitWithoutSaving;
 
@@ -53,6 +58,9 @@ namespace KRingForm
             InitializeComponent();
             _user = user;
             _profileRepository = profileRepository;
+
+            /* Start rehashing for potential re-encryption already now in a task since it takes quite a while */
+            RehashingTask = Task.Run(() => { this._user.GenerateNewSalt(); });
 
             var securePassword = new SecureString();
             securePassword.PopulateWithString(user.PlaintextPassword);
@@ -71,6 +79,7 @@ namespace KRingForm
             }
 
             _unsavedChanges = false;
+            _savedSoFar = false;
             HideSaveButton();
             _exitWithoutSaving = false;
 
@@ -148,6 +157,54 @@ namespace KRingForm
             Notify();
         }
 
+
+        /// <summary>
+        /// Returns empty string is the index is out of range - dont throw errors as logic control, just check when calling. 
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        private string GetCurrentDomain(int index)
+        {
+            var list = GetListAsStrings();
+
+            if(index >= list.Count || index < 0)
+            {
+                return string.Empty;
+            }
+
+            return list.ElementAt(index);
+        }
+
+        private List<string> GetListAsStrings()
+        {
+            return passwordListBox.Items.Cast<string>().ToList();
+        }
+
+        #region ButtonEventHandlers
+
+        private void viewButton_Click(object sender, EventArgs e)
+        {
+            Notify();
+
+            try
+            {
+                var selectedDomain = GetCurrentDomain(_currentIndex);
+
+                if (string.IsNullOrEmpty(selectedDomain)) return;
+
+                var entry = _passwordRep.GetEntry(selectedDomain);
+
+                var viewForm = new ViewForm(entry);
+                viewForm.Show();
+            }
+            catch (Exception)
+            {
+                HandleException();
+                Program.Log("viewButton", "Exception occured");
+            }
+
+        }
+
         private void addButton_Click(object sender, EventArgs e)
         {
             Notify();
@@ -157,11 +214,11 @@ namespace KRingForm
                 var addForm = new AddPasswordForm(_passwordRep, UpdateList);
                 addForm.Show();
             }
-            catch(Exception)
+            catch (Exception)
             {
                 HandleException();
                 Program.Log("addButton", "Exception occured");
-            }            
+            }
         }
 
         private void editButton_Click(object sender, EventArgs e)
@@ -208,58 +265,66 @@ namespace KRingForm
 
         }
 
-        /// <summary>
-        /// Returns empty string is the index is out of range - dont throw errors as logic control, just check when calling. 
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        private string GetCurrentDomain(int index)
-        {
-            var list = GetListAsStrings();
-
-            if(index >= list.Count || index < 0)
-            {
-                return string.Empty;
-            }
-
-            return list.ElementAt(index);
-        }
-
-        private List<string> GetListAsStrings()
-        {
-            return passwordListBox.Items.Cast<string>().ToList();
-        }
-
-        private void viewButton_Click(object sender, EventArgs e)
-        {
-            Notify();
-
-            try
-            {
-                var selectedDomain = GetCurrentDomain(_currentIndex);
-
-                if (string.IsNullOrEmpty(selectedDomain)) return;
-
-                var entry = _passwordRep.GetEntry(selectedDomain);
-
-                var viewForm = new ViewForm(entry);
-                viewForm.Show();
-            }
-            catch (Exception)
-            {
-                HandleException();
-                Program.Log("viewButton", "Exception occured");
-            }
-
-        }
 
         private void deleteUserButton_Click(object sender, EventArgs e)
         {
             //TODO
         }
 
+        private void exportButton_Click(object sender, EventArgs e)
+        {
+            //TODO: i think the flow would be better if we first ask for password, then for the file? seems more natural. 
+
+            var saveFileDialogue = new SaveFileDialog();
+            saveFileDialogue.Filter = "Text File (*.txt)|*.txt";
+            saveFileDialogue.Title = "Export passwords encrypted";
+            saveFileDialogue.FileOk += SaveFile_Ok;
+            saveFileDialogue.ShowDialog();
+        }
+
+        private void importButton_Click(object sender, EventArgs e)
+        {
+            var fileDialogue = new OpenFileDialog();
+            fileDialogue.FileOk += FileDialogue_FileOk;
+            fileDialogue.ShowDialog();
+        }
+
+        private async void saveButton_Click(object sender, EventArgs e)
+        {
+            Task reencrypTask = ReencryptAndSave();
+
+            Notify();
+
+            HideSaveButton();
+
+            await reencrypTask;
+        }
+
+
+        private void SearchButton_Click(object sender, EventArgs e)
+        {
+            var searchString = SearchBar.Text;
+
+            /* If search text is empty, show entire list */
+            if (searchString == string.Empty || searchString == null)
+            {
+                UpdateList(OperationType.NoOperation);
+
+                return;
+            }
+
+            /* Otherwise, do a prefix search on the domain names */
+            var result = _passwordRep.PrefixSearch(searchString);
+
+            UpdateList(result);
+        }
+
+        #endregion
+
+
         /// <summary>
         /// If something fails, make sure to write database. Its a blocking call, we want to be really sure. 
+        /// TODO: should this be a reencrpy thingie?
         /// </summary>
         private void HandleException()
         {
@@ -267,33 +332,32 @@ namespace KRingForm
             _passwordRep.WriteEntriesToDb();
         }
 
-        private async void saveButton_Click(object sender, EventArgs e)
+        private async Task ReencryptAndSave()
         {
-            Notify();
-
-            /* New salt */
-            this._user.GenerateNewSalt();
+            /* Wait for new salt to complete */
+            await RehashingTask;
 
             /* New password rep that derives and uses new keys, copy over existing passwords before overwriting. */
             var passwords = _passwordRep.GetEntries().ToList();
-            _passwordRep = new StoredPasswordRepository(this._user.Password, 
-                                                        this._user.SecurityData.EncryptionKeySalt, 
-                                                        this._user.SecurityData.MacKeySalt, 
+            _passwordRep = new StoredPasswordRepository(this._user.Password,
+                                                        this._user.SecurityData.EncryptionKeySalt,
+                                                        this._user.SecurityData.MacKeySalt,
                                                         _passwordRep.GetEntries());
 
 
             /* Start write */
             await _passwordRep.WriteEntriesToDbAsync();
 
-            if(_passwordRep.EncryptionErrorOccured)
+            if (_passwordRep.EncryptionErrorOccured)
             {
                 Program._messageToUser("One or more passwords could not be encrypted - their data has been lost");
                 Program.Log("Save", "One or more passwords could not be encrypted");
             }
 
             await _profileRepository.WriteUserAsync(this._user);
+
             _unsavedChanges = false;
-            HideSaveButton();
+            _savedSoFar = true;
         }
 
         private void PasswordList_Load(object sender, EventArgs e)
@@ -321,6 +385,8 @@ namespace KRingForm
             // this gives somewhat forward secrecy.
         }
 
+        #region Timer
+
         private void ResetInactiveTimer()
         {
             var startTime = DateTime.Now;
@@ -345,43 +411,15 @@ namespace KRingForm
             this.Close();
         }
 
-        private void SearchButton_Click(object sender, EventArgs e)
-        {
-            var searchString = SearchBar.Text;
+        #endregion
 
-            /* If search text is empty, show entire list */
-            if(searchString == string.Empty || searchString == null)
-            {
-                UpdateList(OperationType.NoOperation);
-
-                return;
-            }
-
-            /* Otherwise, do a prefix search on the domain names */
-            var result = _passwordRep.PrefixSearch(searchString);
-
-            UpdateList(result);
-        }
-
-        private void importButton_Click(object sender, EventArgs e)
-        {
-            var fileDialogue = new OpenFileDialog();
-            fileDialogue.FileOk += FileDialogue_FileOk;
-            fileDialogue.ShowDialog();
-        }
+        #region ExportImportLogic
 
         private void FileDialogue_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var fileDialogue = sender as OpenFileDialog;
             var importForm = new ImportPasswords(fileDialogue, ImportPasswords, DisplayErrorMessageToUser, new StreamReaderToEnd());
             importForm.Show();
-        }
-
-        private void DisplayErrorMessageToUser(string messageToUser)
-        {
-            Program.Log("Displaying error to user", messageToUser);
-            var informationForm = new InformationPopup(messageToUser);
-            informationForm.Show();
         }
 
         private void ImportPasswords(List<StoredPassword> passwords)
@@ -445,18 +483,7 @@ namespace KRingForm
                 UpdateList(OperationType.NoOperation);
             }
         }
-
-        private void exportButton_Click(object sender, EventArgs e)
-        {
-            //TODO: i think the flow would be better if we first ask for password, then for the file? seems more natural. 
-
-            var saveFileDialogue = new SaveFileDialog();
-            saveFileDialogue.Filter = "Text File (*.txt)|*.txt";
-            saveFileDialogue.Title = "Export passwords encrypted";
-            saveFileDialogue.FileOk += SaveFile_Ok;
-            saveFileDialogue.ShowDialog();
-        }
-
+        
         private void SaveFile_Ok(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var dialogue = sender as SaveFileDialog;
@@ -464,6 +491,15 @@ namespace KRingForm
                                                         this._passwordRep.GetEntries(), 
                                                         new StreamWriterToEnd());
             exportPasswordForm.Show();
+        }
+
+        #endregion
+
+        private void DisplayErrorMessageToUser(string messageToUser)
+        {
+            Program.Log("Displaying error to user", messageToUser);
+            var informationForm = new InformationPopup(messageToUser);
+            informationForm.Show();
         }
     }
 
