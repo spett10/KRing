@@ -9,6 +9,7 @@ using System.Configuration;
 using KRingCore.Persistence.Interfaces;
 using KRingCore.Interfaces;
 using System.Threading.Tasks;
+using KRingCore.Core.Model;
 
 namespace KRingCore.Persistence.Repositories
 {
@@ -98,6 +99,33 @@ namespace KRingCore.Persistence.Repositories
             _entries = passwords;
         }
 
+
+        //TODO: do we need keys as objects? when and where to call dispose? when we clear keys? 
+        public StoredPasswordRepository(SecureString password, SymmetricKey encrKey, SymmetricKey macKey, List<StoredPassword> passwords)
+        {
+#if DEBUG
+            _dataConfig = new DataConfig(
+                               ConfigurationManager.AppSettings["relativedbPathDebug"]);
+#else
+            _dataConfig = new DataConfig(
+                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"]);
+#endif
+
+            DecryptionErrorOccured = false;
+            EncryptionErrorOccured = false;
+
+            _saltForEncrKey = new byte[0];
+            _saltForMacKey = new byte[0];
+            _password = password;
+
+            _encrKey = encrKey.Key;
+            _macKey = macKey.Key;
+
+            _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
+
+            _entries = passwords;
+        }
+
         public StoredPasswordRepository(SecureString password, byte[] encrKeySalt, byte[] macKeySalt, IDataConfig config)
         {
             _dataConfig = config;
@@ -118,7 +146,7 @@ namespace KRingCore.Persistence.Repositories
             _entries = LoadEntriesFromDb();
         }
 
-        //TODO: implement idisposable instead?
+        //TODO: implement idisposable instead? We can use the idisposable of the new symmetrickeyclass.
         ~StoredPasswordRepository()
         {
             CryptoHashing.ZeroOutArray(ref _encrKey);

@@ -43,12 +43,14 @@ namespace KRingForm
         private readonly IPasswordImporter _passwordImporter;
         private readonly IProfileRepository _profileRepository;
 
-        private Task RehashingTask;
+        //TODO: restart once we have used it, it could be that the user makes more changes? 
+        private Task<Tuple<SymmetricKey, SymmetricKey>> RehashingTask;
 
         private int _currentIndex;
 
         //TODO: gather this in a state object or a state design pattern or something.
         private bool _unsavedChanges;
+        private bool _savedSoFar;
         private bool _exitWithoutSaving;
 
         private const int secondsToWait = 120;
@@ -60,7 +62,14 @@ namespace KRingForm
             _profileRepository = profileRepository;
 
             /* Start rehashing for potential re-encryption already now in a task since it takes quite a while */
-            RehashingTask = Task.Run(() => { this._user.GenerateNewSalt(); });
+            RehashingTask = Task.Run(() =>
+            {
+                this._user.GenerateNewSalt();
+                return Tuple.Create(
+                                        new SymmetricKey(this._user.Password, this._user.SecurityData.EncryptionKeySalt), 
+                                        new SymmetricKey(this._user.Password, this._user.SecurityData.MacKeySalt)
+                                    );
+            });
 
             var securePassword = new SecureString();
             securePassword.PopulateWithString(user.PlaintextPassword);
@@ -334,14 +343,14 @@ namespace KRingForm
 
         private async Task ReencryptAndSave()
         {
-            /* Wait for new salt to complete */
-            await RehashingTask;
+            /* Wait for new salt and key derivation to complete */
+            var rehashingResult = await RehashingTask;
 
             /* New password rep that derives and uses new keys, copy over existing passwords before overwriting. */
             var passwords = _passwordRep.GetEntries().ToList();
             _passwordRep = new StoredPasswordRepository(this._user.Password,
-                                                        this._user.SecurityData.EncryptionKeySalt,
-                                                        this._user.SecurityData.MacKeySalt,
+                                                        rehashingResult.Item1,
+                                                        rehashingResult.Item2,
                                                         _passwordRep.GetEntries());
 
 
