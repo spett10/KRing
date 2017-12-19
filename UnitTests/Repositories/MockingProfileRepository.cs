@@ -5,6 +5,7 @@ using System.Security;
 using KRingCore.Extensions;
 using System.Threading.Tasks;
 using KRingCore.Security;
+using KRingCore.Core.Services;
 
 namespace UnitTests
 {
@@ -23,8 +24,8 @@ namespace UnitTests
 
             password.PopulateWithString(passwordRaw);
 
-            var passwordSalted = CryptoHashing.GenerateSaltedHash(passwordRaw, saltForHash);
-            var usernameSalted = CryptoHashing.GenerateSaltedHash(usernameRaw, saltForHash);            
+            var passwordSalted = UserAuthenticator.CreateAuthenticationToken(passwordRaw, saltForHash);
+            var usernameSalted = UserAuthenticator.CreateAuthenticationToken(usernameRaw, saltForHash);            
 
             _correctUser = new User(usernameRaw,
                                     password,
@@ -40,8 +41,8 @@ namespace UnitTests
             var saltForEncrKey = CryptoHashing.GenerateSalt();
             var saltForMacKey = CryptoHashing.GenerateSalt();
             var saltForHash = CryptoHashing.GenerateSalt(64);
-            var passwordSalted = CryptoHashing.GenerateSaltedHash(rawPass, saltForHash);
-            var usernameSalted = CryptoHashing.GenerateSaltedHash(username, saltForHash);
+            var passwordSalted = UserAuthenticator.CreateAuthenticationToken(rawPass, saltForHash);
+            var usernameSalted = UserAuthenticator.CreateAuthenticationToken(username, saltForHash);
 
             _correctUser = new User(username,
                                     password,

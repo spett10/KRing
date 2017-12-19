@@ -92,7 +92,6 @@
     <Content Include="Data\Debug\profile.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Data\export.txt" />
     <Content Include="Data\Release\db.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

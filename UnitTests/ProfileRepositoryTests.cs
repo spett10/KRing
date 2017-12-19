@@ -6,6 +6,7 @@ using KRingCore.Extensions;
 using KRingCore.Persistence.Repositories;
 using System.Security;
 using System.Linq;
+using KRingCore.Core.Services;
 
 namespace UnitTests
 {
@@ -23,8 +24,8 @@ namespace UnitTests
             var macKeySalt = CryptoHashing.GenerateSalt();
             var hashSalt = CryptoHashing.GenerateSalt();
 
-            var userSalted = CryptoHashing.GenerateSaltedHash(username, hashSalt);
-            var passwordSalted = CryptoHashing.GenerateSaltedHash(password, hashSalt);
+            var userSalted = UserAuthenticator.CreateAuthenticationToken(username, hashSalt);
+            var passwordSalted = UserAuthenticator.CreateAuthenticationToken(password, hashSalt);
             
 
             var cookie = new SecurityData(passwordSalted, userSalted, encrKeySalt, macKeySalt, hashSalt, hashSalt);
@@ -82,8 +83,8 @@ namespace UnitTests
 
             string username = "Bob";
             var salt = CryptoHashing.GenerateSalt();
-            var passwordSalted = CryptoHashing.GenerateSaltedHash(_user.PlaintextPassword, salt);
-            var userSalted = CryptoHashing.GenerateSaltedHash(username, salt);
+            var passwordSalted = UserAuthenticator.CreateAuthenticationToken(_user.PlaintextPassword, salt);
+            var userSalted = UserAuthenticator.CreateAuthenticationToken(username, salt);
             var encrKeySalt = CryptoHashing.GenerateSalt();
             var macKeySalt = CryptoHashing.GenerateSalt();
             var hashSalt = CryptoHashing.GenerateSalt();

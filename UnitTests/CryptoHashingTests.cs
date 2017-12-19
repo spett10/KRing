@@ -12,34 +12,6 @@ namespace UnitTests
     public class CryptoHashingTests
     {
         [TestMethod]
-        public void PBKDF2_GivingCorrect_ShouldSucced()
-        {
-            var password = "UggaBuggaSuperSecret";
-            var salt = CryptoHashing.GenerateSalt();
-
-            var hashedPassword = Convert.ToBase64String(CryptoHashing.GenerateSaltedHash(password, salt));
-
-            bool isCorrectPassword = CryptoHashing.CompareSaltedHash(password, salt, hashedPassword);
-
-            Assert.IsTrue(isCorrectPassword);
-        }
-
-        [TestMethod]
-        public void PBKDF2_GivingIncorrect_ShouldFail()
-        {
-            var password = "UggaBuggaSuperSecret";
-            var salt = CryptoHashing.GenerateSalt();
-
-            var hashedPassword = Convert.ToBase64String(CryptoHashing.GenerateSaltedHash(password, salt));
-
-            var wrongpassword = "UggaBuggaSuperSecret1";
-
-            bool isCorrectPassword = CryptoHashing.CompareSaltedHash(wrongpassword, salt, hashedPassword);
-
-            Assert.IsFalse(isCorrectPassword);
-        }
-
-        [TestMethod]
         public void CBCThenHMAC_GiveCorrectKeyAndIv_ShouldBeEqual()
         {
             var plaintext = "Foo Bar Baz";

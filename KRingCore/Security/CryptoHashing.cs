@@ -14,49 +14,8 @@ namespace KRingCore.Security
 {
     public static class CryptoHashing
     {
+        // Based on IV size for AES, but should be like 64 for password hashing.. 
         public static readonly int DefaultSaltByteSize = 16;
-        private static readonly int iterations = 10000; //could we go further? like.. 20k? 30k? We only have to load them once. 
-
-        public static byte[] GenerateSaltedHash(string plaintext, byte[] salt)
-        {
-            Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(plaintext, salt, iterations);
-            try
-            {
-                return algorithm.GetBytes(plaintext.Length + salt.Length);
-            }
-            finally
-            {
-                algorithm.Dispose();
-            }
-
-        }
-
-        public static bool CompareSaltedHash(string password, byte[] salt, string hashedPassword)
-        {
-            Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(password, salt, iterations);
-            try
-            {
-                var hashed = algorithm.GetBytes(password.Length + salt.Length);
-                return CompareByteArraysNoTimeLeak(hashed, Convert.FromBase64String(hashedPassword));
-            }
-            finally
-            {
-                algorithm.Dispose();
-            }
-        }
-
-        public static byte[] DeriveKeyFromPasswordAndSalt(string plaintext, byte[] salt, int keyLength)
-        {
-            Rfc2898DeriveBytes algorithm = new Rfc2898DeriveBytes(plaintext, salt, iterations);
-            try
-            {
-                return algorithm.GetBytes(keyLength);
-            }
-            finally
-            {
-                algorithm.Dispose();
-            }
-        }
 
         public static byte[] DeriveKeyFromPasswordAndSalt(SecureString password, byte[] salt, int keyLength)
         {
