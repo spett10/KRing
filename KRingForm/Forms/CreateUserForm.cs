@@ -21,7 +21,6 @@ namespace KRingForm
         {
             var username = usernameBox.Text;
 
-            //Todo: Password strength or requirements?
             var password = passwordBox.Text;
 
             if(password == null || password == String.Empty)
@@ -51,7 +50,7 @@ namespace KRingForm
             }
             else
             {
-                Program._messageToUser("Password not strong enough - it must have at least one special character, one capital character and one digit!");
+                Program._messageToUser("Password not strong enough - it must have at least one special character, one capital character and one digit! Or, it has to have a length of at least 16.");
             }            
         }
 

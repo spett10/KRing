@@ -322,7 +322,7 @@ namespace KRingForm
                 return;
             }
 
-            /* Otherwise, do a prefix search on the domain names */
+            /* Otherwise, do a contains search on the domain names */
             var result = _passwordRep.ContainsSearch(searchString);
 
             UpdateList(result);

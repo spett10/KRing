@@ -8,7 +8,6 @@ using System.Collections.Generic;
 
 namespace KRingCore.Core
 {
-    //TODO: make rule that if password is of certain length (like 20+) then it gets a lot of points, to encourage pass phrases.
     public enum PasswordScore
     {
         Blank = 0,
@@ -25,8 +24,22 @@ namespace KRingCore.Core
         {
             int score = 0;
             
-            if(password.Length >= 8) { score++; }
-            if(password.Length >= 12) { score++; }
+            if(password.Length >= 8) {
+                score++;
+
+                //For each additional multiple of 4, add 1 point. 
+                int multiple = 0;
+                int lenght = password.Length - 8;
+                int roundTrip = 4;
+
+                while(lenght >= roundTrip)
+                {
+                    lenght = lenght - roundTrip;
+                    multiple++;
+                }
+
+                score = score + multiple;                
+            }
 
             return score;
         }
