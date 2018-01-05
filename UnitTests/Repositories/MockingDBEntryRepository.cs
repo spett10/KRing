@@ -142,5 +142,10 @@ namespace UnitTests.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public List<StoredPassword> ContainsSearch(string containsDomain)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

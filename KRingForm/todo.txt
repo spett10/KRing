@@ -1,6 +1,5 @@
-﻿2. Config datapoint - Enable you to point to a folder that is the storage - this way, you can put the folder in dropbox, and have 2 computers point to the same data folder, its synced automatically, not dangerous since everything is encrypted. Brilliant
-	-save the path in a config, alter it at runtime. 
-	-do it under a setting button in the main view 
+﻿1. password rules are dumb. passphrases are currently not quite possible? i also think we can amp up the input to more than 80 (not unlimited due to ddos attacks but still more than currently).
+i think just the length should be checked?
 3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
 4. consider having a k1 that is derived from user password and salt (update for each time?). Then, use that to encrypt/decrypt the symmetric key used for encrypting the passwords.
 Then we can change password for the user, but not need to change the key used for encrypting all the entries, so we dont need to reencrypt. 
@@ -23,6 +22,7 @@ similar to JWKS. then we know what algorithm and parameters where used, and we c
 But how can that help transition? If we write in the data format what key derivation algorithm and iteration that was used? How do we authenticate that though? guess we cant.. an attacker can set
 the hashing iteration to be something like.. 1. and then generate a lot of hashes really fast. then he could log in, but not decrypt, since the generated symmetric key would not be valid since the iteration count was altered.
 still seems sketchy as fuck. 
+
 22. Maybe before we close, make a mac on the log and store at the end, then check at startup, delete log if not valid? 
 23. make custom .net control that is a textbox that returns a securestring, not plaintext. listen to keystrokes, add to securestring one by one? PasswordBox exists for WPF, but not for windows forms apparently, and we cant use it here. 
 24. clean up service stuff, some of it belongs in persistence (file io)

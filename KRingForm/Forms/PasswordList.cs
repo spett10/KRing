@@ -323,7 +323,7 @@ namespace KRingForm
             }
 
             /* Otherwise, do a prefix search on the domain names */
-            var result = _passwordRep.PrefixSearch(searchString);
+            var result = _passwordRep.ContainsSearch(searchString);
 
             UpdateList(result);
         }

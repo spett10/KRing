@@ -219,6 +219,11 @@ namespace KRingCore.Persistence.Repositories
             return _entries.Where(e => e.Domain.StartsWith(prefixDomain)).ToList();
         }
 
+        public List<StoredPassword> ContainsSearch(string containsDomain)
+        {
+            return _entries.Where(e => e.Domain.Contains(containsDomain)).ToList();
+        }
+
         public bool ExistsEntry(string domain)
         {
             return _entries.Any(e => e.
@@ -330,5 +335,7 @@ namespace KRingCore.Persistence.Repositories
         {
             return _entries.Where(e => e.Domain == domain).FirstOrDefault();
         }
+
+
     }
 }
