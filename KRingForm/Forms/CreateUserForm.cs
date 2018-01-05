@@ -7,6 +7,7 @@ using KRingCore.Core.Model;
 using KRingCore.Persistence.Repositories;
 using KRingCore.Core.Interfaces;
 using KRingCore.Core;
+using System.Threading.Tasks;
 
 namespace KRingForm
 {
@@ -34,8 +35,8 @@ namespace KRingForm
             if (IsPasswordStrongEnough(score))
             {
                 var profileRep = new ProfileRepository();
-
-                var user = User.NewUserWithFreshSalt(username, password);
+                
+                var user = await Task<User>.Run(() => { return User.NewUserWithFreshSalt(username, password); });
 
                 var writeUserTask = profileRep.WriteUserAsync(user);
 

@@ -54,7 +54,7 @@ namespace KRingForm
         private bool _exitWithoutSaving;
 
         private const int secondsToWait = 120;
-
+        
         public PasswordList(User user, IProfileRepository profileRepository)
         {
             InitializeComponent();
@@ -367,6 +367,16 @@ namespace KRingForm
 
             _unsavedChanges = false;
             _savedSoFar = true;
+
+            /* Start rehashing for potential re-encryption already now in a task since it takes quite a while */
+            RehashingTask = Task.Run(() =>
+            {
+                this._user.GenerateNewSalt();
+                return Tuple.Create(
+                                        new SymmetricKey(this._user.Password, this._user.SecurityData.EncryptionKeySalt),
+                                        new SymmetricKey(this._user.Password, this._user.SecurityData.MacKeySalt)
+                                    );
+            });
         }
 
         private void PasswordList_Load(object sender, EventArgs e)

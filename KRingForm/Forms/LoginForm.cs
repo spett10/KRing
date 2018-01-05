@@ -4,6 +4,7 @@ using KRingCore.Core.Model;
 using KRingCore.Security;
 using static KRingForm.Program;
 using KRingCore.Core.Services;
+using System.Threading.Tasks;
 
 namespace KRingForm
 {
@@ -22,10 +23,13 @@ namespace KRingForm
             InitializeComponent();
         }
 
-        private void loginButton_Click(object sender, EventArgs e)
+        //TODO: do work here async while showing some load stuff.
+        private async void loginButton_Click(object sender, EventArgs e)
         {
             var userName = usernameBox.Text;
             var password = passwordBox.Text;
+
+            
 
             if(userName == string.Empty || password == string.Empty)
             {
@@ -33,12 +37,19 @@ namespace KRingForm
             }
             else
             {
+                var authenticateTask = Task<bool>.Run(() =>
+                {
+                    var correctUsername = UserAuthenticator.Authenticate(userName, savedUser.SecurityData.UsernameHashSalt, savedUser.SecurityData.HashedUsername);
+
+                    var correctPassword = UserAuthenticator.Authenticate(password, savedUser.SecurityData.PasswordHashSalt, savedUser.SecurityData.HashedPassword);
+
+                    return correctUsername && correctPassword;
+                });
+
                 /* Check both username and password, even if username is wrong - dont leak anything timewise (enables enumeration of user) */
-                var correctUsername = UserAuthenticator.Authenticate(userName, savedUser.SecurityData.UsernameHashSalt, savedUser.SecurityData.HashedUsername);
+                var authentic = await authenticateTask;
 
-                var correctPassword = UserAuthenticator.Authenticate(password, savedUser.SecurityData.PasswordHashSalt, savedUser.SecurityData.HashedPassword);
-
-                if (!(correctPassword && correctUsername))
+                if (!(authentic))
                 {
                     HandleFailedLogon(userName);
                 }

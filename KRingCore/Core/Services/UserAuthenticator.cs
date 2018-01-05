@@ -9,6 +9,7 @@ namespace KRingCore.Core.Services
 {
     public static class UserAuthenticator
     {
+
         public static bool Authenticate(byte[] secret, byte[] salt, byte[] saltedSecret)
         {
             if(secret == null ||salt == null || saltedSecret == null)

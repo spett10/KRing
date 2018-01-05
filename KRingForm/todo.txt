@@ -1,6 +1,4 @@
-﻿1. password rules are dumb. passphrases are currently not quite possible? i also think we can amp up the input to more than 80 (not unlimited due to ddos attacks but still more than currently).
-i think just the length should be checked?
-3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
+﻿3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
 4. consider having a k1 that is derived from user password and salt (update for each time?). Then, use that to encrypt/decrypt the symmetric key used for encrypting the passwords.
 Then we can change password for the user, but not need to change the key used for encrypting all the entries, so we dont need to reencrypt. 
 5. Should we derive a masterkey, then derive the two needed keys from that key? I think that is better practice.
@@ -8,8 +6,6 @@ Then we can change password for the user, but not need to change the key used fo
 7. Integration / automated UI tests with AutoIT scripting?
 12. folder structures for the main view in passwordlist
 14. Add more tests to new functionalities such as plaintextpasswordimporter, ReadToEndStoredPasswordRepository etc.
-15. the passwordlist form is dragabble. whether or not it should be, the buttons etc do not follow.
-	perhaps increase the base size? In general the ux is very limited. 
 16. Add a message counter to all lines written to the underlying format (i.e. to the encrypted message? after some delimiter).
 	As it is know, people could swap elements around, and since the encryption key is the same for all elements per save, and the same for the mac key,
 	an attacker could swap elements to make it appear as though keys should be in a certain order when they shold not be .
@@ -23,10 +19,9 @@ But how can that help transition? If we write in the data format what key deriva
 the hashing iteration to be something like.. 1. and then generate a lot of hashes really fast. then he could log in, but not decrypt, since the generated symmetric key would not be valid since the iteration count was altered.
 still seems sketchy as fuck. 
 
-22. Maybe before we close, make a mac on the log and store at the end, then check at startup, delete log if not valid? 
+22. Maybe before we close, make a mac on the log and store at the end, then check at startup, delete log if not valid? people cant fake mac if its based on user password. 
 23. make custom .net control that is a textbox that returns a securestring, not plaintext. listen to keystrokes, add to securestring one by one? PasswordBox exists for WPF, but not for windows forms apparently, and we cant use it here. 
 24. clean up service stuff, some of it belongs in persistence (file io)
-25. search should use contains instead of startwith
 26. edit should be called update or it should show the old password so yo ucan catually edit it? 
 27. make a key check value as described in cryptographic engineering chapter 21. That is, a vlaue that is mac'd with the dervied key. Then check this value
 when user logs in and the key is derived, and only if it checks out, should you attempt to decrypt and check tag of remaning stored vlaues (passwords).
@@ -35,7 +30,6 @@ open to dictionary attacks. but not ONLY on the salt for gods sake, then its a t
 like the password, so it could be a mac on sha256( something? || password || salt ). Then an attacker cant dictionary attack it, since you pnly store the mac value,
 not the data for the mach - that is derived at runtime and depends on password, so the attacker cant do offline dictionary attacks. the only thing we store is salt (something should be dervierd
 at runtime)
-28. figure out what iterations should be on key derivation experimentally - 1000 ms should be acceptable for the user to wait for. 
 
 30. We need logic for trying both old and new value for key derivation? Since we only do it for auth right now, and that might work,
 but the key derivation at runtime for crypto does not try the old one, so the authentication stuff is pointless.
@@ -64,6 +58,8 @@ kind of forward secrecy. leaking of master password is still fatal of course.
 
 Export/Import
 	-the tag created for export should be a tag on the fields in the exported format, not just the cipher text itself? mac what you mean and all that. 
+		start with export doing it, then save the exported stuff, then fix the import afterwards. 
+		then you can go release -> export, then implement the import, then release, try importing the export. then you dont loose passwords. 
 
 ORAM:
 instead of decrypting when loading all passwordsi nto memory, have them encrypted in memory and construct an ORAM? 
@@ -80,7 +76,7 @@ make this data internal?
 
 
 LINKS:
-Read more about PBKDF2 here: TLDR: its not wrong what we do, but its not great either. 
+Read more about PBKDF2 here:
 	https://security.stackexchange.com/questions/53115/how-to-know-which-output-length-to-request-from-pbkdf2
 		https://www.lastpass.com/how-it-works used the above + aes256, so we should aim for the same
 			-bouncy castle has PBEwithHmacSHA-256 and others: http://www.bouncycastle.org/csharp/
