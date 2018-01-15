@@ -67,12 +67,12 @@ namespace KRingForm
         {
             usedLoginAttempts++;
             Program._messageToUser("Wrong username and/or password");
-            Program.Log("Login failed attempt", "User: " + user);
+            Program.Log("Login failed attempt", "");
 
             if(usedLoginAttempts >= maxLoginAttemps)
             {
                 MessageBox.Show("All login attempts used.");
-                Program.Log("Login failed all attempts", "User: " + user);
+                Program.Log("Login failed all attempts", "");
                 _callback(false);
                 this.Close();
             }

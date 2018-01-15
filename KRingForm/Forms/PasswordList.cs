@@ -34,7 +34,7 @@ namespace KRingForm
     public partial class PasswordList : Form
     {
         public delegate void UpdateListCallback(OperationType operation);
-        public delegate void ExitingCallback();
+        public delegate Task ExitingCallback();
         public delegate void ImportCallback(List<StoredPassword> passwords);
         public delegate void ErrorCallback(string messageToUser);
 
@@ -96,14 +96,23 @@ namespace KRingForm
             ActivityManager.Instance.Notify();
         }
 
-        public void NotExiting()
+        public async Task NotExiting()
         {
             _exitWithoutSaving = false;
         }
 
-        public void Exiting()
+        public async Task ExitingWithoutSaving()
         {
             _exitWithoutSaving = true;
+
+            if (!_savedSoFar)
+            {
+                /* Since there are unsaved changes we want to discard, but still want to reencrypt what we had before changes, we reload values from file, and then store again */
+                var entries = this._passwordRep.LoadEntriesFromDb();
+
+                await ReencryptAndSave(entries);
+            }
+
             this.Close();
         }
 
@@ -300,13 +309,16 @@ namespace KRingForm
 
         private async void saveButton_Click(object sender, EventArgs e)
         {
-            Task reencrypTask = ReencryptAndSave();
+            Task reencrypTask = ReencryptAndSave(_passwordRep.GetEntries().ToList());
 
             Notify();
 
             HideSaveButton();
 
             await reencrypTask;
+
+            _savedSoFar = true;
+            _unsavedChanges = false;
         }
 
 
@@ -341,13 +353,12 @@ namespace KRingForm
             _passwordRep.WriteEntriesToDb();
         }
 
-        private async Task ReencryptAndSave()
+        private async Task ReencryptAndSave(List<StoredPassword> passwords)
         {
             /* Wait for new salt and key derivation to complete */
             var rehashingResult = await RehashingTask;
 
             /* New password rep that derives and uses new keys, copy over existing passwords before overwriting. */
-            var passwords = _passwordRep.GetEntries().ToList();
             _passwordRep = new StoredPasswordRepository(this._user.Password,
                                                         rehashingResult.Item1,
                                                         rehashingResult.Item2,
@@ -365,9 +376,6 @@ namespace KRingForm
 
             await _profileRepository.WriteUserAsync(this._user);
 
-            _unsavedChanges = false;
-            _savedSoFar = true;
-
             /* Start rehashing for potential re-encryption already now in a task since it takes quite a while */
             RehashingTask = Task.Run(() =>
             {
@@ -384,24 +392,27 @@ namespace KRingForm
 
         }
 
-        private void PasswordList_FormClosing(object sender, FormClosingEventArgs e)
+        private async void PasswordList_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(_unsavedChanges && !_exitWithoutSaving && !Program.userInactiveLogout)
+            if (_unsavedChanges && !_exitWithoutSaving && !Program.userInactiveLogout)
             {
                 e.Cancel = true;
-                
+
                 var warning = new ExitDialogue(
-                    Exiting,
+                    ExitingWithoutSaving,
                     NotExiting);
                 warning.Show();
             }
+            else if(!_unsavedChanges && !_savedSoFar)
+            {
+                if(!_savedSoFar || Program.userInactiveLogout)
+                {
+                    /* No unsaved changes, but we havent saved at all yet - so reencrypt */
+                    var entries = this._passwordRep.GetEntries();
 
-            // TODO: when form closes, no matter what, we must:
-            // Derive new salt for password and username hashing. 
-            // Derive new salt for mac and encr key
-            // Derive new set of keyts from above, and use that for encryption before writing
-            // Save salt and other user values in profile (update), so it can be read next upstart
-            // this gives somewhat forward secrecy.
+                    await ReencryptAndSave(entries);
+                }
+            }
         }
 
         #region Timer

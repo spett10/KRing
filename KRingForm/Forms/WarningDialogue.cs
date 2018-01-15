@@ -26,15 +26,15 @@ namespace KRingForm.Forms
             _open();
         }
 
-        private void yesButton_Click(object sender, EventArgs e)
+        private async void yesButton_Click(object sender, EventArgs e)
         {
-            _close();
+            await _close();
             this.Close();
         }
 
-        private void noButton_Click(object sender, EventArgs e)
+        private async void noButton_Click(object sender, EventArgs e)
         {
-            _open();
+            await _open();
             this.Close();
         }
     }
