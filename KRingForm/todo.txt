@@ -42,18 +42,6 @@ over with new (same) user and password, then import the passwords? then there is
 30.5: amp up them iterations, then release so you get better version already. Need loading screens to make more user friendly - and use the async stuff where appropraite? even in program perhaps,
 the constructors might call non-async thingies i suspect.. move that to seperate load calls that are async so ui doesnt freeze. 
 
-31. we should derive a new key each time, not just new salt.
-this gives forward secrecy. as it is now, the same key is always derived at runtime. 
-if we get fresh salt for key derivation each time, then we get a different set of keys each run of the program,
-so if a key gets leaked once, then its not gonna be valid for ever, only for that one run of the program, so
-kind of forward secrecy. leaking of master password is still fatal of course. 
-	-should we always reencrypt? the problem is that if we also do it on form closing, then if the user changed something, didnt save the changes yet (cos he not sure),
-	then if he doenst save and wants to exit, then we should not force reencrypt? But then attacker can distinguish between when someone changes password and they dont.
-	but they can still see the length though.. how to avoid that? then we would always have to pad and stuff... 
-
-	todo: keep two lists in password list (show their concat), respecitvely the passwords we loaded, and those we changed. somehow merge? discard the new ones if we dont save, then reencrypt old ones..?
-
-
 32. add option for 32 lenght password, perhaps even more. if its random and generated and remembred by the program, go large man! no reason to stop at 16, maybe go higher than 64? 
 
 Export/Import
