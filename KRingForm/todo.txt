@@ -1,14 +1,4 @@
-﻿1- We need a loading screen bad! but in anywhere an async method is called? Wrap them? 
-	call Loadingscreen(async method)
-	{
-		start task.
-		
-		show loading screen / disable all buttons? 
-
-		await task
-
-		remove loading screen. 
-	}
+﻿
 
 
 3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
@@ -52,13 +42,9 @@ you could just update the numbers directly, since the user has to take the new e
 so creating a new user instead would mean you dont have to copy the profile data around (MANUALLY I MIGHT ADD!), then it might be actually more friendly to start
 over with new (same) user and password, then import the passwords? then there is no manual action outside the program. Then there would need to be an export for the profile for this to work.
 
-30.5: amp up them iterations, then release so you get better version already. Need loading screens to make more user friendly - and use the async stuff where appropraite? even in program perhaps,
-the constructors might call non-async thingies i suspect.. move that to seperate load calls that are async so ui doesnt freeze. 
 
 31- use password importer / exporter for the DB part? right now the individual lines in the DB kinda leak the length of the passwords to some extend. Harder to see such things
 if we just reencrypt an entire blob instead? 
-
-32. add option for 32 lenght password, perhaps even more. if its random and generated and remembred by the program, go large man! no reason to stop at 16, maybe go higher than 64? 
 
 Export/Import
 	-the tag created for export should be a tag on the fields in the exported format, not just the cipher text itself? mac what you mean and all that. 
@@ -69,6 +55,8 @@ ORAM:
 instead of decrypting when loading all passwordsi nto memory, have them encrypted in memory and construct an ORAM? 
 
 BUGS:
+
+
 
 INSECURITIES:
 The authentication to log on simply reads the data folder that has the hashed password. Any attacker can substitute

@@ -70,6 +70,7 @@ namespace KRingForm.Forms
                 smallSizeButton.Enabled = false;
                 mediumSizeButton.Enabled = false;
                 largeSizeButton.Enabled = false;
+                largestSizeButton.Enabled = false;
                 generateButton.Enabled = false;
 
                 _generateClicked = true;
@@ -98,6 +99,12 @@ namespace KRingForm.Forms
         {
             ActivityManager.Instance.Notify();
         }
+
+        private void largestSizeButton_CheckedChanged(object sender, EventArgs e)
+        {
+            Notify();
+            _generator.Size = PasswordGenerator.PasswordSize.Largest;
+        }
     }
 
     internal class PasswordGenerator
@@ -106,14 +113,15 @@ namespace KRingForm.Forms
         {
             Small,
             Medium, 
-            Large
+            Large,
+            Largest
         }
 
         public PasswordSize Size { get; set; }
 
         public PasswordGenerator()
         {
-            Size = PasswordSize.Large;
+            Size = PasswordSize.Largest;
         }
 
         public string Generate()
@@ -129,6 +137,9 @@ namespace KRingForm.Forms
                     break;
                 case PasswordSize.Large:
                     chosenSize = 16;
+                    break;
+                case PasswordSize.Largest:
+                    chosenSize = 32;
                     break;
             }
 

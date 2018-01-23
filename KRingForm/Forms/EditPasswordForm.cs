@@ -72,6 +72,12 @@ namespace KRingForm.Forms
             _generator.Size = PasswordGenerator.PasswordSize.Small;
         }
 
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            Notify();
+            _generator.Size = PasswordGenerator.PasswordSize.Largest;
+        }
+
         private void generateButton_Click(object sender, EventArgs e)
         {
             Notify();
@@ -84,6 +90,7 @@ namespace KRingForm.Forms
                 smallSizeButton.Enabled = false;
                 mediumSizeButton.Enabled = false;
                 largeSizeButton.Enabled = false;
+                largestSizeButton.Enabled = false;
                 generateButton.Enabled = false;
 
                 _generateClicked = true;
@@ -94,5 +101,7 @@ namespace KRingForm.Forms
         {
             ActivityManager.Instance.Notify();
         }
+
+        
     }
 }

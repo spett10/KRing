@@ -52,6 +52,7 @@ namespace KRingForm
         private bool _unsavedChanges;
         private bool _savedSoFar;
         private bool _exitWithoutSaving;
+        private bool _userExiting;
 
         private const int secondsToWait = 120;
         
@@ -91,6 +92,7 @@ namespace KRingForm
             _savedSoFar = false;
             HideSaveButton();
             _exitWithoutSaving = false;
+            _userExiting = true;
 
             ActivityManager.Instance.Init(Notify);
             ActivityManager.Instance.Notify();
@@ -362,7 +364,7 @@ namespace KRingForm
             _passwordRep = new StoredPasswordRepository(this._user.Password,
                                                         rehashingResult.Item1,
                                                         rehashingResult.Item2,
-                                                        _passwordRep.GetEntries());
+                                                        passwords);
 
 
             /* Start write */
@@ -394,24 +396,34 @@ namespace KRingForm
 
         private async void PasswordList_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_unsavedChanges && !_exitWithoutSaving && !Program.userInactiveLogout)
+            if (_userExiting)
             {
+                // do the saving stuff, then call this.close
                 e.Cancel = true;
 
-                var warning = new ExitDialogue(
-                    ExitingWithoutSaving,
-                    NotExiting);
-                warning.Show();
-            }
-            else if(!_unsavedChanges && !_savedSoFar)
-            {
-                if(!_savedSoFar || Program.userInactiveLogout)
+                if (_unsavedChanges && !_exitWithoutSaving && !Program.userInactiveLogout)
                 {
-                    /* No unsaved changes, but we havent saved at all yet - so reencrypt */
-                    var entries = this._passwordRep.GetEntries();
-
-                    await ReencryptAndSave(entries);
+                    var warning = new ExitDialogue(
+                        ExitingWithoutSaving,
+                        NotExiting);
+                    warning.Show();
                 }
+                else if (!_unsavedChanges && !_savedSoFar)
+                {
+                    if (!_savedSoFar || Program.userInactiveLogout)
+                    {
+                        /* No unsaved changes, but we havent saved at all yet - so reencrypt */
+                        var entries = this._passwordRep.GetEntries();
+
+                        await ReencryptAndSave(entries);
+                    }
+                }
+                _userExiting = false;
+                this.Close(); //Call this function again, but now we skip the resave logic. 
+            }
+            else
+            {
+                // we are calling ourselves from the above, so just exit. 
             }
         }
 

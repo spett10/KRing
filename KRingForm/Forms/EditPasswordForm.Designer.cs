@@ -42,6 +42,7 @@
             this.sizeLabel = new System.Windows.Forms.Label();
             this.usernameLabel = new System.Windows.Forms.Label();
             this.usernameBox = new System.Windows.Forms.TextBox();
+            this.largestSizeButton = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // domainLabel
@@ -102,7 +103,7 @@
             // smallSizeButton
             // 
             this.smallSizeButton.AutoSize = true;
-            this.smallSizeButton.Location = new System.Drawing.Point(60, 152);
+            this.smallSizeButton.Location = new System.Drawing.Point(35, 152);
             this.smallSizeButton.Name = "smallSizeButton";
             this.smallSizeButton.Size = new System.Drawing.Size(31, 17);
             this.smallSizeButton.TabIndex = 101;
@@ -113,7 +114,7 @@
             // mediumSizeButton
             // 
             this.mediumSizeButton.AutoSize = true;
-            this.mediumSizeButton.Location = new System.Drawing.Point(95, 152);
+            this.mediumSizeButton.Location = new System.Drawing.Point(70, 152);
             this.mediumSizeButton.Name = "mediumSizeButton";
             this.mediumSizeButton.Size = new System.Drawing.Size(37, 17);
             this.mediumSizeButton.TabIndex = 102;
@@ -124,12 +125,10 @@
             // largeSizeButton
             // 
             this.largeSizeButton.AutoSize = true;
-            this.largeSizeButton.Checked = true;
-            this.largeSizeButton.Location = new System.Drawing.Point(131, 153);
+            this.largeSizeButton.Location = new System.Drawing.Point(106, 153);
             this.largeSizeButton.Name = "largeSizeButton";
             this.largeSizeButton.Size = new System.Drawing.Size(37, 17);
             this.largeSizeButton.TabIndex = 103;
-            this.largeSizeButton.TabStop = true;
             this.largeSizeButton.Text = "16";
             this.largeSizeButton.UseVisualStyleBackColor = true;
             this.largeSizeButton.CheckedChanged += new System.EventHandler(this.largeSizeButton_CheckedChanged);
@@ -160,12 +159,26 @@
             this.usernameBox.Size = new System.Drawing.Size(124, 20);
             this.usernameBox.TabIndex = 106;
             // 
+            // largestSizeButton
+            // 
+            this.largestSizeButton.AutoSize = true;
+            this.largestSizeButton.Checked = true;
+            this.largestSizeButton.Location = new System.Drawing.Point(150, 152);
+            this.largestSizeButton.Name = "largestSizeButton";
+            this.largestSizeButton.Size = new System.Drawing.Size(37, 17);
+            this.largestSizeButton.TabIndex = 107;
+            this.largestSizeButton.TabStop = true;
+            this.largestSizeButton.Text = "32";
+            this.largestSizeButton.UseVisualStyleBackColor = true;
+            this.largestSizeButton.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
+            // 
             // EditPasswordForm
             // 
             this.AcceptButton = this.editButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(231, 209);
+            this.Controls.Add(this.largestSizeButton);
             this.Controls.Add(this.usernameBox);
             this.Controls.Add(this.usernameLabel);
             this.Controls.Add(this.sizeLabel);
@@ -200,5 +213,6 @@
         private System.Windows.Forms.Label sizeLabel;
         private System.Windows.Forms.Label usernameLabel;
         private System.Windows.Forms.TextBox usernameBox;
+        private System.Windows.Forms.RadioButton largestSizeButton;
     }
 }
