@@ -1,9 +1,22 @@
-﻿3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
+﻿1- We need a loading screen bad! but in anywhere an async method is called? Wrap them? 
+	call Loadingscreen(async method)
+	{
+		start task.
+		
+		show loading screen / disable all buttons? 
+
+		await task
+
+		remove loading screen. 
+	}
+
+
+3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
 4. consider having a k1 that is derived from user password and salt (update for each time?). Then, use that to encrypt/decrypt the symmetric key used for encrypting the passwords.
 Then we can change password for the user, but not need to change the key used for encrypting all the entries, so we dont need to reencrypt. 
 5. Should we derive a masterkey, then derive the two needed keys from that key? I think that is better practice.
 6. Make an icon for the buld thingie.
-7. Integration / automated UI tests with AutoIT scripting?
+7. Integration / automated UI tests with AutoIT scripting? that sounds fun... but kinda needed. the manual testing when there are so many buttons is just ass
 12. folder structures for the main view in passwordlist
 14. Add more tests to new functionalities such as plaintextpasswordimporter, ReadToEndStoredPasswordRepository etc.
 16. Add a message counter to all lines written to the underlying format (i.e. to the encrypted message? after some delimiter).
@@ -41,6 +54,9 @@ over with new (same) user and password, then import the passwords? then there is
 
 30.5: amp up them iterations, then release so you get better version already. Need loading screens to make more user friendly - and use the async stuff where appropraite? even in program perhaps,
 the constructors might call non-async thingies i suspect.. move that to seperate load calls that are async so ui doesnt freeze. 
+
+31- use password importer / exporter for the DB part? right now the individual lines in the DB kinda leak the length of the passwords to some extend. Harder to see such things
+if we just reencrypt an entire blob instead? 
 
 32. add option for 32 lenght password, perhaps even more. if its random and generated and remembred by the program, go large man! no reason to stop at 16, maybe go higher than 64? 
 
