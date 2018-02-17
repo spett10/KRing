@@ -182,6 +182,7 @@ namespace KRingCore.Persistence.Repositories
             if (entry != null)
             {
                 entry.PlaintextPassword = updatedEntry.PlaintextPassword;
+                entry.Username = updatedEntry.Username;
             }
             else throw new ArgumentException("No such Domain");
         }

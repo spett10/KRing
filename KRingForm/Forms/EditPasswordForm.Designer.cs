@@ -155,9 +155,9 @@
             // 
             this.usernameBox.Location = new System.Drawing.Point(51, 70);
             this.usernameBox.Name = "usernameBox";
-            this.usernameBox.ReadOnly = true;
             this.usernameBox.Size = new System.Drawing.Size(124, 20);
             this.usernameBox.TabIndex = 106;
+            this.usernameBox.TextChanged += new System.EventHandler(this.usernameBox_TextChanged);
             // 
             // largestSizeButton
             // 

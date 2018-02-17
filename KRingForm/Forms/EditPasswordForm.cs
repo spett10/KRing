@@ -102,6 +102,9 @@ namespace KRingForm.Forms
             ActivityManager.Instance.Notify();
         }
 
-        
+        private void usernameBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }
