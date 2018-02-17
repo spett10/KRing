@@ -26,13 +26,6 @@ still seems sketchy as fuck.
 23. make custom .net control that is a textbox that returns a securestring, not plaintext. listen to keystrokes, add to securestring one by one? PasswordBox exists for WPF, but not for windows forms apparently, and we cant use it here. 
 24. clean up service stuff, some of it belongs in persistence (file io)
 26. edit should be called update or it should show the old password so yo ucan catually edit it? 
-27. make a key check value as described in cryptographic engineering chapter 21. That is, a vlaue that is mac'd with the dervied key. Then check this value
-when user logs in and the key is derived, and only if it checks out, should you attempt to decrypt and check tag of remaning stored vlaues (passwords).
-This saves time on wrong logons and such. Should depend on salt somehow, so it is updated after each reencryption, such that it is not too 
-open to dictionary attacks. but not ONLY on the salt for gods sake, then its a true dictionary attack enabler. It should be a mac on something the attacker doesnt know,
-like the password, so it could be a mac on sha256( something? || password || salt ). Then an attacker cant dictionary attack it, since you pnly store the mac value,
-not the data for the mach - that is derived at runtime and depends on password, so the attacker cant do offline dictionary attacks. the only thing we store is salt (something should be dervierd
-at runtime)
 
 30. We need logic for trying both old and new value for key derivation? Since we only do it for auth right now, and that might work,
 but the key derivation at runtime for crypto does not try the old one, so the authentication stuff is pointless.
