@@ -28,7 +28,6 @@ namespace KRingForm
         private async void loginButton_Click(object sender, EventArgs e)
         {
             var loadingForm = new Loading();
-            
 
             var userName = usernameBox.Text;
             var password = passwordBox.Text;
@@ -41,7 +40,9 @@ namespace KRingForm
             }
             else
             {
+                /* hide */
                 loadingForm.Show();
+                this.Enabled = false;
 
                 var authenticateTask = Task<bool>.Run(() =>
                 {
@@ -55,6 +56,8 @@ namespace KRingForm
                 /* Check both username and password, even if username is wrong - dont leak anything timewise (enables enumeration of user) */
                 var authentic = await authenticateTask;
 
+                /* show */
+                this.Enabled = true;
                 loadingForm.Close();
 
                 if (!(authentic))

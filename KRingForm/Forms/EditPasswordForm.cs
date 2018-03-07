@@ -12,12 +12,13 @@ namespace KRingForm.Forms
         private readonly IStoredPasswordRepository _passwordRep;
         private readonly UpdateListCallback _callback;
         private PasswordGenerator _generator;
+        private Form _hidingBehind;
 
         private string _editTarget;
 
         private bool _generateClicked = false;
 
-        public EditPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback, StoredPassword entry)
+        public EditPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback, StoredPassword entry, Form hidingBehind)
         {
             InitializeComponent();
             _passwordRep = repository;
@@ -25,7 +26,8 @@ namespace KRingForm.Forms
             _editTarget = entry.Domain;
 
             _generator = new PasswordGenerator();
-            
+            _hidingBehind = hidingBehind;
+
             domainBox.Text = entry.Domain;
             usernameBox.Text = entry.Username;
         }
@@ -46,7 +48,7 @@ namespace KRingForm.Forms
                 
                 _passwordRep.UpdateEntry(newEntry);
 
-                _callback(OperationType.EditPassword);
+                _callback(OperationType.EditPassword, _hidingBehind);
 
                 plaintextPassword.ZeroOut();
 
@@ -95,6 +97,11 @@ namespace KRingForm.Forms
 
                 _generateClicked = true;
             }
+        }
+
+        private void ViewForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _callback(OperationType.NoOperation, _hidingBehind);
         }
 
         private void Notify()

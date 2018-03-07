@@ -13,16 +13,18 @@ namespace KRingForm.Forms
         private readonly IStoredPasswordRepository _passwordRep;
         private readonly UpdateListCallback _callback;
         private readonly PasswordGenerator _generator;
+        private readonly Form _hidingBehind;
 
         private bool _generateClicked = false;
 
-        public AddPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback)
+        public AddPasswordForm(IStoredPasswordRepository repository, UpdateListCallback callback, Form hidingBehind)
         {
             InitializeComponent();
             _passwordRep = repository;
             _callback = callback;
 
             _generator = new PasswordGenerator();
+            _hidingBehind = hidingBehind;
         }
 
         private void addButton_Click(object sender, EventArgs e)
@@ -49,7 +51,7 @@ namespace KRingForm.Forms
 
                     _passwordRep.AddEntry(dbEntry);
                     
-                    _callback(OperationType.AddPassword);
+                    _callback(OperationType.AddPassword, _hidingBehind);
 
                     plaintextPassword.ZeroOut();
 
@@ -104,6 +106,11 @@ namespace KRingForm.Forms
         {
             Notify();
             _generator.Size = PasswordGenerator.PasswordSize.Largest;
+        }
+
+        private void ViewForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _callback(OperationType.NoOperation, _hidingBehind);
         }
     }
 

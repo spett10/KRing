@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using KRingCore.Persistence.Model;
 using KRingCore.Core;
+using static KRingForm.PasswordList;
 
 namespace KRingForm.Forms
 {
@@ -26,7 +27,10 @@ namespace KRingForm.Forms
 
         private bool _isPasswordCopied;
 
-        public ViewForm(StoredPassword entry)
+        private readonly UpdateListCallback _callback;
+        private readonly Form _hidingBehind;
+
+        public ViewForm(StoredPassword entry, UpdateListCallback callback, Form hidingBehind)
         {
             InitializeComponent();
             
@@ -36,6 +40,8 @@ namespace KRingForm.Forms
             usernameBox.Text = _entry.Username;
 
             _isPasswordCopied = false;
+            _callback = callback;
+            _hidingBehind = hidingBehind;
 
             _password = entry.PlaintextPassword;
             passwordBox.Text = string.Concat(Enumerable.Repeat("*", _password.Length));
@@ -97,6 +103,8 @@ namespace KRingForm.Forms
             {
                 Clipboard.SetText(" ");
             }
+
+            _callback(OperationType.NoOperation, _hidingBehind);
         }
     }
 }

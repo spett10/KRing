@@ -62,6 +62,7 @@
             this.Name = "InformationPopup";
             this.Text = "InformationPopup";
             this.TopMost = true;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ViewForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -21,8 +21,11 @@ namespace KRingForm.Forms
         private readonly IStreamReadToEnd _streamReader;
         private readonly ImportCallback _callback;
         private readonly ErrorCallback _errorCallback;
+        private readonly UpdateListCallback _revealingCallback;
+        private readonly Form _hidingBehind;
 
-        public ImportPasswords(OpenFileDialog dialogue, ImportCallback importCallback, ErrorCallback errorCallback, IStreamReadToEnd streamReader)
+
+        public ImportPasswords(OpenFileDialog dialogue, ImportCallback importCallback, ErrorCallback errorCallback, IStreamReadToEnd streamReader, UpdateListCallback revealingCallback, Form hidingBehind)
         {
             InitializeComponent();
 
@@ -30,6 +33,8 @@ namespace KRingForm.Forms
             _streamReader = streamReader;
             _callback = importCallback;
             _errorCallback = errorCallback;
+            _revealingCallback = revealingCallback;
+            _hidingBehind = hidingBehind;
         }
 
         private void okButton_Click(object sender, EventArgs e)
@@ -85,5 +90,6 @@ namespace KRingForm.Forms
                 _errorCallback("The format of the file supplied was not valid. You can only import files export by this application");
             }
         }
+
     }
 }

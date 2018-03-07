@@ -28,13 +28,20 @@ namespace KRingForm.Forms
         private readonly List<StoredPassword> _passwords;
         private readonly IStreamWriterToEnd _streamWriter;
 
-        public ExportPasswords(SaveFileDialog dialogue, List<StoredPassword> passwords, IStreamWriterToEnd streamWriter)
+        private readonly UpdateListCallback _callback;
+        private readonly Form _hidingBehind;
+
+        public ExportPasswords(SaveFileDialog dialogue, List<StoredPassword> passwords, IStreamWriterToEnd streamWriter, UpdateListCallback callback, Form hidingBehind)
         {
             InitializeComponent();
             
             _passwords = passwords;
             _dialogue = dialogue;
             _streamWriter = streamWriter;
+
+            _callback = callback;
+            _hidingBehind = hidingBehind;
+
         }
 
         private void okButton_Click(object sender, EventArgs e)
@@ -78,5 +85,11 @@ namespace KRingForm.Forms
 
             _streamWriter.WriteToNewFile(_dialogue.FileName, exportedJson);
         }
+
+        private void ViewForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            _callback(OperationType.NoOperation, _hidingBehind);
+        }
+
     }
 }

@@ -108,6 +108,7 @@
             this.Name = "ExportPasswords";
             this.Text = "Export Passwords";
             this.TopMost = true;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ViewForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

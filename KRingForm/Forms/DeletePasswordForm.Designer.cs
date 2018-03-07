@@ -97,6 +97,7 @@
             this.Controls.Add(this.domainLabel);
             this.Name = "DeletePasswordForm";
             this.Text = "DeletePasswordForm";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ViewForm_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
 

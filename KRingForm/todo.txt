@@ -40,6 +40,28 @@ over with new (same) user and password, then import the passwords? then there is
 if we just reencrypt an entire blob instead? 
 
 
+32. hiding forms seems to be working. But hte code could be nicer:
+
+	
+TODO:
+make formarranger replace all the 
+Disalbe()
+show()
+
+code, by sending in the passwordlist form as this, and then the newly created form, then the callbacks take care of the rest. 
+
+
+also, maybe make the pair of updatelist and hidingbehind into an object that has two fields, so we get less parameters? Maybe 
+HiddenForm
+RevealingCallback
+Hiding
+
+but that only removes the NoOp calls i guess? You would have to go Hiddenform.revealingcallback(nooperaion, hiding), that saves you one parameter,
+but makes the calling code more convulated? You could just have one fixed object for that in passwordlist though.
+
+What about subclassing, can that remove the boiler plate?
+
+
 Export/Import
 	-the tag created for export should be a tag on the fields in the exported format, not just the cipher text itself? mac what you mean and all that. 
 		start with export doing it, then save the exported stuff, then fix the import afterwards. 

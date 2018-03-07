@@ -28,12 +28,13 @@ namespace KRingForm
         DeletePassword = 4,
         SavePassword = 5,
         DeleteUser = 6,
-        NoOperation = 7
+        RefreshList = 7,
+        NoOperation = 8
     }
 
     public partial class PasswordList : Form
     {
-        public delegate void UpdateListCallback(OperationType operation);
+        public delegate void UpdateListCallback(OperationType operation, Form disabled);
         public delegate Task ExitingCallback();
         public delegate void ImportCallback(List<StoredPassword> passwords);
         public delegate void ErrorCallback(string messageToUser);
@@ -78,7 +79,7 @@ namespace KRingForm
             _passwordRep = new StoredPasswordRepository(securePassword, _user.SecurityData.EncryptionKeySalt, _user.SecurityData.MacKeySalt);
             _passwordImporter = new PlaintextPasswordImporter();
 
-            UpdateList(OperationType.NoOperation);
+            UpdateList(OperationType.RefreshList, this);
 
             if (_passwordRep.DecryptionErrorOccured)
             {
@@ -119,8 +120,18 @@ namespace KRingForm
         }
 
         /* TODO: make async? */
-        public void UpdateList(OperationType operation)
+        public void UpdateList(OperationType operation, Form disabled)
         {
+            /* we always dsiable something prior to this callback */
+            disabled.Enabled = true;
+
+            /* TODO: if no operation, just exit early??? */
+            if(operation == OperationType.NoOperation)
+            {
+                Notify();
+                return;
+            }
+
             passwordListBox.Items.Clear();
 
             var passwords = _passwordRep.GetEntries();
@@ -214,7 +225,8 @@ namespace KRingForm
 
                 var entry = _passwordRep.GetEntry(selectedDomain);
 
-                var viewForm = new ViewForm(entry);
+                var viewForm = new ViewForm(entry, UpdateList, this);
+                Disable();
                 viewForm.Show();
             }
             catch (Exception)
@@ -231,8 +243,9 @@ namespace KRingForm
 
             try
             {
-                var addForm = new AddPasswordForm(_passwordRep, UpdateList);
-                addForm.Show();
+                var addPadssword = new AddPasswordForm(_passwordRep, UpdateList, this);
+                Disable();
+                addPadssword.Show();
             }
             catch (Exception)
             {
@@ -253,7 +266,8 @@ namespace KRingForm
 
                 var entry = _passwordRep.GetEntry(selectedDomain);
 
-                var editForm = new EditPasswordForm(_passwordRep, UpdateList, entry);
+                Disable();
+                var editForm = new EditPasswordForm(_passwordRep, UpdateList, entry, this);
                 editForm.Show();
             }
             catch (Exception)
@@ -274,7 +288,8 @@ namespace KRingForm
 
                 if (string.IsNullOrEmpty(selectedDomain)) return;
 
-                var deleteForm = new DeletePasswordForm(_passwordRep, UpdateList, selectedDomain);
+                var deleteForm = new DeletePasswordForm(_passwordRep, UpdateList, selectedDomain, this);
+                Disable();
                 deleteForm.Show();
             }
             catch (Exception)
@@ -289,6 +304,8 @@ namespace KRingForm
         private void deleteUserButton_Click(object sender, EventArgs e)
         {
             //TODO
+            //Cleanup password repository
+            //Cleanup profile
         }
 
         private void exportButton_Click(object sender, EventArgs e)
@@ -331,7 +348,7 @@ namespace KRingForm
             /* If search text is empty, show entire list */
             if (searchString == string.Empty || searchString == null)
             {
-                UpdateList(OperationType.NoOperation);
+                UpdateList(OperationType.NoOperation, this);
 
                 return;
             }
@@ -460,7 +477,8 @@ namespace KRingForm
         private void FileDialogue_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var fileDialogue = sender as OpenFileDialog;
-            var importForm = new ImportPasswords(fileDialogue, ImportPasswords, DisplayErrorMessageToUser, new StreamReaderToEnd());
+            var importForm = new ImportPasswords(fileDialogue, ImportPasswords, DisplayErrorMessageToUser, new StreamReaderToEnd(), UpdateList, this);
+            Disable();
             importForm.Show();
         }
 
@@ -506,8 +524,8 @@ namespace KRingForm
                     count++;
                 }
 
-                var infoDialogue = new InformationPopup(info);
-
+                var infoDialogue = new InformationPopup(info, UpdateList, this);
+                Disable();
                 infoDialogue.Show();
 
                 if (moreThanOne)
@@ -518,11 +536,11 @@ namespace KRingForm
 
             if (!onlyDuplicates)
             {
-                UpdateList(OperationType.AddPassword);
+                UpdateList(OperationType.AddPassword, this);
             }
             else
             {
-                UpdateList(OperationType.NoOperation);
+                UpdateList(OperationType.NoOperation, this);
             }
         }
         
@@ -531,7 +549,10 @@ namespace KRingForm
             var dialogue = sender as SaveFileDialog;
             var exportPasswordForm = new ExportPasswords(dialogue, 
                                                         this._passwordRep.GetEntries(), 
-                                                        new StreamWriterToEnd());
+                                                        new StreamWriterToEnd(),
+                                                        UpdateList,
+                                                        this);
+            Disable();
             exportPasswordForm.Show();
         }
 
@@ -540,8 +561,14 @@ namespace KRingForm
         private void DisplayErrorMessageToUser(string messageToUser)
         {
             Program.Log("Displaying error to user", messageToUser);
-            var informationForm = new InformationPopup(messageToUser);
+            var informationForm = new InformationPopup(messageToUser, UpdateList, this);
+            Disable();
             informationForm.Show();
+        }
+
+        private void Disable()
+        {
+            this.Enabled = false;
         }
     }
 

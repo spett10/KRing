@@ -191,6 +191,7 @@
             this.Controls.Add(this.passwordLabel);
             this.Controls.Add(this.domainBox);
             this.Controls.Add(this.domainLabel);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ViewForm_FormClosing);
             this.Name = "EditPasswordForm";
             this.Text = "EditPasswordForm";
             this.ResumeLayout(false);
