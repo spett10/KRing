@@ -8,7 +8,6 @@ namespace KRingForm
         {
             hiding.Enabled = false;
             blocking.Show();
-            hiding.Enabled = true;
         }
     }
 }

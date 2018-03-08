@@ -225,9 +225,7 @@ namespace KRingForm
 
                 var entry = _passwordRep.GetEntry(selectedDomain);
 
-                var viewForm = new ViewForm(entry, UpdateList, this);
-                Disable();
-                viewForm.Show();
+                FormArranger.HideBehind(this, new ViewForm(entry, UpdateList, this));
             }
             catch (Exception)
             {
@@ -243,9 +241,7 @@ namespace KRingForm
 
             try
             {
-                var addPadssword = new AddPasswordForm(_passwordRep, UpdateList, this);
-                Disable();
-                addPadssword.Show();
+                FormArranger.HideBehind(this, new AddPasswordForm(_passwordRep, UpdateList, this));
             }
             catch (Exception)
             {
@@ -266,9 +262,7 @@ namespace KRingForm
 
                 var entry = _passwordRep.GetEntry(selectedDomain);
 
-                Disable();
-                var editForm = new EditPasswordForm(_passwordRep, UpdateList, entry, this);
-                editForm.Show();
+                FormArranger.HideBehind(this, new EditPasswordForm(_passwordRep, UpdateList, entry, this));
             }
             catch (Exception)
             {
@@ -288,9 +282,7 @@ namespace KRingForm
 
                 if (string.IsNullOrEmpty(selectedDomain)) return;
 
-                var deleteForm = new DeletePasswordForm(_passwordRep, UpdateList, selectedDomain, this);
-                Disable();
-                deleteForm.Show();
+                FormArranger.HideBehind(this, new DeletePasswordForm(_passwordRep, UpdateList, selectedDomain, this));
             }
             catch (Exception)
             {
@@ -477,9 +469,14 @@ namespace KRingForm
         private void FileDialogue_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var fileDialogue = sender as OpenFileDialog;
-            var importForm = new ImportPasswords(fileDialogue, ImportPasswords, DisplayErrorMessageToUser, new StreamReaderToEnd(), UpdateList, this);
-            Disable();
-            importForm.Show();
+
+            FormArranger.HideBehind(this, 
+                                    new ImportPasswords(fileDialogue, 
+                                                        ImportPasswords, 
+                                                        DisplayErrorMessageToUser, 
+                                                        new StreamReaderToEnd(), 
+                                                        UpdateList, 
+                                                        this));
         }
 
         private void ImportPasswords(List<StoredPassword> passwords)
@@ -523,10 +520,8 @@ namespace KRingForm
 
                     count++;
                 }
-
-                var infoDialogue = new InformationPopup(info, UpdateList, this);
-                Disable();
-                infoDialogue.Show();
+                
+                FormArranger.HideBehind(this, new InformationPopup(info, UpdateList, this));
 
                 if (moreThanOne)
                 {
@@ -547,13 +542,11 @@ namespace KRingForm
         private void SaveFile_Ok(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var dialogue = sender as SaveFileDialog;
-            var exportPasswordForm = new ExportPasswords(dialogue, 
-                                                        this._passwordRep.GetEntries(), 
+            FormArranger.HideBehind(this, new ExportPasswords(dialogue,
+                                                        this._passwordRep.GetEntries(),
                                                         new StreamWriterToEnd(),
                                                         UpdateList,
-                                                        this);
-            Disable();
-            exportPasswordForm.Show();
+                                                        this));
         }
 
         #endregion
@@ -561,14 +554,7 @@ namespace KRingForm
         private void DisplayErrorMessageToUser(string messageToUser)
         {
             Program.Log("Displaying error to user", messageToUser);
-            var informationForm = new InformationPopup(messageToUser, UpdateList, this);
-            Disable();
-            informationForm.Show();
-        }
-
-        private void Disable()
-        {
-            this.Enabled = false;
+            FormArranger.HideBehind(this, new InformationPopup(messageToUser, UpdateList, this));
         }
     }
 

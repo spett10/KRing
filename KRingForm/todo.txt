@@ -42,24 +42,6 @@ if we just reencrypt an entire blob instead?
 
 32. hiding forms seems to be working. But hte code could be nicer:
 
-	
-TODO:
-make formarranger replace all the 
-Disalbe()
-show()
-
-code, by sending in the passwordlist form as this, and then the newly created form, then the callbacks take care of the rest. 
-
-
-also, maybe make the pair of updatelist and hidingbehind into an object that has two fields, so we get less parameters? Maybe 
-HiddenForm
-RevealingCallback
-Hiding
-
-but that only removes the NoOp calls i guess? You would have to go Hiddenform.revealingcallback(nooperaion, hiding), that saves you one parameter,
-but makes the calling code more convulated? You could just have one fixed object for that in passwordlist though.
-
-What about subclassing, can that remove the boiler plate?
 
 
 Export/Import
