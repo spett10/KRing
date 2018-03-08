@@ -118,8 +118,8 @@ namespace KRingCore.Persistence.Repositories
             _saltForMacKey = new byte[0];
             _password = password;
 
-            _encrKey = encrKey.Key;
-            _macKey = macKey.Key;
+            _encrKey = encrKey.Bytes;
+            _macKey = macKey.Bytes;
 
             _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
 

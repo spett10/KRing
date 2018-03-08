@@ -5,9 +5,12 @@ Then we can change password for the user, but not need to change the key used fo
 12. folder structures for the main view in passwordlist
 14. Add more tests to new functionalities such as plaintextpasswordimporter, ReadToEndStoredPasswordRepository etc.
 20. How to add 2factor? Email? Sms? but how to authenticate that what we get is good? Send a challenge or something, how do others do it? could be cool
-22. Maybe before we close, make a mac on the log and store at the end, then check at startup, delete log if not valid? people cant fake mac if its based on user password. 
 23. make custom .net control that is a textbox that returns a securestring, not plaintext. listen to keystrokes, add to securestring one by one? PasswordBox exists for WPF, but not for windows forms apparently, and we cant use it here. 
 24. clean up service stuff, some of it belongs in persistence (file io)
+25. Even though we have the symmetric key class, many classes still reference byte[], because they dont necc wanna clear them - but then just dont use the using keyword?
+	So, use symmetric key throughout, but dont necc do the using stuff. Just looks better,
+	then make the "derivekeybasedon.." in cryptohashing not-public, perhaps move it so the symmestrickey constructor can still call it, so people
+	can ONLY use the symmetric key constructor.
 
 31- use password importer / exporter for the DB part? right now the individual lines in the DB kinda leak the length of the passwords to some extend. Harder to see such things
 if we just reencrypt an entire blob instead? 
@@ -21,6 +24,16 @@ Export/Import
 		start with export doing it, then save the exported stuff, then fix the import afterwards. 
 		then you can go release -> export, then implement the import, then release, try importing the export. then you dont loose passwords. 
 
+
+CURRENT TASK:
+
+22. Maybe before we close, make a mac on the log and store at the end, then check at startup, delete log if not valid? people cant fake mac if its based on user password. 
+	-Mac on log implemented, and tested manually, works fine (also catches alterations). 
+	But how should we act? Maybe just erase log, write new entry that log file was altered,
+	maybe also tell to user (log file corrupted, you may have compromised access to your files)
+	Dont think we should abort and delete everything.
+
+	-also add unit tests. 
 
 BUGS:
 

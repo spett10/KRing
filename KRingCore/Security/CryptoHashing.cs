@@ -80,5 +80,19 @@ namespace KRingCore.Security
             gen.Init(password, salt, rounds);            
             return ((KeyParameter)gen.GenerateDerivedMacParameters(keyLengthInBits)).GetKey();
         }
+
+        public static byte[] HMACSHA256(byte[] data, byte[] key)
+        {
+            return KeyedHash(data, key, x => new HMACSHA256(x));
+        }
+
+        private static byte[] KeyedHash(byte[] data, byte[] key, Func<byte[], KeyedHashAlgorithm> keyedHashCreator)
+        {
+            using (KeyedHashAlgorithm keyedHash = keyedHashCreator(key))
+            {
+                return keyedHash.ComputeHash(data);
+            }
+
+        }
     }
 }

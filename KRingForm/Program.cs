@@ -48,6 +48,9 @@ namespace KRingForm
                     try
                     {
                         Application.Run(new CreateUserForm());
+
+                        _log.ClearLog();
+                        Log("Main", "New user created");
                     }
                     catch (Exception e)
                     {
@@ -56,7 +59,7 @@ namespace KRingForm
                     }
                 }
 
-                /* Try to loging */
+                /* Try to login */
                 if (DoesUserExist() || userCreated)
                 {
                     try
@@ -76,6 +79,15 @@ namespace KRingForm
                 {
                     try
                     {
+                        if(!userCreated) /* if regular login, check log integrity */
+                        {
+                            /* TODO: how to act if integrity is not good? Someone altered log. Delete it? IT means we are under attack, but.. */
+                            bool integrity = _log.CheckLogIntegrity(_profileRepository.ReadUser());
+
+                            Log("Main", "Log integrity: " + integrity.ToString());
+                        }
+
+                        Log("Main", "Login succesfull");
                         Application.Run(new PasswordList(SavedUser, _profileRepository));
                     }
                     catch (Exception e)
@@ -99,6 +111,11 @@ namespace KRingForm
             }
             finally
             {
+                if(isLoggedIn) /* We can only authenticate the log if the user was logged in, since we need the password */
+                {
+                    _log.AuthenticateLog(_profileRepository.ReadUser());
+                }
+
                 //TODO: try to force garbage collection? Call some handle that tries to wipe memory. Anything. 
             }
         }

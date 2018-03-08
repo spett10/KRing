@@ -13,11 +13,11 @@ namespace KRingCore.Core.Model
     {
         private static readonly IReadOnlyCollection<int> allowedKeySizesInBytes = new ReadOnlyCollection<int>(new List<int>() { 32 });
 
-        public byte[] Key { get; private set; }
+        public byte[] Bytes { get; private set; }
 
         public SymmetricKey(SecureString password, byte[] salt)
         {
-            Key = CryptoHashing.DeriveKeyFromPasswordAndSalt(password, salt, allowedKeySizesInBytes.Max());
+            Bytes = CryptoHashing.DeriveKeyFromPasswordAndSalt(password, salt, allowedKeySizesInBytes.Max());
         }
 
         #region IDisposable Support
@@ -30,7 +30,7 @@ namespace KRingCore.Core.Model
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects).
-                    Array.Clear(this.Key, 0, this.Key.Length);
+                    Array.Clear(this.Bytes, 0, this.Bytes.Length);
                 }
 
                 // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
