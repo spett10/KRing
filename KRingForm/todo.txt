@@ -1,46 +1,18 @@
-﻿
-1. make the needed files be embedded resources instead of just files? 
-
-3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
+﻿3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
 4. consider having a k1 that is derived from user password and salt (update for each time?). Then, use that to encrypt/decrypt the symmetric key used for encrypting the passwords.
 Then we can change password for the user, but not need to change the key used for encrypting all the entries, so we dont need to reencrypt. 
-5. Should we derive a masterkey, then derive the two needed keys from that key? I think that is better practice.
-6. Make an icon for the buld thingie.
 7. Integration / automated UI tests with AutoIT scripting? that sounds fun... but kinda needed. the manual testing when there are so many buttons is just ass
 12. folder structures for the main view in passwordlist
 14. Add more tests to new functionalities such as plaintextpasswordimporter, ReadToEndStoredPasswordRepository etc.
-16. Add a message counter to all lines written to the underlying format (i.e. to the encrypted message? after some delimiter).
-	As it is know, people could swap elements around, and since the encryption key is the same for all elements per save, and the same for the mac key,
-	an attacker could swap elements to make it appear as though keys should be in a certain order when they shold not be .
-	we can reuse the import tool for migration. 
-19. We need some solution for enabling upscaling of parameters in future... That does not require manual migration. 
 20. How to add 2factor? Email? Sms? but how to authenticate that what we get is good? Send a challenge or something, how do others do it? could be cool
-
-Can some of the above problems be solved by simply wiriting the different algorithms in the data we store? 
-similar to JWKS. then we know what algorithm and parameters where used, and we can use that. 
-But how can that help transition? If we write in the data format what key derivation algorithm and iteration that was used? How do we authenticate that though? guess we cant.. an attacker can set
-the hashing iteration to be something like.. 1. and then generate a lot of hashes really fast. then he could log in, but not decrypt, since the generated symmetric key would not be valid since the iteration count was altered.
-still seems sketchy as fuck. 
-
 22. Maybe before we close, make a mac on the log and store at the end, then check at startup, delete log if not valid? people cant fake mac if its based on user password. 
 23. make custom .net control that is a textbox that returns a securestring, not plaintext. listen to keystrokes, add to securestring one by one? PasswordBox exists for WPF, but not for windows forms apparently, and we cant use it here. 
 24. clean up service stuff, some of it belongs in persistence (file io)
-26. edit should be called update or it should show the old password so yo ucan catually edit it? 
-
-30. We need logic for trying both old and new value for key derivation? Since we only do it for auth right now, and that might work,
-but the key derivation at runtime for crypto does not try the old one, so the authentication stuff is pointless.
-The key check in 27 could be used for this, to test both iterations, and then finding out which iteration to use.
-But... This would stil require an update of the program on someones computer, meaning the user has to import and export anyways? and at that point,
-you could just update the numbers directly, since the user has to take the new executable. sure, they could log in using their old data, but that is only for the profile,
-so creating a new user instead would mean you dont have to copy the profile data around (MANUALLY I MIGHT ADD!), then it might be actually more friendly to start
-over with new (same) user and password, then import the passwords? then there is no manual action outside the program. Then there would need to be an export for the profile for this to work.
-
 
 31- use password importer / exporter for the DB part? right now the individual lines in the DB kinda leak the length of the passwords to some extend. Harder to see such things
 if we just reencrypt an entire blob instead? 
 
 
-32. hiding forms seems to be working. But hte code could be nicer:
 
 
 
@@ -49,8 +21,6 @@ Export/Import
 		start with export doing it, then save the exported stuff, then fix the import afterwards. 
 		then you can go release -> export, then implement the import, then release, try importing the export. then you dont loose passwords. 
 
-ORAM:
-instead of decrypting when loading all passwordsi nto memory, have them encrypted in memory and construct an ORAM? 
 
 BUGS:
 

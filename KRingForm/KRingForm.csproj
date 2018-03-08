@@ -38,6 +38,9 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>assemblysigning.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Custom-Icon-Design-Pretty-Office-8-Link.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -203,6 +206,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Custom-Icon-Design-Pretty-Office-8-Link.ico" />
     <Content Include="Data\Debug\db.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
