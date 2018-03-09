@@ -72,6 +72,7 @@
     <Compile Include="DBEntryRepositoryTests.cs" />
     <Compile Include="ProfileRepositoryTests.cs" />
     <Compile Include="CryptoHashingTests.cs" />
+    <Compile Include="FlatFileLogTests.cs" />
     <Compile Include="UserAuthenticatorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -89,10 +90,18 @@
     <Content Include="Data\Debug\db.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Data\Debug\log.txt" />
+    <Content Include="Data\Debug\logIntegrity.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Data\Debug\profile.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\Release\db.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\Release\log.txt" />
+    <Content Include="Data\Release\logIntegrity.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Data\Release\profile.txt">

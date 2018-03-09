@@ -33,8 +33,6 @@ CURRENT TASK:
 	maybe also tell to user (log file corrupted, you may have compromised access to your files)
 	Dont think we should abort and delete everything.
 
-	-also add unit tests. 
-
 BUGS:
 
 
