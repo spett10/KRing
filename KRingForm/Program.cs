@@ -81,8 +81,13 @@ namespace KRingForm
                     {
                         if(!userCreated) /* if regular login, check log integrity */
                         {
-                            /* TODO: how to act if integrity is not good? Someone altered log. Delete it? IT means we are under attack, but.. */
                             bool integrity = _log.CheckLogIntegrity(_profileRepository.ReadUser());
+
+                            if(!integrity)
+                            {
+                                _log.ClearLog();
+                                Log("WARNING", "Log integrity compromised! Log cleared");
+                            }
 
                             Log("Main", "Log integrity: " + integrity.ToString());
                         }

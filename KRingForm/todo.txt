@@ -27,11 +27,7 @@ Export/Import
 
 CURRENT TASK:
 
-22. Maybe before we close, make a mac on the log and store at the end, then check at startup, delete log if not valid? people cant fake mac if its based on user password. 
-	-Mac on log implemented, and tested manually, works fine (also catches alterations). 
-	But how should we act? Maybe just erase log, write new entry that log file was altered,
-	maybe also tell to user (log file corrupted, you may have compromised access to your files)
-	Dont think we should abort and delete everything.
+
 
 BUGS:
 
