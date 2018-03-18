@@ -8,6 +8,7 @@ using KRingCore.Persistence.Model;
 using System.Collections.Generic;
 using KRingCore.Interfaces;
 using System.Security;
+using KRingCore.Core.Model;
 
 namespace KRingCore.Persistence.Repositories
 {
@@ -15,11 +16,11 @@ namespace KRingCore.Persistence.Repositories
     {
         private readonly IDataConfig _config;
 
-        private byte[] _encrKey;
-        private byte[] _macKey;
+        private SymmetricKey _encrKey;
+        private SymmetricKey _macKey;
         private readonly int _ivLength = 16;
 
-        public NsvStoredPasswordWriter(SecureString password, byte[] encrKey, byte[] macKey, IDataConfig config)
+        public NsvStoredPasswordWriter(SecureString password, SymmetricKey encrKey, SymmetricKey macKey, IDataConfig config)
         {
             _config = config;
             _encrKey = encrKey;
@@ -49,9 +50,9 @@ namespace KRingCore.Persistence.Repositories
                         var ivForUsername = CryptoHashing.GenerateSalt(_ivLength);
                         var ivForPass = CryptoHashing.GenerateSalt(_ivLength);
 
-                        var domainCipher = cipher.EncryptThenHMac(rawDomain, ivForDomain, _encrKey, _macKey);
-                        var usernameCipher = cipher.EncryptThenHMac(rawUsername, ivForUsername, _encrKey, _macKey);
-                        var passCipher = cipher.EncryptThenHMac(rawPass, ivForPass, _encrKey, _macKey);
+                        var domainCipher = cipher.EncryptThenHMac(rawDomain, ivForDomain, _encrKey.Bytes, _macKey.Bytes);
+                        var usernameCipher = cipher.EncryptThenHMac(rawUsername, ivForUsername, _encrKey.Bytes, _macKey.Bytes);
+                        var passCipher = cipher.EncryptThenHMac(rawPass, ivForPass, _encrKey.Bytes, _macKey.Bytes);
 
                         /* write domain, tag, iv */
                         streamWriter.WriteLine(domainCipher.GetCipherAsBase64());
@@ -99,9 +100,9 @@ namespace KRingCore.Persistence.Repositories
 
                         var cipher = new AesHmacAuthenticatedCipher(System.Security.Cryptography.CipherMode.CBC, System.Security.Cryptography.PaddingMode.PKCS7);
 
-                        var domainCipher = cipher.EncryptThenHMac(rawDomain, ivForDomain, _encrKey, _macKey);
-                        var usernameCipher = cipher.EncryptThenHMac(rawUsername, ivForUsername, _encrKey, _macKey);
-                        var passCipher = cipher.EncryptThenHMac(rawPass, ivForPass, _encrKey, _macKey);
+                        var domainCipher = cipher.EncryptThenHMac(rawDomain, ivForDomain, _encrKey.Bytes, _macKey.Bytes);
+                        var usernameCipher = cipher.EncryptThenHMac(rawUsername, ivForUsername, _encrKey.Bytes, _macKey.Bytes);
+                        var passCipher = cipher.EncryptThenHMac(rawPass, ivForPass, _encrKey.Bytes, _macKey.Bytes);
 
                         /* write domain, tag, iv */
                         await streamWriter.WriteLineAsync(domainCipher.GetCipherAsBase64());

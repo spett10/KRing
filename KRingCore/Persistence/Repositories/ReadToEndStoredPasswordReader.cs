@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using KRingCore.Security;
 using System.Text;
+using KRingCore.Core.Model;
 
 namespace KRingCore.Persistence.Repositories
 {
@@ -24,14 +25,14 @@ namespace KRingCore.Persistence.Repositories
     public class ReadToEndStoredPasswordReader : ReleasePathDependent, IStoredPasswordReader
     {
         private readonly IDataConfig _config;
-        private byte[] _encrKey;
-        private byte[] _macKey;
+        private SymmetricKey _encrKey;
+        private SymmetricKey _macKey;
 
         private const int _keyLength = 32;
 
         public bool DecryptionErrorOccured { get; private set; }
 
-        public ReadToEndStoredPasswordReader(SecureString password, byte[] encrKey, byte[] macKey, IDataConfig config)
+        public ReadToEndStoredPasswordReader(SecureString password, SymmetricKey encrKey, SymmetricKey macKey, IDataConfig config)
         {
             _config = config;
 
@@ -122,10 +123,10 @@ namespace KRingCore.Persistence.Repositories
             private ExtractTokenFromEntry _extractPasswordTag = a => { return a[7]; };
             private ExtractTokenFromEntry _extractPasswordIv = a => { return a[8]; };
 
-            private byte[] _encrKey;
-            private byte[] _macKey;
+            private SymmetricKey _encrKey;
+            private SymmetricKey _macKey;
 
-            public NewLineSeperatedDb(string db, byte[] encrKey, byte[] macKey)
+            public NewLineSeperatedDb(string db, SymmetricKey encrKey, SymmetricKey macKey)
             {
                 var str = db.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
                 var count = str.Count();
@@ -142,12 +143,6 @@ namespace KRingCore.Persistence.Repositories
                     var currentEntry = str.Skip(i * _linesPerEntry).Take(_linesPerEntry).ToArray();
                     _entries.Add(ParseEntry(currentEntry));
                 }
-            }
-
-            ~NewLineSeperatedDb()
-            {
-                CryptoHashing.ZeroOutArray(ref _encrKey);
-                CryptoHashing.ZeroOutArray(ref _macKey);
             }
 
             private StoredPassword ParseEntry(string[] entry)
@@ -175,9 +170,9 @@ namespace KRingCore.Persistence.Repositories
                 var passwordIv = Convert.FromBase64String(passwordIvBase64);
 
                 /* Decrypt and check tag. If tag is not valid, the used methods throws errors */
-                var domain = cipher.VerifyMacThenDecrypt(domainCipher, _encrKey, domainIv, _macKey);
-                var username = cipher.VerifyMacThenDecrypt(usernameCipher, _encrKey, usernameIv, _macKey);
-                var password = cipher.VerifyMacThenDecrypt(passwordCipher, _encrKey, passwordIv, _macKey);
+                var domain = cipher.VerifyMacThenDecrypt(domainCipher, _encrKey.Bytes, domainIv, _macKey.Bytes);
+                var username = cipher.VerifyMacThenDecrypt(usernameCipher, _encrKey.Bytes, usernameIv, _macKey.Bytes);
+                var password = cipher.VerifyMacThenDecrypt(passwordCipher, _encrKey.Bytes, passwordIv, _macKey.Bytes);
 
                 return new StoredPassword(Encoding.UTF8.GetString(domain), Encoding.UTF8.GetString(username), Encoding.UTF8.GetString(password));
             }

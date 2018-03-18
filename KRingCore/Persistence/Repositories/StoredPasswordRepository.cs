@@ -62,7 +62,7 @@ namespace KRingCore.Persistence.Repositories
             _encrKey = new SymmetricKey(password, _saltForEncrKey);
             _macKey = new SymmetricKey(password, _saltForMacKey);
 
-            _passwordIO = new NsvStoredPasswordIO(password, _encrKey.Bytes, _macKey.Bytes, _dataConfig);
+            _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
 
             _entries = LoadEntriesFromDb();  
         }
@@ -94,7 +94,7 @@ namespace KRingCore.Persistence.Repositories
             _encrKey = new SymmetricKey(password, _saltForEncrKey);
             _macKey = new SymmetricKey(password, _saltForMacKey);
 
-            _passwordIO = new NsvStoredPasswordIO(password, _encrKey.Bytes, _macKey.Bytes, _dataConfig);
+            _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
 
             _entries = passwords;
         }
@@ -121,7 +121,7 @@ namespace KRingCore.Persistence.Repositories
             _encrKey = encrKey;
             _macKey = macKey;
 
-            _passwordIO = new NsvStoredPasswordIO(password, _encrKey.Bytes, _macKey.Bytes, _dataConfig);
+            _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
 
             _entries = passwords;
         }
@@ -141,7 +141,7 @@ namespace KRingCore.Persistence.Repositories
             _encrKey = new SymmetricKey(password, _saltForEncrKey);
             _macKey = new SymmetricKey(password, _saltForMacKey);
 
-            _passwordIO = new NsvStoredPasswordIO(password, _encrKey.Bytes, _macKey.Bytes, _dataConfig);
+            _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
 
             _entries = LoadEntriesFromDb();
         }
@@ -259,7 +259,7 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
-                _passwordIO = new NsvStoredPasswordIO(_password, _encrKey.Bytes, _macKey.Bytes, _dataConfig);
+                _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
                 await _passwordIO.Writer.WriteEntriesToDbAsync(_entries);
             }
             catch (Exception)
@@ -272,7 +272,7 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
-                _passwordIO = new NsvStoredPasswordIO(_password, _encrKey.Bytes, _macKey.Bytes, _dataConfig);
+                _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
                 _passwordIO.Writer.WriteEntriesToDb(_entries);
             }
             catch(Exception)

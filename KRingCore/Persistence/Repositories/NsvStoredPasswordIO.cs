@@ -1,4 +1,5 @@
-﻿using KRingCore.Interfaces;
+﻿using KRingCore.Core.Model;
+using KRingCore.Interfaces;
 using KRingCore.Persistence.Interfaces;
 using System.Security;
 
@@ -16,7 +17,7 @@ namespace KRingCore.Persistence.Repositories
 
         public IStoredPasswordWriter Writer { get; }
 
-        public NsvStoredPasswordIO(SecureString password, byte[] encrKey, byte[] macKey, IDataConfig config)
+        public NsvStoredPasswordIO(SecureString password, SymmetricKey encrKey, SymmetricKey macKey, IDataConfig config)
         {
             Reader = new ReadToEndStoredPasswordReader(password, encrKey, macKey, config);
 
