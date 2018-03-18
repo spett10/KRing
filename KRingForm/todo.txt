@@ -24,11 +24,6 @@ Export/Import
 
 CURRENT TASK:
 
-25. Even though we have the symmetric key class, many classes still reference byte[], because they dont necc wanna clear them - but then just dont use the using keyword?
-	So, use symmetric key throughout, but dont necc do the using stuff. Just looks better,
-	then make the "derivekeybasedon.." in cryptohashing not-public, perhaps move it so the symmestrickey constructor can still call it, so people
-	can ONLY use the symmetric key constructor.
-
 BUGS:
 
 
