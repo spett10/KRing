@@ -27,11 +27,11 @@ namespace KRingCore.Persistence.Repositories
 
         private byte[] _saltForEncrKey;
         private byte[] _saltForMacKey;
-        private byte[] _encrKey;
-        private byte[] _macKey;
+        private SymmetricKey _encrKey;
+        private SymmetricKey _macKey;
 
         private readonly int _keyLength = 32;
-        private readonly int _ivLength = 16; //TODO why not 256? can aes handle that? 
+        private readonly int _ivLength = 16;
 
         public int EntryCount => _entries.Count;
         public bool DecryptionErrorOccured { get; private set; }
@@ -59,10 +59,10 @@ namespace KRingCore.Persistence.Repositories
             _saltForMacKey = macKeySalt;
             _password = password;
 
-            _encrKey = DeriveKey(password, _saltForEncrKey);
-            _macKey = DeriveKey(password, _saltForMacKey);
+            _encrKey = new SymmetricKey(password, _saltForEncrKey);
+            _macKey = new SymmetricKey(password, _saltForMacKey);
 
-            _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
+            _passwordIO = new NsvStoredPasswordIO(password, _encrKey.Bytes, _macKey.Bytes, _dataConfig);
 
             _entries = LoadEntriesFromDb();  
         }
@@ -91,10 +91,10 @@ namespace KRingCore.Persistence.Repositories
             _saltForMacKey = macKeySalt;
             _password = password;
 
-            _encrKey = DeriveKey(password, _saltForEncrKey);
-            _macKey = DeriveKey(password, _saltForMacKey);
+            _encrKey = new SymmetricKey(password, _saltForEncrKey);
+            _macKey = new SymmetricKey(password, _saltForMacKey);
 
-            _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
+            _passwordIO = new NsvStoredPasswordIO(password, _encrKey.Bytes, _macKey.Bytes, _dataConfig);
 
             _entries = passwords;
         }
@@ -118,10 +118,10 @@ namespace KRingCore.Persistence.Repositories
             _saltForMacKey = new byte[0];
             _password = password;
 
-            _encrKey = encrKey.Bytes;
-            _macKey = macKey.Bytes;
+            _encrKey = encrKey;
+            _macKey = macKey;
 
-            _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
+            _passwordIO = new NsvStoredPasswordIO(password, _encrKey.Bytes, _macKey.Bytes, _dataConfig);
 
             _entries = passwords;
         }
@@ -138,10 +138,10 @@ namespace KRingCore.Persistence.Repositories
             _saltForMacKey = macKeySalt;
             _password = password;
 
-            _encrKey = DeriveKey(password, _saltForEncrKey);
-            _macKey = DeriveKey(password, _saltForMacKey);
+            _encrKey = new SymmetricKey(password, _saltForEncrKey);
+            _macKey = new SymmetricKey(password, _saltForMacKey);
 
-            _passwordIO = new NsvStoredPasswordIO(password, _encrKey, _macKey, _dataConfig);
+            _passwordIO = new NsvStoredPasswordIO(password, _encrKey.Bytes, _macKey.Bytes, _dataConfig);
 
             _entries = LoadEntriesFromDb();
         }
@@ -149,8 +149,8 @@ namespace KRingCore.Persistence.Repositories
         //TODO: implement idisposable instead? We can use the idisposable of the new symmetrickeyclass.
         ~StoredPasswordRepository()
         {
-            CryptoHashing.ZeroOutArray(ref _encrKey);
-            CryptoHashing.ZeroOutArray(ref _macKey);
+            _encrKey.Dispose();
+            _macKey.Dispose();
         }
 
         public void DeleteEntry(string domain)
@@ -259,7 +259,7 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
-                _passwordIO = new NsvStoredPasswordIO(this._password, this._encrKey, this._macKey, this._dataConfig);
+                _passwordIO = new NsvStoredPasswordIO(_password, _encrKey.Bytes, _macKey.Bytes, _dataConfig);
                 await _passwordIO.Writer.WriteEntriesToDbAsync(_entries);
             }
             catch (Exception)
@@ -272,7 +272,7 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
-                _passwordIO = new NsvStoredPasswordIO(this._password, this._encrKey, this._macKey, this._dataConfig);
+                _passwordIO = new NsvStoredPasswordIO(_password, _encrKey.Bytes, _macKey.Bytes, _dataConfig);
                 _passwordIO.Writer.WriteEntriesToDb(_entries);
             }
             catch(Exception)
@@ -315,11 +315,6 @@ namespace KRingCore.Persistence.Repositories
             {
                 DecryptionErrorOccured = _passwordIO.Reader.DecryptionErrorOccured;
             }
-        }
-        
-        private byte[] DeriveKey(SecureString password, byte[] iv)
-        {
-            return CryptoHashing.DeriveKeyFromPasswordAndSalt(password, iv, _keyLength);            
         }
 
         private void DeleteDb()

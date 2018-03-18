@@ -1,4 +1,5 @@
-﻿using KRingCore.Security;
+﻿using KRingCore.Extensions;
+using KRingCore.Security;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,13 +12,16 @@ namespace KRingCore.Core.Model
 {
     public class SymmetricKey : IDisposable 
     {
-        private static readonly IReadOnlyCollection<int> allowedKeySizesInBytes = new ReadOnlyCollection<int>(new List<int>() { 32 });
+        private static readonly IReadOnlyCollection<int> allowedKeySizesInBits = new ReadOnlyCollection<int>(new List<int>() { 256 });
 
         public byte[] Bytes { get; private set; }
 
         public SymmetricKey(SecureString password, byte[] salt)
         {
-            Bytes = CryptoHashing.DeriveKeyFromPasswordAndSalt(password, salt, allowedKeySizesInBytes.Max());
+            var raw = Encoding.ASCII.GetBytes(password.ConvertToUnsecureString());
+            var iterations = Configuration.PBKDF2DeriveIterations;
+            // This algorithm takes keysize at bits
+            Bytes = CryptoHashing.PBKDF2HMACSHA256(raw, salt, iterations, allowedKeySizesInBits.Max());
         }
 
         #region IDisposable Support

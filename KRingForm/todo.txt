@@ -7,10 +7,7 @@ Then we can change password for the user, but not need to change the key used fo
 20. How to add 2factor? Email? Sms? but how to authenticate that what we get is good? Send a challenge or something, how do others do it? could be cool
 23. make custom .net control that is a textbox that returns a securestring, not plaintext. listen to keystrokes, add to securestring one by one? PasswordBox exists for WPF, but not for windows forms apparently, and we cant use it here. 
 24. clean up service stuff, some of it belongs in persistence (file io)
-25. Even though we have the symmetric key class, many classes still reference byte[], because they dont necc wanna clear them - but then just dont use the using keyword?
-	So, use symmetric key throughout, but dont necc do the using stuff. Just looks better,
-	then make the "derivekeybasedon.." in cryptohashing not-public, perhaps move it so the symmestrickey constructor can still call it, so people
-	can ONLY use the symmetric key constructor.
+
 
 31- use password importer / exporter for the DB part? right now the individual lines in the DB kinda leak the length of the passwords to some extend. Harder to see such things
 if we just reencrypt an entire blob instead? 
@@ -27,7 +24,10 @@ Export/Import
 
 CURRENT TASK:
 
-
+25. Even though we have the symmetric key class, many classes still reference byte[], because they dont necc wanna clear them - but then just dont use the using keyword?
+	So, use symmetric key throughout, but dont necc do the using stuff. Just looks better,
+	then make the "derivekeybasedon.." in cryptohashing not-public, perhaps move it so the symmestrickey constructor can still call it, so people
+	can ONLY use the symmetric key constructor.
 
 BUGS:
 

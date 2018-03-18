@@ -17,14 +17,6 @@ namespace KRingCore.Security
         // Based on IV size for AES, but should be like 64 for password hashing.. 
         public static readonly int DefaultSaltByteSize = 16;
 
-        public static byte[] DeriveKeyFromPasswordAndSalt(SecureString password, byte[] salt, int keyLength)
-        {
-            var raw = Encoding.ASCII.GetBytes(password.ConvertToUnsecureString());
-            var iterations = Configuration.PBKDF2DeriveIterations;
-            // This algorithm takes keysize at bits, not bytes, so mult by 8.
-            return PBKDF2HMACSHA256(raw, salt, iterations, keyLength * 8);
-        }
-
         public static byte[] GenerateSalt(int size)
         {
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
