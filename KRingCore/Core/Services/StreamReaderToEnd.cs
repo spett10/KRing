@@ -12,14 +12,30 @@ namespace KRingCore.Core.Services
     {
         public string ReadToEnd(string filename)
         {
-            if (string.IsNullOrEmpty(filename))
-                throw new ArgumentException();
+            ValidateInput(filename);
 
             using (FileStream fileStream = new FileStream(filename, FileMode.Open))
             using (StreamReader streamReader = new StreamReader(fileStream))
             {
                 return streamReader.ReadToEnd();
             }
+        }
+
+        public Task<string> ReadToEndAsync(string filename)
+        {
+            ValidateInput(filename);
+
+            using (FileStream fileStream = new FileStream(filename, FileMode.Open))
+            using (StreamReader streamReader = new StreamReader(fileStream))
+            {
+                return streamReader.ReadToEndAsync();
+            }
+        }
+
+        private void ValidateInput(string filename)
+        {
+            if (string.IsNullOrEmpty(filename))
+                throw new ArgumentException();
         }
     }
 }

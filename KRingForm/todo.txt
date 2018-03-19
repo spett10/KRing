@@ -9,8 +9,7 @@ Then we can change password for the user, but not need to change the key used fo
 24. clean up service stuff, some of it belongs in persistence (file io)
 
 
-31- use password importer / exporter for the DB part? right now the individual lines in the DB kinda leak the length of the passwords to some extend. Harder to see such things
-if we just reencrypt an entire blob instead? 
+
 
 
 
@@ -24,7 +23,17 @@ Export/Import
 
 CURRENT TASK:
 
+31- use password importer / exporter for the DB part? right now the individual lines in the DB kinda leak the length of the passwords to some extend. Harder to see such things
+if we just reencrypt an entire blob instead? 
+
 BUGS:
+
+
+THREAT MODEL:
+
+We consider an adversary to be an active agent that has access physical access to the users pc during
+a user session - that is we assume the adversary is logged in as the user on her (stolen) pc.
+
 
 
 

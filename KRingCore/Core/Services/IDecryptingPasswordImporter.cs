@@ -9,6 +9,6 @@ namespace KRingCore.Core.Services
     public interface IDecryptingPasswordImporter
     {
         List<StoredPassword> ImportPasswords(string filename, SecureString password, IStreamReadToEnd streamReader);
-        Task<List<StoredPassword>> ImportPasswordsAsync(string filename, SecureString password);
+        Task<List<StoredPassword>> ImportPasswordsAsync(string filename, SecureString password, IStreamReadToEnd streamReader);
     }
 }

@@ -9,5 +9,6 @@ namespace KRingCore.Persistence.Interfaces
     public interface IStreamReadToEnd
     {
         string ReadToEnd(string filename);
+        Task<string> ReadToEndAsync(string filename);
     }
 }
