@@ -25,6 +25,13 @@ CURRENT TASK:
 
 31- use password importer / exporter for the DB part? right now the individual lines in the DB kinda leak the length of the passwords to some extend. Harder to see such things
 if we just reencrypt an entire blob instead? 
+	
+	status: the plumbing / coding is done, but we need to refactor it. read second commit of jsonformat_db_refactor branch. Basically, increase iteration for
+	import export in config, and then do similar tasks for deriving keys that run in background so user doesnt have to wait. 
+
+	Maybe we can do some pub / sub stuff. Subscribe to some provider, that starts task in its constructor. Then it can have some task you can await that gives the key? and then
+	it starts the task anew. But thats not really pub.. that would be a handler method that the subscriber should impplement, such that when we are done, they get key and
+	handle it. but we must still be able to await that stuff. 
 
 BUGS:
 
