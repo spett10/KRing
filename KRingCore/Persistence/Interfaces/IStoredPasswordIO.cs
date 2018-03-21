@@ -10,5 +10,6 @@ namespace KRingCore.Persistence.Interfaces
     {
         IStoredPasswordReader Reader { get; }
         IStoredPasswordWriter Writer { get; }
+        //TODO: need refresh thingie, so it can replace itself, so the underlying keys are regenerated if neccesary. also so you dont have to call explicit constructor. 
     }
 }

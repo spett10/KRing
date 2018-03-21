@@ -72,11 +72,11 @@ namespace KRingForm.Forms
 
         private void Import(SecureString password)
         {
-            var importer = new DecryptingPasswordImporter();
+            var importer = new DecryptingPasswordImporter(new KRingCore.Security.KeyGenerator(), password);
 
             try
             {
-                var importedPasswords = importer.ImportPasswords(_dialogue.FileName, password, _streamReader);
+                var importedPasswords = importer.ImportPasswords(_dialogue.FileName, _streamReader);
 
                 _callback(importedPasswords);
             }

@@ -36,6 +36,48 @@ namespace KRingCore.Persistence.Repositories
         public bool DecryptionErrorOccured { get; private set; }
         public bool EncryptionErrorOccured { get; private set; }
 
+
+        public StoredPasswordRepository(SecureString password, List<StoredPassword> passwords)
+        {
+#if DEBUG
+            _dataConfig = new DataConfig(
+                               ConfigurationManager.AppSettings["relativedbPathDebug"]);
+#else
+            _dataConfig = new DataConfig(
+                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"]);
+#endif
+
+            DecryptionErrorOccured = false;
+            EncryptionErrorOccured = false;
+
+            _password = password;
+            
+            _passwordIO = new JsonStoredPasswordIO(_dataConfig, _password);
+
+            _entries = passwords;
+        }
+
+        public StoredPasswordRepository(SecureString password)
+        {
+#if DEBUG
+            _dataConfig = new DataConfig(
+                               ConfigurationManager.AppSettings["relativedbPathDebug"]);
+#else
+            _dataConfig = new DataConfig(
+                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"]);
+#endif
+
+            DecryptionErrorOccured = false;
+            EncryptionErrorOccured = false;
+
+            _password = password;
+            
+            _passwordIO = new JsonStoredPasswordIO(_dataConfig, _password);
+
+            _entries = LoadEntriesFromDb();
+        }
+
+
         /// <summary>
         /// If you create a new Repository object, and the underlying DB already exists
         /// The password must be the same. Otherwise, the decryption will fail and an error must be thrown.
@@ -61,7 +103,7 @@ namespace KRingCore.Persistence.Repositories
             _encrKey = new SymmetricKey(password, _saltForEncrKey);
             _macKey = new SymmetricKey(password, _saltForMacKey);
             
-            _passwordIO = PasswordIOFactory();
+            _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
 
             _entries = LoadEntriesFromDb();  
         }
@@ -93,7 +135,7 @@ namespace KRingCore.Persistence.Repositories
             _encrKey = new SymmetricKey(password, _saltForEncrKey);
             _macKey = new SymmetricKey(password, _saltForMacKey);
 
-            _passwordIO = PasswordIOFactory();
+            _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
 
             _entries = passwords;
         }
@@ -120,11 +162,18 @@ namespace KRingCore.Persistence.Repositories
             _encrKey = encrKey;
             _macKey = macKey;
                         
-            _passwordIO = PasswordIOFactory();
+            _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
 
             _entries = passwords;
         }
 
+        /// <summary>
+        /// Only for unit testing, which is why you can inject the config. 
+        /// </summary>
+        /// <param name="password"></param>
+        /// <param name="encrKeySalt"></param>
+        /// <param name="macKeySalt"></param>
+        /// <param name="config"></param>
         public StoredPasswordRepository(SecureString password, byte[] encrKeySalt, byte[] macKeySalt, IDataConfig config)
         {
             _dataConfig = config;
@@ -140,7 +189,7 @@ namespace KRingCore.Persistence.Repositories
             _encrKey = new SymmetricKey(password, _saltForEncrKey);
             _macKey = new SymmetricKey(password, _saltForMacKey);
             
-            _passwordIO = PasswordIOFactory();
+            _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
 
             _entries = LoadEntriesFromDb();
         }
@@ -148,8 +197,8 @@ namespace KRingCore.Persistence.Repositories
         //TODO: implement idisposable instead? We can use the idisposable of the new symmetrickeyclass.
         ~StoredPasswordRepository()
         {
-            _encrKey.Dispose();
-            _macKey.Dispose();
+            _encrKey?.Dispose();
+            _macKey?.Dispose();
         }
 
         public void DeleteEntry(string domain)
@@ -258,7 +307,6 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
-                _passwordIO = PasswordIOFactory();
                 await _passwordIO.Writer.WriteEntriesToDbAsync(_entries);
             }
             catch (Exception)
@@ -271,7 +319,6 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
-                _passwordIO = PasswordIOFactory();
                 _passwordIO.Writer.WriteEntriesToDb(_entries);
             }
             catch(Exception)
@@ -330,13 +377,5 @@ namespace KRingCore.Persistence.Repositories
         {
             return _entries.Where(e => e.Domain == domain).FirstOrDefault();
         }
-
-        IStoredPasswordIO PasswordIOFactory()
-        {
-            //return new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
-            return new JsonStoredPasswordIO(_dataConfig, _password);
-        }
-
-
     }
 }

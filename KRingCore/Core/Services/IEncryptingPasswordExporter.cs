@@ -8,7 +8,7 @@ namespace KRingCore.Core.Services
 {
     public interface IEncryptingPasswordExporter
     {
-        string ExportPasswords(List<StoredPassword> passwords, SecureString password);
-        Task<string> ExportPasswordsAsync(List<StoredPassword> passwords, SecureString password);
+        string ExportPasswords(List<StoredPassword> passwords);
+        Task<string> ExportPasswordsAsync(List<StoredPassword> passwords);
     }
 }

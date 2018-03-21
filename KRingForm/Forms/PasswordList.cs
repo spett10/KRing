@@ -41,12 +41,8 @@ namespace KRingForm
 
         private readonly User _user;
         private IStoredPasswordRepository _passwordRep;
-        private readonly IPasswordImporter _passwordImporter;
         private readonly IProfileRepository _profileRepository;
-
-        //TODO: restart once we have used it, it could be that the user makes more changes? 
-        private Task<Tuple<SymmetricKey, SymmetricKey>> RehashingTask;
-
+        
         private int _currentIndex;
 
         //TODO: gather this in a state object or a state design pattern or something.
@@ -63,21 +59,12 @@ namespace KRingForm
             _user = user;
             _profileRepository = profileRepository;
 
-            /* Start rehashing for potential re-encryption already now in a task since it takes quite a while */
-            RehashingTask = Task.Run(() =>
-            {
-                this._user.GenerateNewSalt();
-                return Tuple.Create(
-                                        new SymmetricKey(this._user.Password, this._user.SecurityData.EncryptionKeySalt), 
-                                        new SymmetricKey(this._user.Password, this._user.SecurityData.MacKeySalt)
-                                    );
-            });
+            this._user.GenerateNewSalt();
 
             var securePassword = new SecureString();
             securePassword.PopulateWithString(user.PlaintextPassword);
 
-            _passwordRep = new StoredPasswordRepository(securePassword, _user.SecurityData.EncryptionKeySalt, _user.SecurityData.MacKeySalt);
-            _passwordImporter = new PlaintextPasswordImporter();
+            _passwordRep = new StoredPasswordRepository(securePassword);
 
             UpdateList(OperationType.RefreshList, this);
 
@@ -366,14 +353,8 @@ namespace KRingForm
 
         private async Task ReencryptAndSave(List<StoredPassword> passwords)
         {
-            /* Wait for new salt and key derivation to complete */
-            var rehashingResult = await RehashingTask;
-
             /* New password rep that derives and uses new keys, copy over existing passwords before overwriting. */
-            _passwordRep = new StoredPasswordRepository(this._user.Password,
-                                                        rehashingResult.Item1,
-                                                        rehashingResult.Item2,
-                                                        passwords);
+            _passwordRep = new StoredPasswordRepository(this._user.Password, passwords);
 
 
             /* Start write */
@@ -385,17 +366,15 @@ namespace KRingForm
                 Program.Log("Save", "One or more passwords could not be encrypted");
             }
 
+            //TODO: do we need this if we let storedpassword handle the salt for enc and mac? 
             await _profileRepository.WriteUserAsync(this._user);
 
-            /* Start rehashing for potential re-encryption already now in a task since it takes quite a while */
-            RehashingTask = Task.Run(() =>
-            {
-                this._user.GenerateNewSalt();
-                return Tuple.Create(
-                                        new SymmetricKey(this._user.Password, this._user.SecurityData.EncryptionKeySalt),
-                                        new SymmetricKey(this._user.Password, this._user.SecurityData.MacKeySalt)
-                                    );
-            });
+            /* Create new password rep, such that rehashing for potential re-encryption already starts now in a task since it takes quite a while */
+            _passwordRep = new StoredPasswordRepository(this._user.Password, passwords);
+
+            /* Generate new salt for user as well? Do we actually need this? */
+            //TODO: do we need this if we let storedpassword handle the salt for enc and mac? 
+            this._user.GenerateNewSalt();
         }
 
         private void PasswordList_Load(object sender, EventArgs e)

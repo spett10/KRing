@@ -34,7 +34,7 @@ namespace KRingCore.Persistence.Repositories
 
         public JsonPasswordReader(IDataConfig dataConfig, SecureString password)
         {
-            _importer = new DecryptingPasswordImporter();
+            _importer = new DecryptingPasswordImporter(new Security.KeyGenerator(), password);
             _dataConfig = dataConfig;
             _password = password;
             _streamReader = new StreamReaderToEnd();
@@ -48,7 +48,7 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
-                return _importer.ImportPasswords(_dataConfig.dbPath, _password, _streamReader);
+                return _importer.ImportPasswords(_dataConfig.dbPath, _streamReader);
             }
             catch (CryptographicException)
             {
@@ -61,7 +61,7 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
-                return await _importer.ImportPasswordsAsync(_dataConfig.dbPath, _password, _streamReader);
+                return await _importer.ImportPasswordsAsync(_dataConfig.dbPath, _streamReader);
             }
             catch (CryptographicException)
             {
@@ -82,7 +82,7 @@ namespace KRingCore.Persistence.Repositories
 
         public JsonPasswordWriter(IDataConfig dataConfig, SecureString password)
         {
-            _exporter = new EncryptingPasswordExporter();
+            _exporter = new EncryptingPasswordExporter(new Security.KeyGenerator(), password);
             _dataConfig = dataConfig;
             _streamWriter = new StreamWriterToEnd();
             _password = password;
@@ -94,7 +94,7 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
-                var data = _exporter.ExportPasswords(list, _password);
+                var data = _exporter.ExportPasswords(list);
                 _streamWriter.WriteToNewFile(_dataConfig.dbPath, data);
             }
             catch(CryptographicException)
@@ -107,7 +107,7 @@ namespace KRingCore.Persistence.Repositories
         {
             try
             {
-                var data = _exporter.ExportPasswords(list, _password);
+                var data = await _exporter.ExportPasswordsAsync(list);
                 await _streamWriter.WriteToNewFileAsync(_dataConfig.dbPath, data);
             }
             catch (CryptographicException)

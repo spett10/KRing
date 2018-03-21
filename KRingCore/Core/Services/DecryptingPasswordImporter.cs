@@ -16,9 +16,18 @@ namespace KRingCore.Core.Services
 {
     public class DecryptingPasswordImporter : IDecryptingPasswordImporter
     {
-        public List<StoredPassword> ImportPasswords(string filename, SecureString password, IStreamReadToEnd streamReader)
+        private readonly KeyGenerator _generator;
+        private readonly SecureString _password;
+
+        public DecryptingPasswordImporter(KeyGenerator generator, SecureString password)
         {
-            if (String.IsNullOrEmpty(filename) || password == null)
+            _generator = generator;
+            _password = password;
+        }
+
+        public List<StoredPassword> ImportPasswords(string filename, IStreamReadToEnd streamReader)
+        {
+            if (String.IsNullOrEmpty(filename))
             {
                 throw new ArgumentException("Invalid argument");
             }
@@ -35,15 +44,12 @@ namespace KRingCore.Core.Services
                 ExportedEncryptedPasswords passwords = JsonConvert.DeserializeObject<ExportedEncryptedPasswords>(contents);
 
                 var iterations = Configuration.ExportImportIterations;
-                var raw = Encoding.UTF8.GetBytes(password.ConvertToUnsecureString());
-                var encrKey = CryptoHashing.PBKDF2HMACSHA256(raw,
-                                                                Convert.FromBase64String(passwords.EncryptionKeyIvBase64),
-                                                                iterations,
-                                                                256);
-                var macKey = CryptoHashing.PBKDF2HMACSHA256(raw,
-                                                            Convert.FromBase64String(passwords.MacKeyIvBase64),
-                                                            iterations,
-                                                            256);
+                var raw = Encoding.UTF8.GetBytes(_password.ConvertToUnsecureString());
+
+                var keyGenResult = _generator.GetGenerationTask(_password, Convert.FromBase64String(passwords.EncryptionKeyIvBase64), Convert.FromBase64String(passwords.MacKeyIvBase64)).Result;
+
+                var encrKey = keyGenResult.EncryptionKey.Bytes;
+                var macKey = keyGenResult.MacKey.Bytes;
 
                 var cipher = new AesHmacAuthenticatedCipher(System.Security.Cryptography.CipherMode.CBC, System.Security.Cryptography.PaddingMode.PKCS7);
                 var passwordsCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(passwords.EncryptedPasswordsBase64, passwords.TagBase64);
@@ -51,8 +57,8 @@ namespace KRingCore.Core.Services
 
                 var plaintextJson = Encoding.UTF8.GetString(cipher.VerifyMacThenDecrypt(passwordsCipher, encrKey, encrIv, macKey));
 
-                macKey.ZeroOut();
-                encrKey.ZeroOut();
+                keyGenResult.EncryptionKey.Dispose();
+                keyGenResult.MacKey.Dispose();
 
                 List<StoredPassword> list = JsonConvert.DeserializeObject<List<StoredPassword>>(plaintextJson);
 
@@ -69,9 +75,9 @@ namespace KRingCore.Core.Services
 
         }
 
-        public async Task<List<StoredPassword>> ImportPasswordsAsync(string filename, SecureString password, IStreamReadToEnd streamReader)
+        public async Task<List<StoredPassword>> ImportPasswordsAsync(string filename, IStreamReadToEnd streamReader)
         {
-            if (String.IsNullOrEmpty(filename) || password == null)
+            if (String.IsNullOrEmpty(filename))
             {
                 throw new ArgumentException("Invalid argument");
             }
@@ -88,15 +94,11 @@ namespace KRingCore.Core.Services
                 ExportedEncryptedPasswords passwords = JsonConvert.DeserializeObject<ExportedEncryptedPasswords>(contents);
 
                 var iterations = Configuration.ExportImportIterations;
-                var raw = Encoding.UTF8.GetBytes(password.ConvertToUnsecureString());
-                var encrKey = CryptoHashing.PBKDF2HMACSHA256(raw,
-                                                                Convert.FromBase64String(passwords.EncryptionKeyIvBase64),
-                                                                iterations,
-                                                                256);
-                var macKey = CryptoHashing.PBKDF2HMACSHA256(raw,
-                                                            Convert.FromBase64String(passwords.MacKeyIvBase64),
-                                                            iterations,
-                                                            256);
+                var raw = Encoding.UTF8.GetBytes(_password.ConvertToUnsecureString());
+                var keyGenResult = await _generator.GetGenerationTask(_password, Convert.FromBase64String(passwords.EncryptionKeyIvBase64), Convert.FromBase64String(passwords.MacKeyIvBase64));
+
+                var encrKey = keyGenResult.EncryptionKey.Bytes;
+                var macKey = keyGenResult.MacKey.Bytes;
 
                 var cipher = new AesHmacAuthenticatedCipher(System.Security.Cryptography.CipherMode.CBC, System.Security.Cryptography.PaddingMode.PKCS7);
                 var passwordsCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(passwords.EncryptedPasswordsBase64, passwords.TagBase64);
@@ -104,8 +106,8 @@ namespace KRingCore.Core.Services
 
                 var plaintextJson = Encoding.UTF8.GetString(cipher.VerifyMacThenDecrypt(passwordsCipher, encrKey, encrIv, macKey));
 
-                macKey.ZeroOut();
-                encrKey.ZeroOut();
+                keyGenResult.EncryptionKey.Dispose();
+                keyGenResult.MacKey.Dispose();
 
                 List<StoredPassword> list = JsonConvert.DeserializeObject<List<StoredPassword>>(plaintextJson);
 
