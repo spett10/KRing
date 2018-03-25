@@ -24,11 +24,6 @@ namespace KRingCore.Persistence.Repositories
         private List<StoredPassword> _entries;
 
         private SecureString _password;
-
-        private byte[] _saltForEncrKey;
-        private byte[] _saltForMacKey;
-        private SymmetricKey _encrKey;
-        private SymmetricKey _macKey;
         
         private readonly int _ivLength = 16;
 
@@ -96,12 +91,12 @@ namespace KRingCore.Persistence.Repositories
             DecryptionErrorOccured = false;
             EncryptionErrorOccured = false;
 
-            _saltForEncrKey = encrKeySalt;
-            _saltForMacKey = macKeySalt;
-            _password = password;
+            var _saltForEncrKey = encrKeySalt;
+            var _saltForMacKey = macKeySalt;
+            var _password = password;
 
-            _encrKey = new SymmetricKey(password, _saltForEncrKey);
-            _macKey = new SymmetricKey(password, _saltForMacKey);
+            var _encrKey = new SymmetricKey(password, _saltForEncrKey);
+            var _macKey = new SymmetricKey(password, _saltForMacKey);
             
             _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
 
@@ -128,12 +123,12 @@ namespace KRingCore.Persistence.Repositories
             DecryptionErrorOccured = false;
             EncryptionErrorOccured = false;
 
-            _saltForEncrKey = encrKeySalt;
-            _saltForMacKey = macKeySalt;
-            _password = password;
+            var _saltForEncrKey = encrKeySalt;
+            var _saltForMacKey = macKeySalt;
+            var _password = password;
 
-            _encrKey = new SymmetricKey(password, _saltForEncrKey);
-            _macKey = new SymmetricKey(password, _saltForMacKey);
+            var _encrKey = new SymmetricKey(password, _saltForEncrKey);
+            var _macKey = new SymmetricKey(password, _saltForMacKey);
 
             _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
 
@@ -155,12 +150,12 @@ namespace KRingCore.Persistence.Repositories
             DecryptionErrorOccured = false;
             EncryptionErrorOccured = false;
 
-            _saltForEncrKey = new byte[0];
-            _saltForMacKey = new byte[0];
+            var _saltForEncrKey = new byte[0];
+            var _saltForMacKey = new byte[0];
             _password = password;
 
-            _encrKey = encrKey;
-            _macKey = macKey;
+            var _encrKey = encrKey;
+            var _macKey = macKey;
                         
             _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
 
@@ -181,24 +176,17 @@ namespace KRingCore.Persistence.Repositories
             DecryptionErrorOccured = false;
             EncryptionErrorOccured = false;
 
-            _saltForEncrKey = new byte[_ivLength];
+            var _saltForEncrKey = new byte[_ivLength];
             _saltForEncrKey = encrKeySalt;
-            _saltForMacKey = macKeySalt;
+            var _saltForMacKey = macKeySalt;
             _password = password;
 
-            _encrKey = new SymmetricKey(password, _saltForEncrKey);
-            _macKey = new SymmetricKey(password, _saltForMacKey);
+            var _encrKey = new SymmetricKey(password, _saltForEncrKey);
+            var _macKey = new SymmetricKey(password, _saltForMacKey);
             
             _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
 
             _entries = LoadEntriesFromDb();
-        }
-
-        //TODO: implement idisposable instead? We can use the idisposable of the new symmetrickeyclass.
-        ~StoredPasswordRepository()
-        {
-            _encrKey?.Dispose();
-            _macKey?.Dispose();
         }
 
         public void DeleteEntry(string domain)

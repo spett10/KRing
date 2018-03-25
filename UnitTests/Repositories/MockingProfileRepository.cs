@@ -29,7 +29,7 @@ namespace UnitTests
 
             _correctUser = new User(usernameRaw,
                                     password,
-                                    new SecurityData(passwordSalted, usernameSalted, saltForEncrKey, saltForMacKey, saltForHash, saltForHash));
+                                    new SecurityData(passwordSalted, usernameSalted, saltForHash, saltForHash));
         }
 
         public MockingProfileRepository(string username, SecureString password)
@@ -46,7 +46,7 @@ namespace UnitTests
 
             _correctUser = new User(username,
                                     password,
-                                    new SecurityData(passwordSalted, usernameSalted, saltForEncrKey, saltForMacKey, saltForHash, saltForHash));
+                                    new SecurityData(passwordSalted, usernameSalted, saltForHash, saltForHash));
             
         }
 

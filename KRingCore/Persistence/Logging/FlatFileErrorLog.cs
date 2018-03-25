@@ -47,15 +47,20 @@ namespace KRingCore.Persistence.Logging
             File.WriteAllText(_logIntegrityFile, string.Empty);
         }
 
+        //TODO, store mac salt next to mac? 
         public void AuthenticateLog(User user)
         {
             var bytes = File.ReadAllBytes(_logfile);
+            var salt = CryptoHashing.GenerateSalt(64);
 
-            using (SymmetricKey key = new SymmetricKey(user.Password, user.SecurityData.MacKeySalt))
+            using (SymmetricKey key = new SymmetricKey(user.Password, salt))
             {
                 var macBytes = CryptoHashing.HMACSHA256(bytes, key.Bytes);
 
-                File.WriteAllBytes(_logIntegrityFile, macBytes);
+                var saltBase64 = Convert.ToBase64String(salt);
+                var macBase64 = Convert.ToBase64String(macBytes);
+
+                File.WriteAllLines(_logIntegrityFile, new string[] { saltBase64, macBase64 });
             }            
         }
 
@@ -63,12 +68,14 @@ namespace KRingCore.Persistence.Logging
         {
             var bytes = File.ReadAllBytes(_logfile);
 
-            var storedMac = File.ReadAllBytes(_logIntegrityFile);
+            var storedLines = File.ReadAllLines(_logIntegrityFile);
+            var storedSalt = Convert.FromBase64String(storedLines.First());
+            var storedMac = Convert.FromBase64String(storedLines.Skip(1).First());
 
-            using (SymmetricKey key = new SymmetricKey(user.Password, user.SecurityData.MacKeySalt))
+            using (SymmetricKey key = new SymmetricKey(user.Password, storedSalt))
             {
                 var mac = CryptoHashing.HMACSHA256(bytes, key.Bytes);
-                
+
                 return CryptoHashing.CompareByteArraysNoTimeLeak(mac, storedMac);
             }
         }

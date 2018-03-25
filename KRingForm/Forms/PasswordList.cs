@@ -354,6 +354,7 @@ namespace KRingForm
         private async Task ReencryptAndSave(List<StoredPassword> passwords)
         {
             /* New password rep that derives and uses new keys, copy over existing passwords before overwriting. */
+            /* todo: do we need a new one? because the io will start deriving keys after each write. */
             _passwordRep = new StoredPasswordRepository(this._user.Password, passwords);
 
 
@@ -365,16 +366,6 @@ namespace KRingForm
                 Program._messageToUser("One or more passwords could not be encrypted - their data has been lost");
                 Program.Log("Save", "One or more passwords could not be encrypted");
             }
-
-            //TODO: do we need this if we let storedpassword handle the salt for enc and mac? 
-            await _profileRepository.WriteUserAsync(this._user);
-
-            /* Create new password rep, such that rehashing for potential re-encryption already starts now in a task since it takes quite a while */
-            _passwordRep = new StoredPasswordRepository(this._user.Password, passwords);
-
-            /* Generate new salt for user as well? Do we actually need this? */
-            //TODO: do we need this if we let storedpassword handle the salt for enc and mac? 
-            this._user.GenerateNewSalt();
         }
 
         private void PasswordList_Load(object sender, EventArgs e)

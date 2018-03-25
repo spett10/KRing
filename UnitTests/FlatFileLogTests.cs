@@ -43,7 +43,7 @@ namespace UnitTests
             /* Act */
             log.AuthenticateLog(user);
 
-            var otherUser = User.NewUserWithFreshSalt("SOMEONE ELSE", "PASSWORD123");
+            var otherUser = User.NewUserWithFreshSalt("SOMEONE ELSE", "PASSWORD1234");
 
             /* Assert */
             Assert.IsFalse(log.CheckLogIntegrity(otherUser));

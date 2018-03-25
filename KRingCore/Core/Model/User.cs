@@ -59,8 +59,6 @@ namespace KRingCore.Core.Model
         {
             var securityData = new SecurityData()
             {
-                EncryptionKeySalt = CryptoHashing.GenerateSalt(HashSaltSize),
-                MacKeySalt = CryptoHashing.GenerateSalt(HashSaltSize),
                 PasswordHashSalt = CryptoHashing.GenerateSalt(HashSaltSize),
                 UsernameHashSalt = CryptoHashing.GenerateSalt(HashSaltSize),
             };
@@ -92,7 +90,7 @@ namespace KRingCore.Core.Model
             var saltForEncrKey = CryptoHashing.GenerateSalt(HashSaltSize);
             var saltForMacKey = CryptoHashing.GenerateSalt(HashSaltSize);
 
-            var cookie = new SecurityData(saltedPassword, saltedUsername, saltForEncrKey, saltForMacKey, saltForPassword, saltForUser);
+            var cookie = new SecurityData(saltedPassword, saltedUsername, saltForPassword, saltForUser);
             return new User(newUserName, password, cookie);
         }
 
@@ -100,8 +98,6 @@ namespace KRingCore.Core.Model
         {
             return new User("Dummy", new SecureString(),
                                     new SecurityData(CryptoHashing.GenerateSalt(),
-                                                CryptoHashing.GenerateSalt(),
-                                                CryptoHashing.GenerateSalt(),
                                                 CryptoHashing.GenerateSalt(),
                                                 CryptoHashing.GenerateSalt(HashSaltSize),
                                                 CryptoHashing.GenerateSalt()));

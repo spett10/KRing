@@ -28,7 +28,7 @@ namespace UnitTests
             var passwordSalted = UserAuthenticator.CreateAuthenticationToken(password, hashSalt);
             
 
-            var cookie = new SecurityData(passwordSalted, userSalted, encrKeySalt, macKeySalt, hashSalt, hashSalt);
+            var cookie = new SecurityData(passwordSalted, userSalted, hashSalt, hashSalt);
 
             var securePassword = new SecureString();
             securePassword.PopulateWithString(password);
@@ -89,7 +89,7 @@ namespace UnitTests
             var macKeySalt = CryptoHashing.GenerateSalt();
             var hashSalt = CryptoHashing.GenerateSalt();
             
-            var otherCookie = new SecurityData(passwordSalted, userSalted, encrKeySalt, macKeySalt, hashSalt, hashSalt);
+            var otherCookie = new SecurityData(passwordSalted, userSalted, hashSalt, hashSalt);
             var otherUser = new User(username, securePassword, _user.SecurityData);
 
             repository.WriteUser(otherUser);
@@ -97,10 +97,7 @@ namespace UnitTests
             var readUser = repository.ReadUser();
 
             Assert.IsTrue(otherUser.SecurityData.HashedPassword.SequenceEqual(readUser.SecurityData.HashedPassword));
-
-            var keysaltIsEqual = CryptoHashing.CompareByteArraysNoTimeLeak(readUser.SecurityData.EncryptionKeySalt, otherUser.SecurityData.EncryptionKeySalt);
-            Assert.AreEqual(keysaltIsEqual, true);
-
+                        
             Assert.IsTrue(readUser.SecurityData.HashedPassword.SequenceEqual(otherUser.SecurityData.HashedPassword));
         }
     }

@@ -20,6 +20,8 @@ namespace KRingForm
 
         private async void createButton_Click(object sender, EventArgs e)
         {
+            this.Enabled = false;
+
             var username = usernameBox.Text;
 
             var password = passwordBox.Text;
@@ -38,6 +40,8 @@ namespace KRingForm
                 
                 var user = await Task<User>.Run(() => { return User.NewUserWithFreshSalt(username, password); });
 
+                
+
                 var writeUserTask = profileRep.WriteUserAsync(user);
 
                 /* Callback to set User */
@@ -47,10 +51,13 @@ namespace KRingForm
                 /* Update Profile */
                 await writeUserTask;
 
+                this.Enabled = true;
+
                 this.Close();
             }
             else
             {
+                this.Enabled = true;
                 Program._messageToUser("Password not strong enough - it must have at least one special character, one capital character and one digit! Or, it has to have a length of at least 16.");
             }            
         }
