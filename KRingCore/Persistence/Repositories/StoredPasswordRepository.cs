@@ -365,5 +365,10 @@ namespace KRingCore.Persistence.Repositories
         {
             return _entries.Where(e => e.Domain == domain).FirstOrDefault();
         }
+
+        public void ReplaceEntries(List<StoredPassword> entries)
+        {
+            _entries = entries;
+        }
     }
 }

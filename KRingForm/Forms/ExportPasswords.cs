@@ -46,10 +46,13 @@ namespace KRingForm.Forms
 
         private void okButton_Click(object sender, EventArgs e)
         {
+            this.Enabled = false;
+
             Notify();
 
             if (string.IsNullOrEmpty(this.passwordBox.Text))
             {
+                this.Enabled = true;
                 this.passwordEmptyLabel.Visible = true;
             }
             else
@@ -62,6 +65,7 @@ namespace KRingForm.Forms
 
                 Export(password);
 
+                this.Enabled = true;
                 this.Close();
             }
         }

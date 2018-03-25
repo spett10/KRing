@@ -20,7 +20,7 @@ namespace KRingCore.Core
             Configuration.PBKDF2DeriveIterations = 500000;
             Configuration.OLD_PBKDF2LoginIterations = 10000;
             Configuration.OLD_PBKDF2DeriveIterations = 10000;
-            Configuration.ExportImportIterations = 30000;
+            Configuration.ExportImportIterations = 500000;
             Configuration.TryOldValues = true;
         }
     }

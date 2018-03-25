@@ -27,6 +27,7 @@ namespace KRingCore.Persistence.Interfaces
         void UpdateEntry(StoredPassword updatedEntry);
         void WriteEntriesToDb();
         Task WriteEntriesToDbAsync();
+        void ReplaceEntries(List<StoredPassword> entries);
         bool DecryptionErrorOccured { get; }
         bool EncryptionErrorOccured { get; }
     }

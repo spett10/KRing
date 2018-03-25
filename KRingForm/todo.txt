@@ -23,12 +23,6 @@ Export/Import
 
 CURRENT TASK:
 
-31- use password importer / exporter for the DB part? right now the individual lines in the DB kinda leak the length of the passwords to some extend. Harder to see such things
-if we just reencrypt an entire blob instead? 
-	
-	status: the code seems to work. not too sure about the whole task stuff, but it works. maybe we need to start it more places early. we need
-	to remove all the references to keys and NSV IO from storedpasswordrepository, and remove the key generation salt from the users data.
-	it is all in the IO layer going forward. will make everything nicer. hopefully. AT LEAST passwordlist and storedpasswordrepository will be simpler. 
 
 
 BUGS:

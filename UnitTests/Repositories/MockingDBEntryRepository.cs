@@ -147,5 +147,10 @@ namespace UnitTests.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public void ReplaceEntries(List<StoredPassword> entries)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

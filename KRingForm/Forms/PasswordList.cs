@@ -307,6 +307,8 @@ namespace KRingForm
 
         private async void saveButton_Click(object sender, EventArgs e)
         {
+            this.Enabled = false;
+
             Task reencrypTask = ReencryptAndSave(_passwordRep.GetEntries().ToList());
 
             Notify();
@@ -317,6 +319,8 @@ namespace KRingForm
 
             _savedSoFar = true;
             _unsavedChanges = false;
+
+            this.Enabled = true;
         }
 
 
@@ -355,7 +359,7 @@ namespace KRingForm
         {
             /* New password rep that derives and uses new keys, copy over existing passwords before overwriting. */
             /* todo: do we need a new one? because the io will start deriving keys after each write. */
-            _passwordRep = new StoredPasswordRepository(this._user.Password, passwords);
+            _passwordRep.ReplaceEntries(passwords);
 
 
             /* Start write */
