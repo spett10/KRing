@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using KRingCore.Persistence.Model;
@@ -41,21 +42,35 @@ namespace KRingCore.Core.Services
             var encryptionIv = CryptoHashing.GenerateSalt(16);
             var ciphertext = cipher.EncryptThenHMac(Encoding.UTF8.GetBytes(json), encryptionIv, encrKey, macKey);
 
-            keyGenResult.EncryptionKey.Dispose();
-            keyGenResult.MacKey.Dispose();
-            
-            var result = new ExportedEncryptedPasswords()
+            var payload = new ExportedEncryptedPasswords()
             {
                 EncryptedPasswordsBase64 = Convert.ToBase64String(ciphertext.ciphertext),
                 EncryptionKeyIvBase64 = Convert.ToBase64String(keyGenResult.SaltForEncryptionKey),
                 EncryptionIvBase64 = Convert.ToBase64String(encryptionIv),
-                TagBase64 = Convert.ToBase64String(ciphertext.tag),
+                CiphertextTagBase64 = Convert.ToBase64String(ciphertext.tag),
                 MacKeyIvBase64 = Convert.ToBase64String(keyGenResult.SaltForMacKey)
             };
 
+
+            var serializedPayload = payload.ToJsonString();
+            var payloadMac = CryptoHashing.HMACSHA256(Encoding.ASCII.GetBytes(serializedPayload), keyGenResult.MacKey);
+
+            var result = new ExportedEncryptedPasswordsWithIntegrity()
+            {
+                EncryptedPasswordsBase64 = payload.EncryptedPasswordsBase64,
+                EncryptionKeyIvBase64 = payload.EncryptionKeyIvBase64,
+                EncryptionIvBase64 = payload.EncryptionIvBase64,
+                CiphertextTagBase64 = payload.CiphertextTagBase64,
+                MacKeyIvBase64 = payload.MacKeyIvBase64,
+                PayloadTagBase64 = Convert.ToBase64String(payloadMac)
+            };
+
+            keyGenResult.EncryptionKey.Dispose();
+            keyGenResult.MacKey.Dispose();
+
             RestartKeyGen(_password);
 
-            return JsonConvert.SerializeObject(result);
+            return result.ToJsonString();
         }
 
         public async Task<string> ExportPasswordsAsync(List<StoredPassword> passwords)
@@ -75,21 +90,35 @@ namespace KRingCore.Core.Services
             var encryptionIv = CryptoHashing.GenerateSalt(16);
             var ciphertext = cipher.EncryptThenHMac(Encoding.UTF8.GetBytes(json), encryptionIv, encrKey, macKey);
 
-            keyGenResult.EncryptionKey.Dispose();
-            keyGenResult.MacKey.Dispose();
-
-            var result = new ExportedEncryptedPasswords()
+            var payload = new ExportedEncryptedPasswords()
             {
                 EncryptedPasswordsBase64 = Convert.ToBase64String(ciphertext.ciphertext),
                 EncryptionKeyIvBase64 = Convert.ToBase64String(keyGenResult.SaltForEncryptionKey),
                 EncryptionIvBase64 = Convert.ToBase64String(encryptionIv),
-                TagBase64 = Convert.ToBase64String(ciphertext.tag),
+                CiphertextTagBase64 = Convert.ToBase64String(ciphertext.tag),
                 MacKeyIvBase64 = Convert.ToBase64String(keyGenResult.SaltForMacKey)
             };
 
+
+            var serializedPayload = payload.ToJsonString();
+            var payloadMac = CryptoHashing.HMACSHA256(Encoding.ASCII.GetBytes(serializedPayload), keyGenResult.MacKey);
+
+            var result = new ExportedEncryptedPasswordsWithIntegrity()
+            {
+                EncryptedPasswordsBase64 = payload.EncryptedPasswordsBase64,
+                EncryptionKeyIvBase64 = payload.EncryptionKeyIvBase64,
+                EncryptionIvBase64 = payload.EncryptionIvBase64,
+                CiphertextTagBase64 = payload.CiphertextTagBase64,
+                MacKeyIvBase64 = payload.MacKeyIvBase64,
+                PayloadTagBase64 = Convert.ToBase64String(payloadMac)
+            };
+
+            keyGenResult.EncryptionKey.Dispose();
+            keyGenResult.MacKey.Dispose();
+
             RestartKeyGen(_password);
 
-            return JsonConvert.SerializeObject(result);
+            return result.ToJsonString();
         }
 
         private void RestartKeyGen(SecureString password)

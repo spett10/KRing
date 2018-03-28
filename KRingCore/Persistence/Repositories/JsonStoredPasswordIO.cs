@@ -50,7 +50,7 @@ namespace KRingCore.Persistence.Repositories
             {
                 return _importer.ImportPasswords(_dataConfig.dbPath, _streamReader);
             }
-            catch (CryptographicException)
+            catch (Exception)
             {
                 DecryptionErrorOccured = true;
                 return new List<StoredPassword>();
@@ -63,7 +63,7 @@ namespace KRingCore.Persistence.Repositories
             {
                 return await _importer.ImportPasswordsAsync(_dataConfig.dbPath, _streamReader);
             }
-            catch (CryptographicException)
+            catch (Exception)
             {
                 DecryptionErrorOccured = true;
                 return new List<StoredPassword>();
@@ -97,7 +97,7 @@ namespace KRingCore.Persistence.Repositories
                 var data = _exporter.ExportPasswords(list);
                 _streamWriter.WriteToNewFile(_dataConfig.dbPath, data);
             }
-            catch(CryptographicException)
+            catch(Exception)
             {
                 EncryptionErrorOccured = true;
             }
@@ -110,7 +110,7 @@ namespace KRingCore.Persistence.Repositories
                 var data = await _exporter.ExportPasswordsAsync(list);
                 await _streamWriter.WriteToNewFileAsync(_dataConfig.dbPath, data);
             }
-            catch (CryptographicException)
+            catch (Exception)
             {
                 EncryptionErrorOccured = true;
             }

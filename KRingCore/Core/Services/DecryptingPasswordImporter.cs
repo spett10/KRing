@@ -27,10 +27,7 @@ namespace KRingCore.Core.Services
 
         public List<StoredPassword> ImportPasswords(string filename, IStreamReadToEnd streamReader)
         {
-            if (String.IsNullOrEmpty(filename))
-            {
-                throw new ArgumentException("Invalid argument");
-            }
+            ValidateInput(filename);
 
             try
             {
@@ -41,7 +38,7 @@ namespace KRingCore.Core.Services
                     return new List<StoredPassword>();
                 }
 
-                ExportedEncryptedPasswords passwords = JsonConvert.DeserializeObject<ExportedEncryptedPasswords>(contents);
+                ExportedEncryptedPasswordsWithIntegrity passwords = JsonConvert.DeserializeObject<ExportedEncryptedPasswordsWithIntegrity>(contents);
 
                 var iterations = Configuration.ExportImportIterations;
                 var raw = Encoding.UTF8.GetBytes(_password.ConvertToUnsecureString());
@@ -50,9 +47,19 @@ namespace KRingCore.Core.Services
 
                 var encrKey = keyGenResult.EncryptionKey.Bytes;
                 var macKey = keyGenResult.MacKey.Bytes;
+                
+                ExportedEncryptedPasswords payload = passwords.GetPayload();
+                var storedMac = Convert.FromBase64String(passwords.PayloadTagBase64);
+                var serializedPayload = payload.ToJsonString();
+                var computedMac = CryptoHashing.HMACSHA256(Encoding.ASCII.GetBytes(serializedPayload), keyGenResult.MacKey);
+
+                if(!CryptoHashing.CompareByteArraysNoTimeLeak(storedMac, computedMac))
+                {
+                    throw new CryptoHashing.IntegrityException();
+                }
 
                 var cipher = new AesHmacAuthenticatedCipher(System.Security.Cryptography.CipherMode.CBC, System.Security.Cryptography.PaddingMode.PKCS7);
-                var passwordsCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(passwords.EncryptedPasswordsBase64, passwords.TagBase64);
+                var passwordsCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(passwords.EncryptedPasswordsBase64, passwords.CiphertextTagBase64);
                 var encrIv = Convert.FromBase64String(passwords.EncryptionIvBase64);
 
                 var plaintextJson = Encoding.UTF8.GetString(cipher.VerifyMacThenDecrypt(passwordsCipher, encrKey, encrIv, macKey));
@@ -68,6 +75,10 @@ namespace KRingCore.Core.Services
             {
                 throw c;
             }
+            catch(CryptoHashing.IntegrityException c)
+            {
+                throw c;
+            }
             catch (Exception)
             {
                 throw new FormatException("File does not contain a valid format.");
@@ -77,10 +88,7 @@ namespace KRingCore.Core.Services
 
         public async Task<List<StoredPassword>> ImportPasswordsAsync(string filename, IStreamReadToEnd streamReader)
         {
-            if (String.IsNullOrEmpty(filename))
-            {
-                throw new ArgumentException("Invalid argument");
-            }
+            ValidateInput(filename);
 
             try
             {
@@ -91,7 +99,7 @@ namespace KRingCore.Core.Services
                     return new List<StoredPassword>();
                 }
 
-                ExportedEncryptedPasswords passwords = JsonConvert.DeserializeObject<ExportedEncryptedPasswords>(contents);
+                ExportedEncryptedPasswordsWithIntegrity passwords = JsonConvert.DeserializeObject<ExportedEncryptedPasswordsWithIntegrity>(contents);
 
                 var iterations = Configuration.ExportImportIterations;
                 var raw = Encoding.UTF8.GetBytes(_password.ConvertToUnsecureString());
@@ -99,9 +107,18 @@ namespace KRingCore.Core.Services
 
                 var encrKey = keyGenResult.EncryptionKey.Bytes;
                 var macKey = keyGenResult.MacKey.Bytes;
+                
+                ExportedEncryptedPasswords payload = passwords.GetPayload();
+                var storedMac = Convert.FromBase64String(passwords.PayloadTagBase64);
+                var computedMac = CryptoHashing.HMACSHA256(Encoding.ASCII.GetBytes(payload.ToJsonString()), macKey);
+
+                if (!CryptoHashing.CompareByteArraysNoTimeLeak(storedMac, computedMac))
+                {
+                    throw new CryptoHashing.IntegrityException();
+                }
 
                 var cipher = new AesHmacAuthenticatedCipher(System.Security.Cryptography.CipherMode.CBC, System.Security.Cryptography.PaddingMode.PKCS7);
-                var passwordsCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(passwords.EncryptedPasswordsBase64, passwords.TagBase64);
+                var passwordsCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(passwords.EncryptedPasswordsBase64, passwords.CiphertextTagBase64);
                 var encrIv = Convert.FromBase64String(passwords.EncryptionIvBase64);
 
                 var plaintextJson = Encoding.UTF8.GetString(cipher.VerifyMacThenDecrypt(passwordsCipher, encrKey, encrIv, macKey));
@@ -120,6 +137,14 @@ namespace KRingCore.Core.Services
             catch (Exception)
             {
                 throw new FormatException("File does not contain a valid format.");
+            }
+        }
+
+        private void ValidateInput(string filename)
+        {
+            if (String.IsNullOrEmpty(filename))
+            {
+                throw new ArgumentException("Invalid argument");
             }
         }
     }

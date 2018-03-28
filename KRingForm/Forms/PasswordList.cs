@@ -71,7 +71,7 @@ namespace KRingForm
             if (_passwordRep.DecryptionErrorOccured)
             {
                 _passwordRep.DeleteAllEntries();
-                string message = "One or more passwords were corrupted and could not be decrypted. They have thus been deleted";
+                string message = "Database could not be decrypted, and/or it's integrity had been compromised. Database deleted.";
                 MessageBox.Show(message);
                 Program.Log("PasswordList", message);
             }

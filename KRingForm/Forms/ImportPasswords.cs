@@ -1,5 +1,6 @@
 ﻿using KRingCore.Core.Services;
 using KRingCore.Persistence.Interfaces;
+using KRingCore.Security;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -88,6 +89,10 @@ namespace KRingForm.Forms
             {
                 // Password was invalid.
                 _errorCallback("Password entered for decryption was incorrect. please try again");
+            }
+            catch(CryptoHashing.IntegrityException)
+            {
+                _errorCallback("Imported file integrity compromised. Consider deleting file.");
             }
             catch(Exception)
             {

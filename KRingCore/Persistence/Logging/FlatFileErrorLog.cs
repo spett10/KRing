@@ -47,7 +47,6 @@ namespace KRingCore.Persistence.Logging
             File.WriteAllText(_logIntegrityFile, string.Empty);
         }
 
-        //TODO, store mac salt next to mac? 
         public void AuthenticateLog(User user)
         {
             var bytes = File.ReadAllBytes(_logfile);

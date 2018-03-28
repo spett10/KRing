@@ -9,18 +9,6 @@ Then we can change password for the user, but not need to change the key used fo
 24. clean up service stuff, some of it belongs in persistence (file io)
 
 
-
-
-
-
-
-
-Export/Import
-	-the tag created for export should be a tag on the fields in the exported format, not just the cipher text itself? mac what you mean and all that. 
-		start with export doing it, then save the exported stuff, then fix the import afterwards. 
-		then you can go release -> export, then implement the import, then release, try importing the export. then you dont loose passwords. 
-
-
 CURRENT TASK:
 
 

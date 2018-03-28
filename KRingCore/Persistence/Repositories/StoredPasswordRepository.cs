@@ -325,7 +325,7 @@ namespace KRingCore.Persistence.Repositories
             catch (Exception)
             {
                 _entries = new List<StoredPassword>();
-                throw new Exception("Could not load passwords - possibly data is corrupted!");
+                return _entries;
             }
             finally
             {
@@ -343,11 +343,11 @@ namespace KRingCore.Persistence.Repositories
             catch(Exception)
             {
                 _entries = new List<StoredPassword>();
-                throw new Exception("Could not load passwords - possibly data is corrupted!");
+                return _entries;
             }
             finally
             {
-                DecryptionErrorOccured = _passwordIO.Reader.DecryptionErrorOccured;
+                DecryptionErrorOccured = _passwordIO.Reader.DecryptionErrorOccured;                
             }
         }
 

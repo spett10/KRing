@@ -104,7 +104,7 @@ namespace UnitTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(CryptographicException))]
+        [ExpectedException(typeof(CryptoHashing.IntegrityException))]
         public void ExportThenImport_WrongPassword_ShouldThrowException()
         {
             var securePassword = new SecureString();
