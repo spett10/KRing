@@ -132,6 +132,7 @@
             // 
             // inactiveTimer
             // 
+            this.inactiveTimer.Interval = 500;
             this.inactiveTimer.Tick += new System.EventHandler(this.inactiveTimer_Tick);
             // 
             // SearchBar
