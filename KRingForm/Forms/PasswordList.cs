@@ -51,7 +51,7 @@ namespace KRingForm
         private bool _exitWithoutSaving;
         private bool _userExiting;
 
-        private const int secondsToWait = 120;
+        private const int secondsToWait = 500;
         
         public PasswordList(User user, IProfileRepository profileRepository)
         {
