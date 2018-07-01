@@ -56,6 +56,7 @@ namespace KRingForm
                     {
                         _messageToUser("Error: " + e.Message);
                         Log("Main", e.Message);
+                        Log("Main", e.ToString());
                     }
                 }
 

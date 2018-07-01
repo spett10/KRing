@@ -25,7 +25,7 @@ namespace KRingCore.Persistence.Logging
             _logIntegrityFile = ConfigurationManager.AppSettings["relativeLogIntegrityPathDebug"];
 #else
             _logfile = base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeLogPath"];
-            _logIntegrityFile = ConfigurationManager.AppSettings["relativeLogIntegrityPath"];
+            _logIntegrityFile = base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeLogIntegrityPath"];
 #endif
 
         }
