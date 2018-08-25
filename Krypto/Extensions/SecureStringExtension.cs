@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace KRingCore.Extensions
+namespace Krypto.Extensions
 {
     public static class SecureStringExtension
     {

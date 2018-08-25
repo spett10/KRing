@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Security;
 using System.Windows.Forms;
-using KRingCore.Extensions;
+using Krypto.Extensions;
 using KRingCore.Core.Model;
 using KRingCore.Persistence.Repositories;
 using KRingCore.Core.Interfaces;

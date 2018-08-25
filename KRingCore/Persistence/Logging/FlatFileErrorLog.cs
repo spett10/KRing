@@ -4,12 +4,9 @@ using System.Configuration;
 using System.IO;
 using KRingCore.Core;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using KRingCore.Core.Model;
-using System.Security.Cryptography;
-using KRingCore.Core.Services;
-using KRingCore.Security;
+using Krypto;
+using Krypto.Model;
 
 namespace KRingCore.Persistence.Logging
 {
@@ -52,7 +49,7 @@ namespace KRingCore.Persistence.Logging
             var bytes = File.ReadAllBytes(_logfile);
             var salt = CryptoHashing.GenerateSalt(64);
 
-            using (SymmetricKey key = new SymmetricKey(user.Password, salt))
+            using (SymmetricKey key = new SymmetricKey(user.Password, salt, Core.Configuration.PBKDF2DeriveIterations))
             {
                 var macBytes = CryptoHashing.HMACSHA256(bytes, key.Bytes);
 
@@ -71,7 +68,7 @@ namespace KRingCore.Persistence.Logging
             var storedSalt = Convert.FromBase64String(storedLines.First());
             var storedMac = Convert.FromBase64String(storedLines.Skip(1).First());
 
-            using (SymmetricKey key = new SymmetricKey(user.Password, storedSalt))
+            using (SymmetricKey key = new SymmetricKey(user.Password, storedSalt, Core.Configuration.PBKDF2DeriveIterations))
             {
                 var mac = CryptoHashing.HMACSHA256(bytes, key.Bytes);
 

@@ -6,9 +6,9 @@ using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Parameters;
 
-using KRingCore.Core.Model;
+using Krypto.Model;
 
-namespace KRingCore.Security
+namespace Krypto
 {
     public static class CryptoHashing
     {

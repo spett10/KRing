@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace KRingCore.Security
+namespace Krypto.Cipher
 {
     /// <summary>
     /// A concrete implementation of the generic base class. Uses AES and HMACSHA256. 

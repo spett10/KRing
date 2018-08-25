@@ -1,33 +1,30 @@
-﻿using KRingCore.Core.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Krypto;
+using Krypto.Model;
 using System.Security;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace KRingCore.Security
+namespace Krypto.KeyGen
 {
     public class KeyGenerator
     {
         private static readonly int HashSaltSizeBytes = 64;
 
-        public Task<KeyGenResult> GetGenerationTask(SecureString password)
+        public Task<KeyGenResult> GetGenerationTask(SecureString password, int iteration)
         {
 
             var encryptionKeySalt = CryptoHashing.GenerateSalt(HashSaltSizeBytes);
             var macKeySalt = CryptoHashing.GenerateSalt(HashSaltSizeBytes);
 
-            return GetGenerationTask(password, encryptionKeySalt, macKeySalt);
+            return GetGenerationTask(password, encryptionKeySalt, macKeySalt, iteration);
 
 
         }
 
-        public Task<KeyGenResult> GetGenerationTask(SecureString password, byte[] encryptionKeySalt, byte[] macKeySalt)
+        public Task<KeyGenResult> GetGenerationTask(SecureString password, byte[] encryptionKeySalt, byte[] macKeySalt, int iteration)
         {
             return Task.Run(() => {
-                var encryptionKey = new SymmetricKey(password, encryptionKeySalt);
-                var macKey = new SymmetricKey(password, macKeySalt);
+                var encryptionKey = new SymmetricKey(password, encryptionKeySalt, iteration);
+                var macKey = new SymmetricKey(password, macKeySalt, iteration);
 
                 return new KeyGenResult()
                 {

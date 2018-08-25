@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using KRingCore.Core.Model;
-using KRingCore.Security;
-using KRingCore.Extensions;
+using Krypto;
+using Krypto.Extensions;
 using KRingCore.Persistence.Repositories;
 using System.Security;
 using System.Linq;

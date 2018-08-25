@@ -2,7 +2,8 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
 using System.Security.Cryptography;
-using KRingCore.Security;
+using Krypto.Cipher;
+using Krypto;
 using System.Diagnostics;
 using System.Linq;
 

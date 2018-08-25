@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{B1645651-5CC1-4FA3-BEC4-042E1CFA65C1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KRingForm", "KRingForm\KRingForm.csproj", "{4897917B-1EE5-47B2-94D7-03439BC193AD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KRingCore", "KRingCore\KRingCore.csproj", "{874A2636-5A37-48B6-B057-A78B51251A8B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Krypto", "Krypto\Krypto.csproj", "{91207FB2-94A9-4672-B732-BFF8E34DE2B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{874A2636-5A37-48B6-B057-A78B51251A8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{874A2636-5A37-48B6-B057-A78B51251A8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{874A2636-5A37-48B6-B057-A78B51251A8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91207FB2-94A9-4672-B732-BFF8E34DE2B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91207FB2-94A9-4672-B732-BFF8E34DE2B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91207FB2-94A9-4672-B732-BFF8E34DE2B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91207FB2-94A9-4672-B732-BFF8E34DE2B3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

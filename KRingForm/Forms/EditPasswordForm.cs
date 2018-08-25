@@ -1,7 +1,7 @@
 ﻿using System;
 using KRingCore.Persistence.Interfaces;
 using KRingCore.Persistence.Model;
-using KRingCore.Extensions;
+using Krypto.Extensions;
 using System.Windows.Forms;
 using static KRingForm.PasswordList;
 

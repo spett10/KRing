@@ -1,15 +1,9 @@
 ﻿using KRingCore.Core.Services;
 using KRingCore.Persistence.Model;
+using Krypto.KeyGen;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Forms;
 using static KRingForm.PasswordList;
 
@@ -83,7 +77,7 @@ namespace KRingForm.Forms
 
         private void Export(SecureString password)
         {
-            var exporter = new EncryptingPasswordExporter(new KRingCore.Security.KeyGenerator(), password);
+            var exporter = new EncryptingPasswordExporter(new KeyGenerator(), password);
 
             var exportedJson = exporter.ExportPasswords(_passwords);
 

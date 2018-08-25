@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Security.Cryptography;
-using static KRingCore.Security.AesHmacAuthenticatedCipher;
+using static Krypto.Cipher.AesHmacAuthenticatedCipher;
 
-namespace KRingCore.Security
+namespace Krypto.Cipher
 {
     /// <summary>
     /// Base class for an authenticated cipher. Needs a symmetric encryption algorithm and a keyed hash algorithm. 

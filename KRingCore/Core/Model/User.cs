@@ -1,6 +1,6 @@
 ﻿using System.Security;
-using KRingCore.Extensions;
-using KRingCore.Security;
+using Krypto.Extensions;
+using Krypto;
 using KRingCore.Core.Services;
 
 namespace KRingCore.Core.Model

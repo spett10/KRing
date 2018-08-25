@@ -57,7 +57,6 @@
     <Compile Include="Core\ActionType.cs" />
     <Compile Include="Core\Configuration.cs" />
     <Compile Include="Core\Model\ExportedEncryptedPasswords.cs" />
-    <Compile Include="Core\Model\SymmetricKey.cs" />
     <Compile Include="Core\Services\DecryptingPasswordImporter.cs" />
     <Compile Include="Core\Services\EncryptingPasswordExporter.cs" />
     <Compile Include="Core\Services\IDecryptingPasswordImporter.cs" />
@@ -66,7 +65,6 @@
     <Compile Include="Core\Services\StreamReaderToEnd.cs" />
     <Compile Include="Core\Services\StreamWriterToEnd.cs" />
     <Compile Include="Core\Services\UserAuthenticator.cs" />
-    <Compile Include="Extensions\ByteArrayExtensions.cs" />
     <Compile Include="Persistence\FileStreamReadToEnd.cs" />
     <Compile Include="Persistence\Interfaces\IStreamReadToEnd.cs" />
     <Compile Include="Persistence\Repositories\JsonStoredPasswordIO.cs" />
@@ -75,9 +73,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Security\AesHmacAuthenticatedCipher.cs" />
-    <Compile Include="Security\AuthenticatedCipher.cs" />
-    <Compile Include="Security\CryptoHashing.cs" />
     <Compile Include="Core\Interfaces\IPasswordRule.cs" />
     <Compile Include="Core\Interfaces\IPasswordUI.cs" />
     <Compile Include="Core\Model\SecurityData.cs" />
@@ -87,8 +82,6 @@
     <Compile Include="Core\ReleasePathDependent.cs" />
     <Compile Include="Core\Services\IPasswordImporter.cs" />
     <Compile Include="Core\Services\PlaintextPasswordImporter.cs" />
-    <Compile Include="Extensions\CharArrayExtension.cs" />
-    <Compile Include="Extensions\SecureStringExtension.cs" />
     <Compile Include="Persistence\Converter.cs" />
     <Compile Include="Persistence\DataConfig.cs" />
     <Compile Include="Persistence\FileUtil.cs" />
@@ -106,8 +99,6 @@
     <Compile Include="Persistence\Repositories\ReadToEndStoredPasswordReader.cs" />
     <Compile Include="Persistence\Repositories\StoredPasswordRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Security\KeyGenerator.cs" />
-    <Compile Include="Security\KeyGenResult.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -119,6 +110,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Krypto\Krypto.csproj">
+      <Project>{91207fb2-94a9-4672-b732-bff8e34de2b3}</Project>
+      <Name>Krypto</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

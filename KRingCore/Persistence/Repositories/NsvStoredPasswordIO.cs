@@ -1,4 +1,4 @@
-﻿using KRingCore.Core.Model;
+﻿using Krypto.Model;
 using KRingCore.Interfaces;
 using KRingCore.Persistence.Interfaces;
 using System.Security;

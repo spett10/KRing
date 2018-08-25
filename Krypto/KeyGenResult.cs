@@ -1,6 +1,6 @@
-﻿using KRingCore.Core.Model;
+﻿using Krypto.Model;
 
-namespace KRingCore.Security
+namespace Krypto.KeyGen
 {
     public class KeyGenResult
     {

@@ -1,9 +1,7 @@
 ﻿using System.Text.RegularExpressions;
-using KRingCore.Interfaces;
 using System.Security;
 using KRingCore.Core.Interfaces;
-using KRingCore.Extensions;
-using System;
+using Krypto.Extensions;
 using System.Collections.Generic;
 
 namespace KRingCore.Core

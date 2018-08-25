@@ -1,16 +1,10 @@
 ﻿using KRingCore.Core.Services;
 using KRingCore.Persistence.Interfaces;
-using KRingCore.Security;
+using Krypto;
+using Krypto.KeyGen;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Security;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static KRingForm.PasswordList;
 
@@ -77,7 +71,7 @@ namespace KRingForm.Forms
 
         private void Import(SecureString password)
         {
-            var importer = new DecryptingPasswordImporter(new KRingCore.Security.KeyGenerator(), password);
+            var importer = new DecryptingPasswordImporter(new KeyGenerator(), password);
 
             try
             {

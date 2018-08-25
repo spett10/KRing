@@ -1,6 +1,6 @@
 ﻿using KRingCore.Core.Model;
 using KRingCore.Core.Services;
-using KRingCore.Extensions;
+using Krypto.Extensions;
 using KRingCore.Persistence.Interfaces;
 using KRingCore.Persistence.Model;
 using KRingCore.Persistence.Repositories;

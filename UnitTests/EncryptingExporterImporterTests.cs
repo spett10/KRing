@@ -1,15 +1,13 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using KRingCore.Persistence.Model;
 using System.Security;
 using KRingCore.Core.Services;
 using KRingCore.Persistence.Interfaces;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
-using KRingCore.Security;
+using Krypto;
+using Krypto.KeyGen;
 
 namespace UnitTests
 {
@@ -114,7 +112,7 @@ namespace UnitTests
                 securePassword.AppendChar(c);
             }
 
-            var exporter = new EncryptingPasswordExporter(new KRingCore.Security.KeyGenerator(), securePassword);
+            var exporter = new EncryptingPasswordExporter(new KeyGenerator(), securePassword);
             var exported = exporter.ExportPasswords(this.passwords);
 
             Assert.IsTrue(!string.IsNullOrEmpty(exported));
@@ -124,7 +122,7 @@ namespace UnitTests
             //Alter password so its wrong
             securePassword.AppendChar('e');
 
-            var importer = new DecryptingPasswordImporter(new KRingCore.Security.KeyGenerator(), securePassword);
+            var importer = new DecryptingPasswordImporter(new KeyGenerator(), securePassword);
             var importedList = importer.ImportPasswords("test.txt", mockReader);
         }
 

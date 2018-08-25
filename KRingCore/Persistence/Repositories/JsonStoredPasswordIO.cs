@@ -5,8 +5,8 @@ using KRingCore.Persistence.Interfaces;
 using KRingCore.Persistence.Model;
 using KRingCore.Core.Services;
 using KRingCore.Interfaces;
-using System.Security.Cryptography;
 using System.Security;
+using Krypto.KeyGen;
 
 namespace KRingCore.Persistence.Repositories
 {
@@ -34,7 +34,7 @@ namespace KRingCore.Persistence.Repositories
 
         public JsonPasswordReader(IDataConfig dataConfig, SecureString password)
         {
-            _importer = new DecryptingPasswordImporter(new Security.KeyGenerator(), password);
+            _importer = new DecryptingPasswordImporter(new KeyGenerator(), password);
             _dataConfig = dataConfig;
             _password = password;
             _streamReader = new StreamReaderToEnd();
@@ -82,7 +82,7 @@ namespace KRingCore.Persistence.Repositories
 
         public JsonPasswordWriter(IDataConfig dataConfig, SecureString password)
         {
-            _exporter = new EncryptingPasswordExporter(new Security.KeyGenerator(), password);
+            _exporter = new EncryptingPasswordExporter(new KeyGenerator(), password);
             _dataConfig = dataConfig;
             _streamWriter = new StreamWriterToEnd();
             _password = password;

@@ -5,12 +5,14 @@ using KRingCore.Persistence.Model;
 using System.IO;
 using Newtonsoft.Json;
 using KRingCore.Core.Model;
-using KRingCore.Extensions;
+using Krypto.Extensions;
 using System.Security;
 using System.Text;
-using KRingCore.Security;
+using Krypto;
+using Krypto.KeyGen;
 using KRingCore.Persistence.Interfaces;
 using System.Security.Cryptography;
+using Krypto.Cipher;
 
 namespace KRingCore.Core.Services
 {
@@ -43,7 +45,10 @@ namespace KRingCore.Core.Services
                 var iterations = Configuration.ExportImportIterations;
                 var raw = Encoding.UTF8.GetBytes(_password.ConvertToUnsecureString());
 
-                var keyGenResult = _generator.GetGenerationTask(_password, Convert.FromBase64String(passwords.EncryptionKeyIvBase64), Convert.FromBase64String(passwords.MacKeyIvBase64)).Result;
+                var keyGenResult = _generator.GetGenerationTask(_password, 
+                                                                Convert.FromBase64String(passwords.EncryptionKeyIvBase64), 
+                                                                Convert.FromBase64String(passwords.MacKeyIvBase64), 
+                                                                iterations).Result;
 
                 var encrKey = keyGenResult.EncryptionKey.Bytes;
                 var macKey = keyGenResult.MacKey.Bytes;
@@ -58,7 +63,7 @@ namespace KRingCore.Core.Services
                     throw new CryptoHashing.IntegrityException();
                 }
 
-                var cipher = new AesHmacAuthenticatedCipher(System.Security.Cryptography.CipherMode.CBC, System.Security.Cryptography.PaddingMode.PKCS7);
+                var cipher = new AesHmacAuthenticatedCipher(CipherMode.CBC, PaddingMode.PKCS7);
                 var passwordsCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(passwords.EncryptedPasswordsBase64, passwords.CiphertextTagBase64);
                 var encrIv = Convert.FromBase64String(passwords.EncryptionIvBase64);
 
@@ -103,7 +108,11 @@ namespace KRingCore.Core.Services
 
                 var iterations = Configuration.ExportImportIterations;
                 var raw = Encoding.UTF8.GetBytes(_password.ConvertToUnsecureString());
-                var keyGenResult = await _generator.GetGenerationTask(_password, Convert.FromBase64String(passwords.EncryptionKeyIvBase64), Convert.FromBase64String(passwords.MacKeyIvBase64));
+
+                var keyGenResult = await _generator.GetGenerationTask(_password, 
+                                                                      Convert.FromBase64String(passwords.EncryptionKeyIvBase64), 
+                                                                      Convert.FromBase64String(passwords.MacKeyIvBase64), 
+                                                                      iterations);
 
                 var encrKey = keyGenResult.EncryptionKey.Bytes;
                 var macKey = keyGenResult.MacKey.Bytes;

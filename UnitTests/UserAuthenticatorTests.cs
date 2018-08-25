@@ -1,5 +1,5 @@
 ﻿using KRingCore.Core.Services;
-using KRingCore.Security;
+using Krypto;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text;
 

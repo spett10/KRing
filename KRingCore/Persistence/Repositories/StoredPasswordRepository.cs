@@ -2,14 +2,14 @@
 using KRingCore.Persistence.Model;
 using System;
 using System.Collections.Generic;
-using KRingCore.Security;
+using Krypto.Model;
+using Krypto.KeyGen;
 using System.Linq;
 using System.Security;
 using System.Configuration;
 using KRingCore.Persistence.Interfaces;
 using KRingCore.Interfaces;
 using System.Threading.Tasks;
-using KRingCore.Core.Model;
 
 namespace KRingCore.Persistence.Repositories
 {
@@ -95,8 +95,8 @@ namespace KRingCore.Persistence.Repositories
             var _saltForMacKey = macKeySalt;
             var _password = password;
 
-            var _encrKey = new SymmetricKey(password, _saltForEncrKey);
-            var _macKey = new SymmetricKey(password, _saltForMacKey);
+            var _encrKey = new SymmetricKey(password, _saltForEncrKey, Core.Configuration.PBKDF2DeriveIterations);
+            var _macKey = new SymmetricKey(password, _saltForMacKey, Core.Configuration.PBKDF2DeriveIterations);
             
             _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
 
@@ -127,8 +127,8 @@ namespace KRingCore.Persistence.Repositories
             var _saltForMacKey = macKeySalt;
             var _password = password;
 
-            var _encrKey = new SymmetricKey(password, _saltForEncrKey);
-            var _macKey = new SymmetricKey(password, _saltForMacKey);
+            var _encrKey = new SymmetricKey(password, _saltForEncrKey, Core.Configuration.PBKDF2DeriveIterations);
+            var _macKey = new SymmetricKey(password, _saltForMacKey, Core.Configuration.PBKDF2DeriveIterations);
 
             _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
 
@@ -181,8 +181,8 @@ namespace KRingCore.Persistence.Repositories
             var _saltForMacKey = macKeySalt;
             _password = password;
 
-            var _encrKey = new SymmetricKey(password, _saltForEncrKey);
-            var _macKey = new SymmetricKey(password, _saltForMacKey);
+            var _encrKey = new SymmetricKey(password, _saltForEncrKey, Core.Configuration.PBKDF2DeriveIterations);
+            var _macKey = new SymmetricKey(password, _saltForMacKey, Core.Configuration.PBKDF2DeriveIterations);
             
             _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
 

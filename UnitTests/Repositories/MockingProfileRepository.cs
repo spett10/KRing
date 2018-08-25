@@ -2,9 +2,9 @@
 using KRingCore.Persistence.Interfaces;
 using KRingCore.Core.Model;
 using System.Security;
-using KRingCore.Extensions;
+using Krypto.Extensions;
 using System.Threading.Tasks;
-using KRingCore.Security;
+using Krypto;
 using KRingCore.Core.Services;
 
 namespace UnitTests

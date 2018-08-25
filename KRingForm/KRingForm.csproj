@@ -234,6 +234,10 @@
       <Project>{874a2636-5a37-48b6-b057-a78b51251a8b}</Project>
       <Name>KRingCore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Krypto\Krypto.csproj">
+      <Project>{91207fb2-94a9-4672-b732-bff8e34de2b3}</Project>
+      <Name>Krypto</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

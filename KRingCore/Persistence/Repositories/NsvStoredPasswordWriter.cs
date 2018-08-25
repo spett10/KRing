@@ -3,12 +3,13 @@ using System.Threading.Tasks;
 using System.IO;
 using KRingCore.Persistence.Interfaces;
 using System.Text;
-using KRingCore.Security;
+using Krypto;
 using KRingCore.Persistence.Model;
 using System.Collections.Generic;
 using KRingCore.Interfaces;
 using System.Security;
-using KRingCore.Core.Model;
+using Krypto.Model;
+using Krypto.Cipher;
 
 namespace KRingCore.Persistence.Repositories
 {

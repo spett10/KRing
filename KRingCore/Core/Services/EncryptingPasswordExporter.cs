@@ -1,14 +1,15 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using KRingCore.Persistence.Model;
 using System.Security;
 using Newtonsoft.Json;
-using KRingCore.Security;
-using KRingCore.Extensions;
+using Krypto;
+using Krypto.KeyGen;
+using Krypto.Extensions;
 using System.Text;
 using KRingCore.Core.Model;
+using Krypto.Cipher;
 
 namespace KRingCore.Core.Services
 {
@@ -22,7 +23,7 @@ namespace KRingCore.Core.Services
         {
             _generator = generator;
             _password = password;
-            _keyGenTask = _generator.GetGenerationTask(password);
+            _keyGenTask = _generator.GetGenerationTask(password, Configuration.PBKDF2DeriveIterations);
         }
         
         public string ExportPasswords(List<StoredPassword> passwords)
@@ -123,7 +124,7 @@ namespace KRingCore.Core.Services
 
         private void RestartKeyGen(SecureString password)
         {
-            _keyGenTask = _generator.GetGenerationTask(password);
+            _keyGenTask = _generator.GetGenerationTask(password, Configuration.PBKDF2DeriveIterations);
         }
     }
 }
