@@ -32,9 +32,9 @@ namespace KRingForm
                 return;
             }
 
-            var score = PasswordAdvisor.CheckStrength(password);
+            //var score = PasswordAdvisor.CheckStrength(password);
 
-            if (IsPasswordStrongEnough(score))
+            if (true)
             {
                 var profileRep = new ProfileRepository();
                 

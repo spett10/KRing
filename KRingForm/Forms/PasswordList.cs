@@ -106,13 +106,12 @@ namespace KRingForm
             this.Close();
         }
 
-        /* TODO: make async? */
+        /* todo: This logic is ugly. Plus, other functionality (refrehs list) depends on this tightly. Can we somehow refactor? */
         public void UpdateList(OperationType operation, Form disabled)
         {
-            /* we always dsiable something prior to this callback */
+            /* we always disable something prior to this callback */
             disabled.Enabled = true;
 
-            /* TODO: if no operation, just exit early??? */
             if(operation == OperationType.NoOperation)
             {
                 Notify();
@@ -128,7 +127,9 @@ namespace KRingForm
                 passwordListBox.Items.Add(pswd.Domain);
             }
 
-            if(operation != OperationType.SavePassword && operation != OperationType.NoOperation)
+            var operationsWithNoChanges = new List<OperationType>() { OperationType.SavePassword, OperationType.NoOperation, OperationType.RefreshList };
+
+            if(!operationsWithNoChanges.Contains(operation))
             {
                 _unsavedChanges = true;
                 ShowSaveButton();
@@ -329,9 +330,9 @@ namespace KRingForm
             var searchString = SearchBar.Text;
 
             /* If search text is empty, show entire list */
-            if (searchString == string.Empty || searchString == null)
+            if (String.IsNullOrEmpty(searchString))
             {
-                UpdateList(OperationType.NoOperation, this);
+                UpdateList(OperationType.RefreshList, this);
 
                 return;
             }
