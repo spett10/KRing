@@ -1,25 +1,19 @@
 #These files are required to build and run tests. 
 
-New-Item -Path "KRingForm" -Name "Data" -ItemType "directory"
-New-Item -Path "KRingForm\Data" -Name "Debug" -ItemType "directory"
-New-Item -Path "KRingForm\Data" -Name "Release" -ItemType "directory"
+New-Item -Path "KRingForm" -Name "Data" -ItemType "directory" -Force
+New-Item -Path "KRingForm\Data" -Name "Debug" -ItemType "directory" -Force
+New-Item -Path "KRingForm\Data" -Name "Release" -ItemType "directory" -Force
 
-New-Item -Path "KRingForm\Data\Debug" -Name "profile.txt" -ItemType "file"
-New-Item -Path "KRingForm\Data\Debug" -Name "db.txt" -ItemType "file"
-New-Item -Path "KRingForm\Data\Debug" -Name "logIntegrity.txt" -ItemType "file"
+[String[]]$files = "profile.txt", "db.txt", "logIntegrity.txt"
 
-New-Item -Path "KRingForm\Data\Release" -Name "profile.txt" -ItemType "file"
-New-Item -Path "KRingForm\Data\Release" -Name "db.txt" -ItemType "file"
-New-Item -Path "KRingForm\Data\Release" -Name "logIntegrity.txt" -ItemType "file"
+foreach ($file in $files) {
+    New-Item -Path "KRingForm\Data\*" -Name $file -ItemType "file" -Force    
+}
 
-New-Item -Path "UnitTests" -Name "Data" -ItemType "directory"
-New-Item -Path "UnitTests\Data" -Name "Debug" -ItemType "directory"
-New-Item -Path "UnitTests\Data" -Name "Release" -ItemType "directory"
+New-Item -Path "UnitTests" -Name "Data" -ItemType "directory" -Force
+New-Item -Path "UnitTests\Data" -Name "Debug" -ItemType "directory" -Force
+New-Item -Path "UnitTests\Data" -Name "Release" -ItemType "directory" -Force
 
-New-Item -Path "UnitTests\Data\Debug" -Name "profile.txt" -ItemType "file"
-New-Item -Path "UnitTests\Data\Debug" -Name "db.txt" -ItemType "file"
-New-Item -Path "UnitTests\Data\Debug" -Name "logIntegrity.txt" -ItemType "file"
-
-New-Item -Path "UnitTests\Data\Release" -Name "profile.txt" -ItemType "file"
-New-Item -Path "UnitTests\Data\Release" -Name "db.txt" -ItemType "file"
-New-Item -Path "UnitTests\Data\Release" -Name "logIntegrity.txt" -ItemType "file"
+foreach ($file in $files) {
+    New-Item -Path "UnitTests\Data\*" -Name $file -ItemType "file" -Force    
+}
