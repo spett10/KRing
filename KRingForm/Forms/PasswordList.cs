@@ -338,7 +338,7 @@ namespace KRingForm
             var searchString = SearchBar.Text;
 
             /* If search text is empty, show entire list */
-            if (searchString == string.Empty || searchString == null)
+            if (string.IsNullOrEmpty(searchString) || string.IsNullOrWhiteSpace(searchString))
             {
                 UpdateList(OperationType.NoOperation, this);
 
