@@ -127,9 +127,9 @@ namespace KRingForm
                 passwordListBox.Items.Add(pswd.Domain);
             }
 
-            var operationsWithNoChanges = new List<OperationType>() { OperationType.SavePassword, OperationType.NoOperation, OperationType.RefreshList };
-
-            if(!operationsWithNoChanges.Contains(operation))
+            if(operation != OperationType.SavePassword && 
+               operation != OperationType.NoOperation && 
+               operation != OperationType.RefreshList)
             {
                 _unsavedChanges = true;
                 ShowSaveButton();
@@ -330,7 +330,7 @@ namespace KRingForm
             var searchString = SearchBar.Text;
 
             /* If search text is empty, show entire list */
-            if (String.IsNullOrEmpty(searchString))
+            if (string.IsNullOrEmpty(searchString) || string.IsNullOrWhiteSpace(searchString))
             {
                 UpdateList(OperationType.RefreshList, this);
 

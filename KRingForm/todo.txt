@@ -1,4 +1,6 @@
 ﻿1. Write in some file (db? export?) the iteration count, and check at runetime its not below "some value". Then yu can export import across versions. 
+1. Make the build a self-contained exe (except for folders) so we dont have all these files. 
+
 3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
 4. consider having a k1 that is derived from user password and salt (update for each time?). Then, use that to encrypt/decrypt the symmetric key used for encrypting the passwords.
 Then we can change password for the user, but not need to change the key used for encrypting all the entries, so we dont need to reencrypt. 
