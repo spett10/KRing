@@ -42,3 +42,5 @@ UnitTest/bin/*
 UnitTests/obj/*
 /packages/Newtonsoft.Json.10.0.3
 /.vs/KRing/v15/Server/sqlite3
+/.vs/KRing/v16/TestStore/0/000.testlog
+/.vs/KRing/v16/TestStore/0/testlog.manifest
