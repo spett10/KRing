@@ -4,7 +4,7 @@ New-Item -Path "KRingForm" -Name "Data" -ItemType "directory" -Force
 New-Item -Path "KRingForm\Data" -Name "Debug" -ItemType "directory" -Force
 New-Item -Path "KRingForm\Data" -Name "Release" -ItemType "directory" -Force
 
-[String[]]$files = "profile.txt", "db.txt", "logIntegrity.txt"
+[String[]]$files = "profile.txt", "db.txt", "log.txt", "logIntegrity.txt"
 
 foreach ($file in $files) {
     New-Item -Path "KRingForm\Data\*" -Name $file -ItemType "file" -Force    

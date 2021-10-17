@@ -1,4 +1,6 @@
-﻿3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
+﻿1. Make the build a self-contained exe (except for folders) so we dont have all these files. 
+
+3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
 4. consider having a k1 that is derived from user password and salt (update for each time?). Then, use that to encrypt/decrypt the symmetric key used for encrypting the passwords.
 Then we can change password for the user, but not need to change the key used for encrypting all the entries, so we dont need to reencrypt. 
 7. Integration / automated UI tests with AutoIT scripting? that sounds fun... but kinda needed. the manual testing when there are so many buttons is just ass
@@ -11,6 +13,8 @@ Then we can change password for the user, but not need to change the key used fo
 
 31- use password importer / exporter for the DB part? right now the individual lines in the DB kinda leak the length of the passwords to some extend. Harder to see such things
 if we just reencrypt an entire blob instead? 
+
+
 
 
 
