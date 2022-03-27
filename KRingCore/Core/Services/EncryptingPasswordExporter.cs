@@ -6,7 +6,6 @@ using System.Security;
 using Newtonsoft.Json;
 using Krypto;
 using Krypto.KeyGen;
-using Krypto.Extensions;
 using System.Text;
 using KRingCore.Core.Model;
 using Krypto.Cipher;
@@ -30,9 +29,6 @@ namespace KRingCore.Core.Services
         {
             var json = JsonConvert.SerializeObject(passwords);
 
-            var iterations = Configuration.ExportImportIterations;
-            var raw = Encoding.UTF8.GetBytes(_password.ConvertToUnsecureString());
-
             var keyGenResult = _keyGenTask.Result;
 
             var encrKey = keyGenResult.EncryptionKey.Bytes;
@@ -54,7 +50,7 @@ namespace KRingCore.Core.Services
 
 
             var serializedPayload = payload.ToJsonString();
-            var payloadMac = CryptoHashing.HMACSHA256(Encoding.ASCII.GetBytes(serializedPayload), keyGenResult.MacKey);
+            var payloadMac = CryptoHashing.HMACSHA256(Encoding.UTF8.GetBytes(serializedPayload), keyGenResult.MacKey);
 
             var result = new ExportedEncryptedPasswordsWithIntegrity()
             {
@@ -77,9 +73,6 @@ namespace KRingCore.Core.Services
         public async Task<string> ExportPasswordsAsync(List<StoredPassword> passwords)
         {
             var json = JsonConvert.SerializeObject(passwords);
-
-            var iterations = Configuration.ExportImportIterations;
-            var raw = Encoding.UTF8.GetBytes(_password.ConvertToUnsecureString());
 
             var keyGenResult = await _keyGenTask;
 

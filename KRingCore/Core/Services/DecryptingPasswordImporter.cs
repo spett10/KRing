@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using KRingCore.Persistence.Model;
-using System.IO;
 using Newtonsoft.Json;
 using KRingCore.Core.Model;
 using Krypto.Extensions;
@@ -43,7 +42,6 @@ namespace KRingCore.Core.Services
                 ExportedEncryptedPasswordsWithIntegrity passwords = JsonConvert.DeserializeObject<ExportedEncryptedPasswordsWithIntegrity>(contents);
 
                 var iterations = Configuration.ExportImportIterations;
-                var raw = Encoding.UTF8.GetBytes(_password.ConvertToUnsecureString());
 
                 var keyGenResult = _generator.GetGenerationTask(_password, 
                                                                 Convert.FromBase64String(passwords.EncryptionKeyIvBase64), 
@@ -56,7 +54,7 @@ namespace KRingCore.Core.Services
                 ExportedEncryptedPasswords payload = passwords.GetPayload();
                 var storedMac = Convert.FromBase64String(passwords.PayloadTagBase64);
                 var serializedPayload = payload.ToJsonString();
-                var computedMac = CryptoHashing.HMACSHA256(Encoding.ASCII.GetBytes(serializedPayload), keyGenResult.MacKey);
+                var computedMac = CryptoHashing.HMACSHA256(Encoding.UTF8.GetBytes(serializedPayload), keyGenResult.MacKey);
 
                 if(!CryptoHashing.CompareByteArraysNoTimeLeak(storedMac, computedMac))
                 {

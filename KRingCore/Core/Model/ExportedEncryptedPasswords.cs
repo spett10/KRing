@@ -1,12 +1,8 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KRingCore.Core.Model
 {
+    //TODO: add a version? 
     public class ExportedEncryptedPasswords
     {
         public string EncryptedPasswordsBase64 { get; set; }

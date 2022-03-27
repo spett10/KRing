@@ -214,7 +214,7 @@ namespace KRingCore.Persistence.Repositories
         public void UpdateEntry(StoredPassword updatedEntry)
         {
             var entry =
-                _entries.FirstOrDefault(e => e.Domain.Equals(updatedEntry.Domain, StringComparison.OrdinalIgnoreCase));
+                _entries.FirstOrDefault(e => e.Domain.Equals(updatedEntry.Domain, StringComparison.CurrentCultureIgnoreCase));
             if (entry != null)
             {
                 entry.PlaintextPassword = updatedEntry.PlaintextPassword;
@@ -253,12 +253,12 @@ namespace KRingCore.Persistence.Repositories
 
         public List<StoredPassword> PrefixSearch(string prefixDomain)
         {
-            return _entries.Where(e => e.Domain.StartsWith(prefixDomain)).ToList();
+            return _entries.Where(e => e.Domain.ToLower().StartsWith(prefixDomain.ToLower())).ToList();
         }
 
         public List<StoredPassword> ContainsSearch(string containsDomain)
         {
-            return _entries.Where(e => e.Domain.Contains(containsDomain)).ToList();
+            return _entries.Where(e => e.Domain.ToLower().Contains(containsDomain.ToLower())).ToList();
         }
 
         public bool ExistsEntry(string domain)
@@ -266,7 +266,7 @@ namespace KRingCore.Persistence.Repositories
             return _entries.Any(e => e.
                                Domain.
                                ToString().
-                               Equals(domain, StringComparison.CurrentCulture));
+                               Equals(domain, StringComparison.CurrentCultureIgnoreCase));
         }
 
         public void AddEntry(StoredPassword newDbEntry)
@@ -274,7 +274,7 @@ namespace KRingCore.Persistence.Repositories
             bool duplicateExists = _entries.Exists(
                                             e => e.
                                             Domain.
-                                            Equals(newDbEntry.Domain, StringComparison.CurrentCulture));
+                                            Equals(newDbEntry.Domain, StringComparison.CurrentCultureIgnoreCase));
 
             if (!duplicateExists)
             {
