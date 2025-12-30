@@ -1,19 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4897917B-1EE5-47B2-94D7-03439BC193AD}</ProjectGuid>
+    <TargetFramework>net48</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KRingForm</RootNamespace>
-    <AssemblyName>KRingForm</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -28,199 +17,25 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <UseWPF>true</UseWPF>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Custom-Icon-Design-Pretty-Office-8-Link.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="FormArranger.cs" />
-    <Compile Include="Forms\CreateUserForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\CreateUserForm.Designer.cs">
-      <DependentUpon>CreateUserForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\AddPasswordForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\AddPasswordForm.Designer.cs">
-      <DependentUpon>AddPasswordForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\DeletePasswordForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DeletePasswordForm.Designer.cs">
-      <DependentUpon>DeletePasswordForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\EditPasswordForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\EditPasswordForm.Designer.cs">
-      <DependentUpon>EditPasswordForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ImportPasswords.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ImportPasswords.Designer.cs">
-      <DependentUpon>ImportPasswords.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\InactiveDialogue.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\InactiveDialogue.Designer.cs">
-      <DependentUpon>InactiveDialogue.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\InformationPopup.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\InformationPopup.Designer.cs">
-      <DependentUpon>InformationPopup.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Loading.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Loading.Designer.cs">
-      <DependentUpon>Loading.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\LoginForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\LoginForm.Designer.cs">
-      <DependentUpon>LoginForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\PasswordList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\PasswordList.Designer.cs">
-      <DependentUpon>PasswordList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ExportPasswords.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ExportPasswords.Designer.cs">
-      <DependentUpon>ExportPasswords.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ViewForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\ViewForm.Designer.cs">
-      <DependentUpon>ViewForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\WarningDialogue.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\WarningDialogue.Designer.cs">
-      <DependentUpon>WarningDialogue.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\CreateUserForm.resx">
-      <DependentUpon>CreateUserForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\AddPasswordForm.resx">
-      <DependentUpon>AddPasswordForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DeletePasswordForm.resx">
-      <DependentUpon>DeletePasswordForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\EditPasswordForm.resx">
-      <DependentUpon>EditPasswordForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ImportPasswords.resx">
-      <DependentUpon>ImportPasswords.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\InactiveDialogue.resx">
-      <DependentUpon>InactiveDialogue.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\InformationPopup.resx">
-      <DependentUpon>InformationPopup.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Loading.resx">
-      <DependentUpon>Loading.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\LoginForm.resx">
-      <DependentUpon>LoginForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\PasswordList.resx">
-      <DependentUpon>PasswordList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ExportPasswords.resx">
-      <DependentUpon>ExportPasswords.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ViewForm.resx">
-      <DependentUpon>ViewForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\WarningDialogue.resx">
-      <DependentUpon>WarningDialogue.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Custom-Icon-Design-Pretty-Office-8-Link.ico" />
@@ -247,10 +62,7 @@
     <Content Include="todo.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\KRingCore\KRingCore.csproj">
-      <Project>{874a2636-5a37-48b6-b057-a78b51251a8b}</Project>
-      <Name>KRingCore</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\KRingCore\KRingCore.csproj" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -264,22 +76,23 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>cd $(TargetDir)
 cd Data
 RD /q /s Debug
 </PostBuildEvent>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <!--<Target Name="AfterBuild">
-    <Delete Files="$(TargetDir)$(TargetFileName).config" />
-    <Copy SourceFiles="$(ProjectDir)\Config\App.$(Configuration).config" DestinationFiles="$(TargetDir)$(TargetFileName).config" />
-  </Target>-->
 </Project>

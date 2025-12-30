@@ -1,4 +1,26 @@
-﻿1. Write in some file (db? export?) the iteration count, and check at runetime its not below "some value". Then yu can export import across versions. 
+﻿Migration:
+
+upgrade to .net standard -> netcore 8 or 10
+
+upgrade to sdk style csproj
+
+KringCore - DONE
+
+KRingForm - 
+
+UnitTests - DONE
+
+fix unit tests and all the path crap with configuration manager. 
+	-why do they take minutes? probably because of pkdfb high iteration count..? maybe set it low for tests? 
+
+
+build as self-contained exe file (how do we handle the text files that store the data?) 
+
+
+
+-------
+
+1. Write in some file (db? export?) the iteration count, and check at runetime its not below "some value". Then yu can export import across versions. 
 1. Make the build a self-contained exe (except for folders) so we dont have all these files. 
 2. add a version to the stored data so we can migrate algorithms in future. 
 3. Make textboxes listen to keystrokes instead of copying the plaintextpassword which is obfuscated with **** in gui. Listen for events and inspect keystrokes?
