@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -31,12 +31,6 @@
   <PropertyGroup>
     <ApplicationIcon>Custom-Icon-Design-Pretty-Office-8-Link.ico</ApplicationIcon>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
   <ItemGroup>
     <Content Include="Custom-Icon-Design-Pretty-Office-8-Link.ico" />
     <Content Include="Data\Debug\db.txt">
