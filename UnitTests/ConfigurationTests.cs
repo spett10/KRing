@@ -17,10 +17,10 @@ namespace UnitTests
             var deriveIterations = Configuration.PBKDF2DeriveIterations;
             var deriveIterationsOld = Configuration.OLD_PBKDF2DeriveIterations;
 
-            Assert.IsTrue(loginIterations > 0);
-            Assert.IsTrue(loginIterationsOld > 0);
-            Assert.IsTrue(deriveIterations > 0);
-            Assert.IsTrue(deriveIterationsOld > 0);
+            Assert.IsGreaterThan(0, loginIterations);
+            Assert.IsGreaterThan(0, loginIterationsOld);
+            Assert.IsGreaterThan(0, deriveIterations);
+            Assert.IsGreaterThan(0, deriveIterationsOld);
         }
     }
 }

@@ -37,29 +37,26 @@ namespace UnitTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(System.IO.IOException))]
         public void ReadUser_WithoutWritingFirst_ShouldThrowError()
         {
             var repository = new ProfileRepository();
 
             repository.DeleteUser();
 
-            var readUser = repository.ReadUser();
+            Assert.Throws<System.IO.IOException>(() => repository.ReadUser());
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void WriteNullUser_ShouldThrowError()
         {
             var repository = new ProfileRepository();
 
             User user = null;
 
-            repository.WriteUser(user);
+            Assert.Throws<ArgumentNullException>(() => repository.WriteUser(user));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(System.IO.IOException))]
         public void WriteUser_DeleteUser_ReadUser_ShouldThrowError()
         {
             var repository = new ProfileRepository();
@@ -68,7 +65,7 @@ namespace UnitTests
 
             repository.DeleteUser();
 
-            var user = repository.ReadUser();
+            Assert.Throws<System.IO.IOException>(() => repository.ReadUser());
         }
 
         [TestMethod]

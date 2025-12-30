@@ -6,11 +6,9 @@ using KRingCore.Krypto.Model;
 namespace KRingCore.Krypto
 {
     public static class CryptoHashing
-    {
+    {        
         // Based on IV size for AES, but should be like 64 for password hashing.. 
-        public static readonly int DefaultSaltByteSize = 16;
-
-        public static byte[] GenerateSalt(int size)
+        public static byte[] GenerateSalt(int size = 16)
         {
             RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
             byte[] buffer = new byte[size];
@@ -26,10 +24,6 @@ namespace KRingCore.Krypto
             }
         }
 
-        public static byte[] GenerateSalt()
-        {
-            return GenerateSalt(DefaultSaltByteSize);
-        }
 
         /* Since we compare hmac and other sensitive stuff, we want to go through the motions? No reason to leak what index */
         /* they differ at by exiting early. So we go through all indexes regardless, to not leak any information other than */

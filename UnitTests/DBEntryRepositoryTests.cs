@@ -38,7 +38,7 @@ namespace UnitTests
         {
             var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
 
-            Assert.AreEqual(repository.EntryCount, 0);
+            Assert.AreEqual(0, repository.EntryCount);
         }
 
         [TestMethod]
@@ -52,11 +52,10 @@ namespace UnitTests
 
             repository.DeleteAllEntries();
 
-            Assert.AreEqual(exists, true);
+            Assert.IsTrue(exists);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException), "Error: Domain Already Exists")]
         public void AddEntry_AddAgain_ShouldThrowException()
         {
             var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
@@ -64,7 +63,9 @@ namespace UnitTests
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
             //duplicates are not allowed
-            repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
+            var ex = Assert.Throws<ArgumentException>(() => repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword)));
+
+            Assert.Contains("Error: Domain Already Exists", ex.Message);
         }
 
         [TestMethod]
@@ -77,7 +78,7 @@ namespace UnitTests
 
             var exists = repository.ExistsEntry(_correctDomain);
 
-            Assert.AreEqual(exists, false);
+            Assert.IsFalse(exists);
         }
 
         [TestMethod]
@@ -95,7 +96,7 @@ namespace UnitTests
 
             var countDuring = repository.EntryCount;
 
-            Assert.AreEqual(countDuring, 3);
+            Assert.AreEqual(3, countDuring);
 
             repository.DeleteAllEntries();
 
@@ -105,11 +106,11 @@ namespace UnitTests
 
             var didAnyExist = existsDomain1 || existsDomain2 || existsDomain3;
 
-            Assert.AreEqual(didAnyExist, false);
+            Assert.IsFalse(didAnyExist);
 
             var countAfter = repository.EntryCount;
 
-            Assert.AreEqual(countAfter, 0);
+            Assert.AreEqual(0, countAfter);
         }
 
         [TestMethod]
@@ -145,7 +146,7 @@ namespace UnitTests
             //and our tests should be independant.
             otherRepository.DeleteAllEntries(); 
 
-            Assert.AreEqual(didAllExist, true);
+            Assert.IsTrue(didAllExist);
         }
 
         [TestMethod]
@@ -159,7 +160,7 @@ namespace UnitTests
 
             var result = repository.ExistsEntry(_correctDomain);
 
-            Assert.AreEqual(result, false);
+            Assert.IsFalse(result);
         }
 
         [TestMethod]
@@ -173,16 +174,15 @@ namespace UnitTests
             repository.DeleteEntry(0);
 
             var result = repository.ExistsEntry(_correctDomain);
-            Assert.AreEqual(result, false);
+            Assert.IsFalse(result);
 
             repository.DeleteEntry(0);
             result = repository.ExistsEntry(fake_domain);
-            Assert.AreEqual(result, false);
+            Assert.IsFalse(result);
 
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException), "domain does not exist to delete")]
         public void AddEntry_DeleteTwice_ShouldFail()
         {
             var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
@@ -191,19 +191,19 @@ namespace UnitTests
 
             repository.DeleteEntry(_correctDomain);
 
-            //this should fail.
-            repository.DeleteEntry(_correctDomain);
+            var ex = Assert.Throws<ArgumentException>(() => repository.DeleteEntry(_correctDomain));
+
+            Assert.Contains("domain does not exist to delete", ex.Message);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void AddEntry_DeleteWrongIndex_ShouldFail()
         {
             var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
-            repository.DeleteEntry(10);
+            var ex = Assert.Throws<ArgumentOutOfRangeException>(() => repository.DeleteEntry(10));
         }
 
         [TestMethod]
@@ -224,7 +224,6 @@ namespace UnitTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
         public void UpdateEntry_EntryDoesNotExist_ShouldFail()
         {
             var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
@@ -233,18 +232,17 @@ namespace UnitTests
 
             var newDto = new StoredPassword("UGGA BUGGA", _plaintextPassword);
 
-            repository.UpdateEntry(newDto);
+            Assert.Throws<ArgumentException>(() => repository.UpdateEntry(newDto));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void GetPasswordFromDomain_WrongDomain_ShouldReturnNull()
         {
             var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
-            var password = repository.GetPasswordFromDomain(_correctDomain + "not");
+            Assert.Throws<InvalidOperationException>(() => repository.GetPasswordFromDomain(_correctDomain + "not"));
         }
 
         [TestMethod]

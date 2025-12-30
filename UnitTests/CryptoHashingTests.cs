@@ -34,7 +34,6 @@ namespace UnitTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(CryptographicException))]
         public void CBCThenHMAC_FiddleWithCipher_ShouldThrowException()
         {
             var plaintext = "Foo Bar Baz";
@@ -46,16 +45,15 @@ namespace UnitTests
 
             var crypto = new AesHmacAuthenticatedCipher(CipherMode.CBC, PaddingMode.PKCS7);
 
-            var cipher = crypto.EncryptThenHMac(rawPlaintext, key, iv, hmacKEy);
+            var cipher = crypto.EncryptThenHMac(rawPlaintext, iv, key, hmacKEy);
 
             /* FIDDLE */
             cipher.ciphertext[0] ^= byte.MaxValue;
 
-            var decryptedRaw = crypto.VerifyMacThenDecrypt(cipher, key, iv, hmacKEy);
+            Assert.Throws<CryptographicException>(() => crypto.VerifyMacThenDecrypt(cipher, key, iv, hmacKEy));
         }
 
         [TestMethod]
-        [ExpectedException(typeof(CryptographicException))]
         public void CBCThenHMAC_FiddleWithTag_ShouldThrowException()
         {
             var plaintext = "Foo Bar Baz";
@@ -67,12 +65,12 @@ namespace UnitTests
 
             var crypto = new AesHmacAuthenticatedCipher(CipherMode.CBC, PaddingMode.PKCS7);
 
-            var cipher = crypto.EncryptThenHMac(rawPlaintext, key, iv, hmacKEy);
+            var cipher = crypto.EncryptThenHMac(rawPlaintext, iv, key, hmacKEy);
 
             /* FIDDLE */
             cipher.tag[0] ^= byte.MaxValue;
 
-            var decryptedRaw = crypto.VerifyMacThenDecrypt(cipher, key, iv, hmacKEy);
+            Assert.Throws<CryptographicException>(() => crypto.VerifyMacThenDecrypt(cipher, key, iv, hmacKEy));
         }
 
         [TestMethod]

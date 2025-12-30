@@ -81,27 +81,26 @@ namespace UnitTests
             var exporter = new EncryptingPasswordExporter(new KeyGenerator(), securePassword);
             var exported = exporter.ExportPasswords(this.passwords);
 
-            Assert.IsTrue(!string.IsNullOrEmpty(exported));
+            Assert.IsFalse(string.IsNullOrEmpty(exported));
 
             var mockReader = new MockStreamReadToEnd(exported);
 
             var importer = new DecryptingPasswordImporter(new KeyGenerator(), securePassword);
             var importedList = importer.ImportPasswords("test.txt", mockReader);
 
-            Assert.IsTrue(importedList != null);
+            Assert.IsNotNull(importedList);
             for(int i = 0; i < this.passwords.Count; i++)
             {
                 var left = passwords.ElementAt(i);
                 var right = importedList.ElementAt(i);
 
-                Assert.IsTrue(left.Domain == right.Domain);
-                Assert.IsTrue(left.PlaintextPassword == right.PlaintextPassword);
-                Assert.IsTrue(left.Username == right.Username);
+                Assert.AreEqual(right.Domain, left.Domain);
+                Assert.AreEqual(right.PlaintextPassword, left.PlaintextPassword);
+                Assert.AreEqual(right.Username, left.Username);
             }
         }
 
         [TestMethod]
-        [ExpectedException(typeof(CryptoHashing.IntegrityException))]
         public void ExportThenImport_WrongPassword_ShouldThrowException()
         {
             var securePassword = new SecureString();
@@ -114,7 +113,7 @@ namespace UnitTests
             var exporter = new EncryptingPasswordExporter(new KeyGenerator(), securePassword);
             var exported = exporter.ExportPasswords(this.passwords);
 
-            Assert.IsTrue(!string.IsNullOrEmpty(exported));
+            Assert.IsFalse(string.IsNullOrEmpty(exported));
 
             var mockReader = new MockStreamReadToEnd(exported);
 
@@ -122,7 +121,7 @@ namespace UnitTests
             securePassword.AppendChar('e');
 
             var importer = new DecryptingPasswordImporter(new KeyGenerator(), securePassword);
-            var importedList = importer.ImportPasswords("test.txt", mockReader);
+            Assert.Throws<CryptoHashing.IntegrityException>(() => importer.ImportPasswords("test.txt", mockReader));
         }
 
         class MockStreamReadToEnd : IStreamReadToEnd
