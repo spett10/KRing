@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security;
 
 namespace KRingCore.Core.Model
 {
