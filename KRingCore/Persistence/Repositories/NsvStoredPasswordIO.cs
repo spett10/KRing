@@ -1,7 +1,7 @@
-﻿using Krypto.Model;
-using KRingCore.Interfaces;
+﻿using KRingCore.Interfaces;
 using KRingCore.Persistence.Interfaces;
 using System.Security;
+using KRingCore.Krypto.Model;
 
 namespace KRingCore.Persistence.Repositories
 {

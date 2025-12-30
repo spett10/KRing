@@ -1,6 +1,6 @@
 ﻿using KRingCore.Core.Services;
+using KRingCore.Krypto;
 using KRingCore.Persistence.Model;
-using Krypto.KeyGen;
 using System;
 using System.Collections.Generic;
 using System.Security;

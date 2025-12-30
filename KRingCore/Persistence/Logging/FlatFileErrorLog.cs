@@ -5,8 +5,8 @@ using System.IO;
 using KRingCore.Core;
 using System.Linq;
 using KRingCore.Core.Model;
-using Krypto;
-using Krypto.Model;
+using KRingCore.Krypto;
+using KRingCore.Krypto.Model;
 
 namespace KRingCore.Persistence.Logging
 {

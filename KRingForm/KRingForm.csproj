@@ -59,9 +59,6 @@
     <ApplicationIcon>Custom-Icon-Design-Pretty-Office-8-Link.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Krypto">
-      <HintPath>..\..\..\..\..\Source\repos\Krypto\Krypto\bin\Release\Krypto.dll</HintPath>
-    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />

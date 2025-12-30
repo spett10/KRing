@@ -4,11 +4,9 @@ using System.Threading.Tasks;
 using KRingCore.Persistence.Model;
 using System.Security;
 using Newtonsoft.Json;
-using Krypto;
-using Krypto.KeyGen;
 using System.Text;
 using KRingCore.Core.Model;
-using Krypto.Cipher;
+using KRingCore.Krypto;
 
 namespace KRingCore.Core.Services
 {

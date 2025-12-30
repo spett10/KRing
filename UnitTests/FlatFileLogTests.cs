@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using KRingCore.Core.Model;
 using KRingCore.Persistence.Logging;
-using KRingCore.Core.Model;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Configuration;
 
 namespace UnitTests

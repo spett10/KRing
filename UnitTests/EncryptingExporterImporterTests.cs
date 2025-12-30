@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using KRingCore.Persistence.Model;
-using System.Security;
-using KRingCore.Core.Services;
+﻿using KRingCore.Core.Services;
+using KRingCore.Krypto;
 using KRingCore.Persistence.Interfaces;
+using KRingCore.Persistence.Model;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using System.Threading.Tasks;
-using Krypto;
-using Krypto.KeyGen;
 
 namespace UnitTests
 {

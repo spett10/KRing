@@ -1,4 +1,4 @@
-﻿using Krypto;
+﻿using KRingCore.Krypto;
 using System;
 using System.Text;
 

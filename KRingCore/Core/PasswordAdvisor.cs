@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 using System.Security;
 using KRingCore.Core.Interfaces;
-using Krypto.Extensions;
 using System.Collections.Generic;
+using KRingCore.Krypto.Extensions;
 
 namespace KRingCore.Core
 {

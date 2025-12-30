@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security;
-using System.Windows.Forms;
-using Krypto.Extensions;
+﻿using KRingCore.Core;
 using KRingCore.Core.Model;
 using KRingCore.Persistence.Repositories;
-using KRingCore.Core.Interfaces;
-using KRingCore.Core;
+using System;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace KRingForm
 {

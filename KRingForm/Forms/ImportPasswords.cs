@@ -1,7 +1,6 @@
 ﻿using KRingCore.Core.Services;
+using KRingCore.Krypto;
 using KRingCore.Persistence.Interfaces;
-using Krypto;
-using Krypto.KeyGen;
 using System;
 using System.Security;
 using System.Security.Cryptography;

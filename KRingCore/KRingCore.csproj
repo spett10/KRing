@@ -8,12 +8,6 @@
     <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BouncyCastle">
-      <HintPath>..\..\..\..\..\Desktop\BouncyCastle\bccrypto-csharp-1.8.1\crypto\bin\Release\lib\net20\BouncyCastle.dll</HintPath>
-    </Reference>
-    <Reference Include="Krypto">
-      <HintPath>..\..\..\..\..\Source\repos\Krypto\Krypto\bin\Release\Krypto.dll</HintPath>
-    </Reference>
     <Reference Include="System.configuration" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Data.DataSetExtensions" />

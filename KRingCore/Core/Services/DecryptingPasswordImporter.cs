@@ -4,14 +4,12 @@ using System.Threading.Tasks;
 using KRingCore.Persistence.Model;
 using Newtonsoft.Json;
 using KRingCore.Core.Model;
-using Krypto.Extensions;
 using System.Security;
 using System.Text;
-using Krypto;
-using Krypto.KeyGen;
 using KRingCore.Persistence.Interfaces;
 using System.Security.Cryptography;
-using Krypto.Cipher;
+using KRingCore.Krypto;
+using KRingCore.Krypto.Extensions;
 
 namespace KRingCore.Core.Services
 {
@@ -43,20 +41,20 @@ namespace KRingCore.Core.Services
 
                 var iterations = Configuration.ExportImportIterations;
 
-                var keyGenResult = _generator.GetGenerationTask(_password, 
-                                                                Convert.FromBase64String(passwords.EncryptionKeyIvBase64), 
-                                                                Convert.FromBase64String(passwords.MacKeyIvBase64), 
+                var keyGenResult = _generator.GetGenerationTask(_password,
+                                                                Convert.FromBase64String(passwords.EncryptionKeyIvBase64),
+                                                                Convert.FromBase64String(passwords.MacKeyIvBase64),
                                                                 iterations).Result;
 
                 var encrKey = keyGenResult.EncryptionKey.Bytes;
                 var macKey = keyGenResult.MacKey.Bytes;
-                
+
                 ExportedEncryptedPasswords payload = passwords.GetPayload();
                 var storedMac = Convert.FromBase64String(passwords.PayloadTagBase64);
                 var serializedPayload = payload.ToJsonString();
                 var computedMac = CryptoHashing.HMACSHA256(Encoding.UTF8.GetBytes(serializedPayload), keyGenResult.MacKey);
 
-                if(!CryptoHashing.CompareByteArraysNoTimeLeak(storedMac, computedMac))
+                if (!CryptoHashing.CompareByteArraysNoTimeLeak(storedMac, computedMac))
                 {
                     throw new CryptoHashing.IntegrityException();
                 }
@@ -74,11 +72,11 @@ namespace KRingCore.Core.Services
 
                 return list;
             }
-            catch(CryptographicException c)
+            catch (CryptographicException c)
             {
                 throw c;
             }
-            catch(CryptoHashing.IntegrityException c)
+            catch (CryptoHashing.IntegrityException c)
             {
                 throw c;
             }
@@ -107,14 +105,14 @@ namespace KRingCore.Core.Services
                 var iterations = Configuration.ExportImportIterations;
                 var raw = Encoding.UTF8.GetBytes(_password.ConvertToUnsecureString());
 
-                var keyGenResult = await _generator.GetGenerationTask(_password, 
-                                                                      Convert.FromBase64String(passwords.EncryptionKeyIvBase64), 
-                                                                      Convert.FromBase64String(passwords.MacKeyIvBase64), 
+                var keyGenResult = await _generator.GetGenerationTask(_password,
+                                                                      Convert.FromBase64String(passwords.EncryptionKeyIvBase64),
+                                                                      Convert.FromBase64String(passwords.MacKeyIvBase64),
                                                                       iterations);
 
                 var encrKey = keyGenResult.EncryptionKey.Bytes;
                 var macKey = keyGenResult.MacKey.Bytes;
-                
+
                 ExportedEncryptedPasswords payload = passwords.GetPayload();
                 var storedMac = Convert.FromBase64String(passwords.PayloadTagBase64);
                 var computedMac = CryptoHashing.HMACSHA256(Encoding.ASCII.GetBytes(payload.ToJsonString()), macKey);

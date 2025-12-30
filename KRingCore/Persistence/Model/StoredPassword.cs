@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Security;
-using Krypto.Extensions;
+using KRingCore.Krypto.Extensions;
 
 namespace KRingCore.Persistence.Model
 {

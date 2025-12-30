@@ -2,8 +2,6 @@
 using KRingCore.Persistence.Model;
 using KRingCore.Core;
 using KRingCore.Interfaces;
-using Krypto.Model;
-using Krypto.Cipher;
 using System.Security;
 using System.IO;
 using System.Linq;
@@ -11,6 +9,7 @@ using System.Text;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using KRingCore.Krypto.Model;
 
 namespace KRingCore.Persistence.Repositories
 {

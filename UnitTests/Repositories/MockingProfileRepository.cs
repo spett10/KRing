@@ -1,11 +1,11 @@
-﻿using System;
-using KRingCore.Persistence.Interfaces;
-using KRingCore.Core.Model;
-using System.Security;
-using Krypto.Extensions;
-using System.Threading.Tasks;
-using Krypto;
+﻿using KRingCore.Core.Model;
 using KRingCore.Core.Services;
+using KRingCore.Krypto;
+using KRingCore.Krypto.Extensions;
+using KRingCore.Persistence.Interfaces;
+using System;
+using System.Security;
+using System.Threading.Tasks;
 
 namespace UnitTests
 {
