@@ -1,12 +1,15 @@
 ﻿Migration:
 
 upgrade to .net standard -> netcore 8 or 10
+	- it builds, but a lot of warnings, and a lot of windows specific warnings, fix them?
+
+build as self-contained exe file (how do we handle the text files that store the data?) 
+
 
 fix unit tests and all the path crap with configuration manager. 
 	-why do they take minutes? probably because of pkdfb high iteration count..? maybe set it low for tests? 
 
 
-build as self-contained exe file (how do we handle the text files that store the data?) 
 
 
 
