@@ -1,28 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using KRingCore.Persistence.Model;
-using System.Security;
-using Newtonsoft.Json;
-using System.Text;
-using KRingCore.Core.Model;
+﻿using KRingCore.Core.Model;
 using KRingCore.Krypto;
+using KRingCore.Persistence.Model;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Security;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace KRingCore.Core.Services
 {
     public class EncryptingPasswordExporter : IEncryptingPasswordExporter
     {
+        private readonly int _derivateIterations;
         private readonly KeyGenerator _generator;
         private readonly SecureString _password;
         private Task<KeyGenResult> _keyGenTask;
 
-        public EncryptingPasswordExporter(KeyGenerator generator, SecureString password)
+        public EncryptingPasswordExporter(KeyGenerator generator, SecureString password, int deriveIterations)
         {
             _generator = generator;
             _password = password;
-            _keyGenTask = _generator.GetGenerationTask(password, Configuration.PBKDF2DeriveIterations);
+            _derivateIterations = deriveIterations;
+            _keyGenTask = _generator.GetGenerationTask(password, _derivateIterations);
         }
-        
+
         public string ExportPasswords(List<StoredPassword> passwords)
         {
             var json = JsonConvert.SerializeObject(passwords);
@@ -115,7 +117,7 @@ namespace KRingCore.Core.Services
 
         private void RestartKeyGen(SecureString password)
         {
-            _keyGenTask = _generator.GetGenerationTask(password, Configuration.PBKDF2DeriveIterations);
+            _keyGenTask = _generator.GetGenerationTask(password, _derivateIterations);
         }
     }
 }

@@ -1,26 +1,25 @@
 ﻿using KRingCore.Core.Model;
+using KRingCore.Core.Services;
 using KRingCore.Persistence.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Configuration;
 
 namespace UnitTests
 {
     [TestClass]
     public class FlatFileLogTests
     {
-        private readonly string _logfilePath = ConfigurationManager.AppSettings["relativeLogPathDebug"];
-        private readonly string _logIntegrityFile = ConfigurationManager.AppSettings["relativeLogIntegrityPathDebug"];
-
         [TestMethod]
         public void AuthenticateLog_Positive()
         {
             /* Arrange */
-            var log = new FlatFileErrorLog();
+            var log = new FlatFileErrorLog(deriveIterations: 1);
             log.ClearLog();
 
             log.Log("TEST", "LALALALLA");
 
-            var user = User.NewUserWithFreshSalt("JOHN DOE", "PASSWORD123");
+            var userAuthenticator = new UserAuthenticator(loginIterations: 1);
+
+            var user = User.NewUserWithFreshSalt(userAuthenticator, "JOHN DOE", "PASSWORD123");
 
             /* Act */
             log.AuthenticateLog(user);
@@ -33,17 +32,19 @@ namespace UnitTests
         public void AuthenticateLog_WrongUser()
         {
             /* Arrange */
-            var log = new FlatFileErrorLog();
+            var log = new FlatFileErrorLog(deriveIterations: 1);
             log.ClearLog();
 
             log.Log("TEST", "LALALALLA");
-            
-            var user = User.NewUserWithFreshSalt("JOHN DOE", "PASSWORD123");
+
+            var userAuthenticator = new UserAuthenticator(loginIterations: 1);
+
+            var user = User.NewUserWithFreshSalt(userAuthenticator, "JOHN DOE", "PASSWORD123");
 
             /* Act */
             log.AuthenticateLog(user);
 
-            var otherUser = User.NewUserWithFreshSalt("SOMEONE ELSE", "PASSWORD1234");
+            var otherUser = User.NewUserWithFreshSalt(userAuthenticator, "SOMEONE ELSE", "PASSWORD1234");
 
             /* Assert */
             Assert.IsFalse(log.CheckLogIntegrity(otherUser));
@@ -53,12 +54,14 @@ namespace UnitTests
         public void AuthenticateLog_AlteredFile()
         {
             /* Arrange */
-            var log = new FlatFileErrorLog();
+            var log = new FlatFileErrorLog(deriveIterations: 1);
             log.ClearLog();
 
             log.Log("TEST", "LALALALLA");
+            
+            var userAuthenticator = new UserAuthenticator(loginIterations: 1);
 
-            var user = User.NewUserWithFreshSalt("JOHN DOE", "PASSWORD123");
+            var user = User.NewUserWithFreshSalt(userAuthenticator, "JOHN DOE", "PASSWORD123");
 
             /* Act */
             log.AuthenticateLog(user);

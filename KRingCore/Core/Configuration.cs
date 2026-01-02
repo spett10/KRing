@@ -1,9 +1,4 @@
-﻿using KRingCore.Properties;
-using System;
-using System.Configuration;
-using System.Resources;
-
-namespace KRingCore.Core
+﻿namespace KRingCore.Core
 {
     public static class Configuration
     {

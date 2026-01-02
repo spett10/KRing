@@ -77,7 +77,7 @@ namespace KRingForm.Forms
 
         private void Export(SecureString password)
         {
-            var exporter = new EncryptingPasswordExporter(new KeyGenerator(), password);
+            var exporter = new EncryptingPasswordExporter(new KeyGenerator(), password, deriveIterations: 1);
 
             var exportedJson = exporter.ExportPasswords(_passwords);
 

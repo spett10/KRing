@@ -36,7 +36,7 @@ namespace UnitTests
         [TestMethod]
         public void CreateDBRepository()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             Assert.AreEqual(0, repository.EntryCount);
         }
@@ -44,7 +44,7 @@ namespace UnitTests
         [TestMethod]
         public void AddEntry_ExistsEntry_ShouldExist()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -58,7 +58,7 @@ namespace UnitTests
         [TestMethod]
         public void AddEntry_AddAgain_ShouldThrowException()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -71,7 +71,7 @@ namespace UnitTests
         [TestMethod]
         public void AddEntryThenDeleteIt_ExistsEntry_ShouldNotExist()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
             repository.DeleteEntry(_correctDomain);
@@ -84,7 +84,7 @@ namespace UnitTests
         [TestMethod]
         public void AddSomeEntries_DeleteAll_CheckExists()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             string domain1 = "FooBar";
             string domain2 = "FooBaz";
@@ -118,7 +118,7 @@ namespace UnitTests
         {
             var encrHash = CryptoHashing.GenerateSalt();
             var macHash = CryptoHashing.GenerateSalt();
-            var repository = new StoredPasswordRepository(_password, encrHash, macHash, _config);
+            var repository = new StoredPasswordRepository(_password, encrHash, macHash, _config, deriveIterations: 1);
 
             string domain1 = "FooBar";
             string domain2 = "FooBaz";
@@ -133,7 +133,7 @@ namespace UnitTests
             repository.WriteEntriesToDb();
 
             //load db into new object, with same password. 
-            var otherRepository = new StoredPasswordRepository(_password, encrHash, macHash, _config);
+            var otherRepository = new StoredPasswordRepository(_password, encrHash, macHash, _config, deriveIterations: 1);
             otherRepository.LoadEntriesFromDb();
 
             var existsDomain1 = otherRepository.ExistsEntry(domain1);
@@ -152,7 +152,7 @@ namespace UnitTests
         [TestMethod]
         public void AddEntryThenDelete_ShouldNotExist()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -166,7 +166,7 @@ namespace UnitTests
         [TestMethod]
         public void AddEntries_DeleteByIndex_ShouldSucceed()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
             string fake_domain = "other";
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
@@ -185,7 +185,7 @@ namespace UnitTests
         [TestMethod]
         public void AddEntry_DeleteTwice_ShouldFail()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -199,7 +199,7 @@ namespace UnitTests
         [TestMethod]
         public void AddEntry_DeleteWrongIndex_ShouldFail()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -209,7 +209,7 @@ namespace UnitTests
         [TestMethod]
         public void UpdateEntry_ExistsAlready_ShouldSuceed()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -226,7 +226,7 @@ namespace UnitTests
         [TestMethod]
         public void UpdateEntry_EntryDoesNotExist_ShouldFail()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -238,7 +238,7 @@ namespace UnitTests
         [TestMethod]
         public void GetPasswordFromDomain_WrongDomain_ShouldReturnNull()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             repository.AddEntry(new StoredPassword(_correctDomain, _plaintextPassword));
 
@@ -248,7 +248,7 @@ namespace UnitTests
         [TestMethod]
         public void PrefixSearch_OkScenario()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             var dummyPassword = new char[12];
             var dummyUsername = "John Doe";
@@ -276,7 +276,7 @@ namespace UnitTests
         [TestMethod]
         public void PrefixSearch_NoMatches_ShouldReturnEmptyList()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             var dummyPassword = new char[12];
             var dummyUsername = "John Doe";
@@ -304,7 +304,7 @@ namespace UnitTests
         [TestMethod]
         public void GetEntry_StringOverload_ShouldReturnCorrect()
         {
-            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config);
+            var repository = new StoredPasswordRepository(_password, CryptoHashing.GenerateSalt(), CryptoHashing.GenerateSalt(), _config, deriveIterations: 1);
 
             var dummyPassword = new char[12];
             var dummyUsername = "John Doe";

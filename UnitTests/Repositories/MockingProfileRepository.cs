@@ -24,8 +24,9 @@ namespace UnitTests
 
             password.PopulateWithString(passwordRaw);
 
-            var passwordSalted = UserAuthenticator.CreateAuthenticationToken(passwordRaw, saltForHash);
-            var usernameSalted = UserAuthenticator.CreateAuthenticationToken(usernameRaw, saltForHash);            
+            var userAuthenticator = new UserAuthenticator(loginIterations: 1);
+            var passwordSalted = userAuthenticator.CreateAuthenticationToken(passwordRaw, saltForHash);
+            var usernameSalted = userAuthenticator.CreateAuthenticationToken(usernameRaw, saltForHash);            
 
             _correctUser = new User(usernameRaw,
                                     password,
@@ -41,8 +42,11 @@ namespace UnitTests
             var saltForEncrKey = CryptoHashing.GenerateSalt();
             var saltForMacKey = CryptoHashing.GenerateSalt();
             var saltForHash = CryptoHashing.GenerateSalt(64);
-            var passwordSalted = UserAuthenticator.CreateAuthenticationToken(rawPass, saltForHash);
-            var usernameSalted = UserAuthenticator.CreateAuthenticationToken(username, saltForHash);
+
+            var userAuthenticator = new UserAuthenticator(loginIterations: 1);
+
+            var passwordSalted = userAuthenticator.CreateAuthenticationToken(rawPass, saltForHash);
+            var usernameSalted = userAuthenticator.CreateAuthenticationToken(username, saltForHash);
 
             _correctUser = new User(username,
                                     password,

@@ -6,11 +6,11 @@ upgrade to .net standard -> netcore 8 or 10
 
 fix unit tests and all the path crap with configuration manager. 
 	-why do they take minutes? probably because of pkdfb high iteration count..? maybe set it low for tests? 
-
+		- inject configuration instead of everything statically pointing to it. we can still hardcode it in source at the outermost layer,
+		but then we can run the tests fast 
 
 Try using types to avoid the mess where the order of iv and key got messed up in that one test. 
 https://allan.reyes.sh/posts/branded-types/
-
 
 
 

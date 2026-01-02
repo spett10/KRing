@@ -59,7 +59,7 @@ namespace KRingForm
             _user = user;
             _profileRepository = profileRepository;
 
-            this._user.GenerateNewSalt();
+            this._user.GenerateNewSalt(new UserAuthenticator());
 
             var securePassword = new SecureString();
             securePassword.PopulateWithString(user.PlaintextPassword);

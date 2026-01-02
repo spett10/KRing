@@ -24,8 +24,10 @@ namespace UnitTests
             var macKeySalt = CryptoHashing.GenerateSalt();
             var hashSalt = CryptoHashing.GenerateSalt();
 
-            var userSalted = UserAuthenticator.CreateAuthenticationToken(username, hashSalt);
-            var passwordSalted = UserAuthenticator.CreateAuthenticationToken(password, hashSalt);
+            var userAuthenticator = new UserAuthenticator(loginIterations: 1);
+
+            var userSalted = userAuthenticator.CreateAuthenticationToken(username, hashSalt);
+            var passwordSalted = userAuthenticator.CreateAuthenticationToken(password, hashSalt);
             
 
             var cookie = new SecurityData(passwordSalted, userSalted, hashSalt, hashSalt);
@@ -80,8 +82,10 @@ namespace UnitTests
 
             string username = "Bob";
             var salt = CryptoHashing.GenerateSalt();
-            var passwordSalted = UserAuthenticator.CreateAuthenticationToken(_user.PlaintextPassword, salt);
-            var userSalted = UserAuthenticator.CreateAuthenticationToken(username, salt);
+
+            var userAuthenticator = new UserAuthenticator(loginIterations: 1);
+            var passwordSalted = userAuthenticator.CreateAuthenticationToken(_user.PlaintextPassword, salt);
+            var userSalted = userAuthenticator.CreateAuthenticationToken(username, salt);
             var encrKeySalt = CryptoHashing.GenerateSalt();
             var macKeySalt = CryptoHashing.GenerateSalt();
             var hashSalt = CryptoHashing.GenerateSalt();

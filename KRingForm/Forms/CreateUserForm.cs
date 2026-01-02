@@ -1,5 +1,6 @@
 ﻿using KRingCore.Core;
 using KRingCore.Core.Model;
+using KRingCore.Core.Services;
 using KRingCore.Persistence.Repositories;
 using System;
 using System.Threading.Tasks;
@@ -34,9 +35,7 @@ namespace KRingForm
             {
                 var profileRep = new ProfileRepository();
                 
-                var user = await Task<User>.Run(() => { return User.NewUserWithFreshSalt(username, password); });
-
-                
+                var user = await Task<User>.Run(() => { return User.NewUserWithFreshSalt(new UserAuthenticator(), username, password); });
 
                 var writeUserTask = profileRep.WriteUserAsync(user);
 

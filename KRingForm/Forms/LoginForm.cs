@@ -45,9 +45,11 @@ namespace KRingForm
 
                 var authenticateTask = Task<bool>.Run(() =>
                 {
-                    var correctUsername = UserAuthenticator.Authenticate(userName, savedUser.SecurityData.UsernameHashSalt, savedUser.SecurityData.HashedUsername);
+                    var userAuthenticator = new UserAuthenticator();
 
-                    var correctPassword = UserAuthenticator.Authenticate(password, savedUser.SecurityData.PasswordHashSalt, savedUser.SecurityData.HashedPassword);
+                    var correctUsername = userAuthenticator.Authenticate(userName, savedUser.SecurityData.UsernameHashSalt, savedUser.SecurityData.HashedUsername);
+
+                    var correctPassword = userAuthenticator.Authenticate(password, savedUser.SecurityData.PasswordHashSalt, savedUser.SecurityData.HashedPassword);
 
                     return correctUsername && correctPassword;
                 });

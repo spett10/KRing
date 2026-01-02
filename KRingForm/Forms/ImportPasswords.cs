@@ -18,7 +18,6 @@ namespace KRingForm.Forms
         private readonly UpdateListCallback _revealingCallback;
         private readonly Form _hidingBehind;
 
-
         public ImportPasswords(OpenFileDialog dialogue, ImportCallback importCallback, ErrorCallback errorCallback, IStreamReadToEnd streamReader, UpdateListCallback revealingCallback, Form hidingBehind)
         {
             InitializeComponent();
@@ -70,7 +69,7 @@ namespace KRingForm.Forms
 
         private void Import(SecureString password)
         {
-            var importer = new DecryptingPasswordImporter(new KeyGenerator(), password);
+            var importer = new DecryptingPasswordImporter(new KeyGenerator(), password, Configuration.Configuration.ExportImportIterations);
 
             try
             {

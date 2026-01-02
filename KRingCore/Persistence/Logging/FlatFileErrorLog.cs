@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
-using KRingCore.Core;
-using System.Linq;
+﻿using KRingCore.Core;
 using KRingCore.Core.Model;
 using KRingCore.Krypto;
 using KRingCore.Krypto.Model;
+using System;
+using System.Configuration;
+using System.IO;
+using System.Linq;
 
 namespace KRingCore.Persistence.Logging
 {
@@ -14,6 +13,8 @@ namespace KRingCore.Persistence.Logging
     {
         private readonly string _logfile;
         private readonly string _logIntegrityFile;
+
+        private readonly int _deriveIterations;
 
         public FlatFileErrorLog()
         {
@@ -25,6 +26,20 @@ namespace KRingCore.Persistence.Logging
             _logIntegrityFile = base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeLogIntegrityPath"];
 #endif
 
+            _deriveIterations = Core.Configuration.PBKDF2DeriveIterations;
+        }
+
+        public FlatFileErrorLog(int deriveIterations)
+        {
+#if DEBUG
+            _logfile = ConfigurationManager.AppSettings["relativeLogPathDebug"];
+            _logIntegrityFile = ConfigurationManager.AppSettings["relativeLogIntegrityPathDebug"];
+#else
+            _logfile = base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeLogPath"];
+            _logIntegrityFile = base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeLogIntegrityPath"];
+#endif
+
+            _deriveIterations = deriveIterations > 0 ? deriveIterations : throw new ArgumentOutOfRangeException(nameof(deriveIterations)); // TODO use uint instead
         }
 
         public void Log(string context, string message)
@@ -49,7 +64,7 @@ namespace KRingCore.Persistence.Logging
             var bytes = File.ReadAllBytes(_logfile);
             var salt = CryptoHashing.GenerateSalt(64);
 
-            using (SymmetricKey key = new SymmetricKey(user.Password, salt, Core.Configuration.PBKDF2DeriveIterations))
+            using (SymmetricKey key = new SymmetricKey(user.Password, salt, _deriveIterations))
             {
                 var macBytes = CryptoHashing.HMACSHA256(bytes, key.Bytes);
 
@@ -68,7 +83,7 @@ namespace KRingCore.Persistence.Logging
             var storedSalt = Convert.FromBase64String(storedLines.First());
             var storedMac = Convert.FromBase64String(storedLines.Skip(1).First());
 
-            using (SymmetricKey key = new SymmetricKey(user.Password, storedSalt, Core.Configuration.PBKDF2DeriveIterations))
+            using (SymmetricKey key = new SymmetricKey(user.Password, storedSalt, _deriveIterations))
             {
                 var mac = CryptoHashing.HMACSHA256(bytes, key.Bytes);
 

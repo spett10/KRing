@@ -78,14 +78,14 @@ namespace UnitTests
                 securePassword.AppendChar(c);
             }
 
-            var exporter = new EncryptingPasswordExporter(new KeyGenerator(), securePassword);
+            var exporter = new EncryptingPasswordExporter(new KeyGenerator(), securePassword, deriveIterations: 1);
             var exported = exporter.ExportPasswords(this.passwords);
 
             Assert.IsFalse(string.IsNullOrEmpty(exported));
 
             var mockReader = new MockStreamReadToEnd(exported);
 
-            var importer = new DecryptingPasswordImporter(new KeyGenerator(), securePassword);
+            var importer = new DecryptingPasswordImporter(new KeyGenerator(), securePassword, exportImportIterations: 1);
             var importedList = importer.ImportPasswords("test.txt", mockReader);
 
             Assert.IsNotNull(importedList);
@@ -110,7 +110,7 @@ namespace UnitTests
                 securePassword.AppendChar(c);
             }
 
-            var exporter = new EncryptingPasswordExporter(new KeyGenerator(), securePassword);
+            var exporter = new EncryptingPasswordExporter(new KeyGenerator(), securePassword, deriveIterations: 1);
             var exported = exporter.ExportPasswords(this.passwords);
 
             Assert.IsFalse(string.IsNullOrEmpty(exported));
@@ -120,7 +120,7 @@ namespace UnitTests
             //Alter password so its wrong
             securePassword.AppendChar('e');
 
-            var importer = new DecryptingPasswordImporter(new KeyGenerator(), securePassword);
+            var importer = new DecryptingPasswordImporter(new KeyGenerator(), securePassword, exportImportIterations: 1);
             Assert.Throws<CryptoHashing.IntegrityException>(() => importer.ImportPasswords("test.txt", mockReader));
         }
 

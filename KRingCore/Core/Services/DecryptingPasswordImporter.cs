@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using KRingCore.Persistence.Model;
-using Newtonsoft.Json;
-using KRingCore.Core.Model;
-using System.Security;
-using System.Text;
-using KRingCore.Persistence.Interfaces;
-using System.Security.Cryptography;
+﻿using KRingCore.Core.Model;
 using KRingCore.Krypto;
 using KRingCore.Krypto.Extensions;
+using KRingCore.Persistence.Interfaces;
+using KRingCore.Persistence.Model;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Security;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace KRingCore.Core.Services
 {
@@ -17,11 +17,13 @@ namespace KRingCore.Core.Services
     {
         private readonly KeyGenerator _generator;
         private readonly SecureString _password;
+        private readonly int _exportImportIterations;
 
-        public DecryptingPasswordImporter(KeyGenerator generator, SecureString password)
+        public DecryptingPasswordImporter(KeyGenerator generator, SecureString password, int exportImportIterations)
         {
             _generator = generator;
             _password = password;
+            _exportImportIterations = exportImportIterations;
         }
 
         public List<StoredPassword> ImportPasswords(string filename, IStreamReadToEnd streamReader)
@@ -38,13 +40,11 @@ namespace KRingCore.Core.Services
                 }
 
                 ExportedEncryptedPasswordsWithIntegrity passwords = JsonConvert.DeserializeObject<ExportedEncryptedPasswordsWithIntegrity>(contents);
-
-                var iterations = Configuration.ExportImportIterations;
-
+                                
                 var keyGenResult = _generator.GetGenerationTask(_password,
                                                                 Convert.FromBase64String(passwords.EncryptionKeyIvBase64),
                                                                 Convert.FromBase64String(passwords.MacKeyIvBase64),
-                                                                iterations).Result;
+                                                                _exportImportIterations).Result;
 
                 var encrKey = keyGenResult.EncryptionKey.Bytes;
                 var macKey = keyGenResult.MacKey.Bytes;
@@ -72,13 +72,13 @@ namespace KRingCore.Core.Services
 
                 return list;
             }
-            catch (CryptographicException c)
+            catch (CryptographicException)
             {
-                throw c;
+                throw;
             }
-            catch (CryptoHashing.IntegrityException c)
+            catch (CryptoHashing.IntegrityException)
             {
-                throw c;
+                throw;
             }
             catch (Exception)
             {
@@ -102,13 +102,12 @@ namespace KRingCore.Core.Services
 
                 ExportedEncryptedPasswordsWithIntegrity passwords = JsonConvert.DeserializeObject<ExportedEncryptedPasswordsWithIntegrity>(contents);
 
-                var iterations = Configuration.ExportImportIterations;
                 var raw = Encoding.UTF8.GetBytes(_password.ConvertToUnsecureString());
 
                 var keyGenResult = await _generator.GetGenerationTask(_password,
                                                                       Convert.FromBase64String(passwords.EncryptionKeyIvBase64),
                                                                       Convert.FromBase64String(passwords.MacKeyIvBase64),
-                                                                      iterations);
+                                                                      _exportImportIterations);
 
                 var encrKey = keyGenResult.EncryptionKey.Bytes;
                 var macKey = keyGenResult.MacKey.Bytes;
@@ -122,7 +121,7 @@ namespace KRingCore.Core.Services
                     throw new CryptoHashing.IntegrityException();
                 }
 
-                var cipher = new AesHmacAuthenticatedCipher(System.Security.Cryptography.CipherMode.CBC, System.Security.Cryptography.PaddingMode.PKCS7);
+                var cipher = new AesHmacAuthenticatedCipher(CipherMode.CBC, PaddingMode.PKCS7);
                 var passwordsCipher = new AesHmacAuthenticatedCipher.AuthenticatedCiphertext(passwords.EncryptedPasswordsBase64, passwords.CiphertextTagBase64);
                 var encrIv = Convert.FromBase64String(passwords.EncryptionIvBase64);
 
@@ -135,9 +134,9 @@ namespace KRingCore.Core.Services
 
                 return list;
             }
-            catch (CryptographicException c)
+            catch (CryptographicException)
             {
-                throw c;
+                throw;
             }
             catch (Exception)
             {
@@ -145,7 +144,7 @@ namespace KRingCore.Core.Services
             }
         }
 
-        private void ValidateInput(string filename)
+        private static void ValidateInput(string filename)
         {
             if (String.IsNullOrEmpty(filename))
             {

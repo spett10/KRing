@@ -4,18 +4,31 @@ using System.Text;
 
 namespace KRingCore.Core.Services
 {
-    public static class UserAuthenticator
+    public class UserAuthenticator
     {
+        private readonly int _loginIterations;
+        private readonly int _oldLoginIterations;
 
-        public static bool Authenticate(byte[] secret, byte[] salt, byte[] saltedSecret)
+        public UserAuthenticator()
+        {
+            _loginIterations = Configuration.PBKDF2LoginIterations;
+            _oldLoginIterations = Configuration.OLD_PBKDF2LoginIterations;
+        }
+
+        public UserAuthenticator(int loginIterations, int oldLoginIterations = 1)
+        {
+            _loginIterations = loginIterations;
+            _oldLoginIterations = oldLoginIterations;
+        }
+
+        public bool Authenticate(byte[] secret, byte[] salt, byte[] saltedSecret)
         {
             if(secret == null ||salt == null || saltedSecret == null)
             {
                 throw new ArgumentException("Null Argument Given");
             }
 
-            var iterations = Configuration.PBKDF2LoginIterations;
-            var correctSecret = ComputeAndCompareHash(secret, salt, saltedSecret, iterations);
+            var correctSecret = ComputeAndCompareHash(secret, salt, saltedSecret, _loginIterations);
 
             if (correctSecret) return correctSecret;
 
@@ -25,29 +38,27 @@ namespace KRingCore.Core.Services
             }
             else
             {
-                var oldIterations = Configuration.OLD_PBKDF2LoginIterations;
-                return ComputeAndCompareHash(secret, salt, saltedSecret, oldIterations);
+                return ComputeAndCompareHash(secret, salt, saltedSecret, _oldLoginIterations);
             }
         }
                 
-        public static bool Authenticate(string secret, byte[] salt, byte[] saltedSecret)
+        public bool Authenticate(string secret, byte[] salt, byte[] saltedSecret)
         {
             var rawSecret = Encoding.ASCII.GetBytes(secret);
             return Authenticate(rawSecret, salt, saltedSecret);
         }
 
-        public static byte[] CreateAuthenticationToken(string secret, byte[] salt)
+        public byte[] CreateAuthenticationToken(string secret, byte[] salt)
         {
             return CreateAuthenticationToken(Encoding.ASCII.GetBytes(secret), salt);
         }
 
-        public static byte[] CreateAuthenticationToken(byte[] secret, byte[] salt)
+        public byte[] CreateAuthenticationToken(byte[] secret, byte[] salt)
         {
-            var iterations = Configuration.PBKDF2LoginIterations;
-            return HashSecret(secret, salt, iterations);
+            return HashSecret(secret, salt, _loginIterations);
         }
 
-        public static bool ComputeAndCompareHash(byte[] secret, byte[] salt, byte[] saltedSecret, int iterations)
+        public bool ComputeAndCompareHash(byte[] secret, byte[] salt, byte[] saltedSecret, int iterations)
         {
             var computedHash = HashSecret(secret, salt, iterations);
             return CryptoHashing.CompareByteArraysNoTimeLeak(computedHash, saltedSecret);

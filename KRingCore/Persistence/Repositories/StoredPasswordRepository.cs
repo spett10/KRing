@@ -168,7 +168,7 @@ namespace KRingCore.Persistence.Repositories
         /// <param name="encrKeySalt"></param>
         /// <param name="macKeySalt"></param>
         /// <param name="config"></param>
-        public StoredPasswordRepository(SecureString password, byte[] encrKeySalt, byte[] macKeySalt, IDataConfig config)
+        public StoredPasswordRepository(SecureString password, byte[] encrKeySalt, byte[] macKeySalt, IDataConfig config, int deriveIterations)
         {
             _dataConfig = config;
             
@@ -180,8 +180,8 @@ namespace KRingCore.Persistence.Repositories
             var _saltForMacKey = macKeySalt;
             _password = password;
 
-            var _encrKey = new SymmetricKey(password, _saltForEncrKey, Core.Configuration.PBKDF2DeriveIterations);
-            var _macKey = new SymmetricKey(password, _saltForMacKey, Core.Configuration.PBKDF2DeriveIterations);
+            var _encrKey = new SymmetricKey(password, _saltForEncrKey, deriveIterations);
+            var _macKey = new SymmetricKey(password, _saltForMacKey, deriveIterations);
             
             _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
 
