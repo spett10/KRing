@@ -1,9 +1,9 @@
 ﻿using KRingCore.Core.Model;
 using KRingCore.Persistence.Logging;
 using KRingCore.Persistence.Repositories;
+using KRingForm.Forms;
 using System;
 using System.Windows.Forms;
-using KRingForm.Forms;
 
 namespace KRingForm
 {
@@ -93,7 +93,7 @@ namespace KRingForm
                         }
 
                         Log("Main", "Login succesfull");
-                        Application.Run(new PasswordList(SavedUser, _profileRepository));
+                        Application.Run(new PasswordList(SavedUser));
                     }
                     catch (Exception)
                     {   

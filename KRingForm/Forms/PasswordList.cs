@@ -40,8 +40,7 @@ namespace KRingForm
         public delegate void ErrorCallback(string messageToUser);
 
         private readonly User _user;
-        private IStoredPasswordRepository _passwordRep;
-        private readonly IProfileRepository _profileRepository;
+        private readonly StoredPasswordRepository _passwordRep;
         
         private int _currentIndex;
 
@@ -53,11 +52,10 @@ namespace KRingForm
 
         private const int secondsToWait = 500;
         
-        public PasswordList(User user, IProfileRepository profileRepository)
+        public PasswordList(User user)
         {
             InitializeComponent();
             _user = user;
-            _profileRepository = profileRepository;
 
             this._user.GenerateNewSalt(new UserAuthenticator(Configuration.Configuration.PBKDF2LoginIterations, 
                                                              Configuration.Configuration.OLD_PBKDF2LoginIterations, 
@@ -294,9 +292,11 @@ namespace KRingForm
         {
             //TODO: i think the flow would be better if we first ask for password, then for the file? seems more natural. 
 
-            var saveFileDialogue = new SaveFileDialog();
-            saveFileDialogue.Filter = "Text File (*.txt)|*.txt";
-            saveFileDialogue.Title = "Export passwords encrypted";
+            var saveFileDialogue = new SaveFileDialog
+            {
+                Filter = "Text File (*.txt)|*.txt",
+                Title = "Export passwords encrypted"
+            };
             saveFileDialogue.FileOk += SaveFile_Ok;
             saveFileDialogue.ShowDialog();
         }
@@ -553,10 +553,7 @@ namespace KRingForm
         {
             get
             {
-                if(_instance == null)
-                {
-                    _instance = new ActivityManager();
-                }
+                _instance ??= new ActivityManager();
                 return _instance;
             }
         }
