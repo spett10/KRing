@@ -8,17 +8,13 @@ namespace KRingCore.Core.Services
     {
         private readonly int _loginIterations;
         private readonly int _oldLoginIterations;
+        private readonly bool _tryOldValue;
 
-        public UserAuthenticator()
-        {
-            _loginIterations = Configuration.PBKDF2LoginIterations;
-            _oldLoginIterations = Configuration.OLD_PBKDF2LoginIterations;
-        }
-
-        public UserAuthenticator(int loginIterations, int oldLoginIterations = 1)
+        public UserAuthenticator(int loginIterations, int oldLoginIterations = 1, bool tryOldValue = true)
         {
             _loginIterations = loginIterations;
             _oldLoginIterations = oldLoginIterations;
+            _tryOldValue = tryOldValue;
         }
 
         public bool Authenticate(byte[] secret, byte[] salt, byte[] saltedSecret)
@@ -32,7 +28,7 @@ namespace KRingCore.Core.Services
 
             if (correctSecret) return correctSecret;
 
-            if(!Configuration.TryOldValues)
+            if(!_tryOldValue)
             {
                 return correctSecret;
             }

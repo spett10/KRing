@@ -34,8 +34,12 @@ namespace KRingForm
             if (true)
             {
                 var profileRep = new ProfileRepository();
-                
-                var user = await Task<User>.Run(() => { return User.NewUserWithFreshSalt(new UserAuthenticator(), username, password); });
+
+                var userAuthenticator = new UserAuthenticator(Configuration.Configuration.PBKDF2LoginIterations,
+                                                              Configuration.Configuration.OLD_PBKDF2LoginIterations,
+                                                              Configuration.Configuration.TryOldValues);
+
+                var user = await Task<User>.Run(() => { return User.NewUserWithFreshSalt(userAuthenticator, username, password); });
 
                 var writeUserTask = profileRep.WriteUserAsync(user);
 

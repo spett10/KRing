@@ -59,12 +59,14 @@ namespace KRingForm
             _user = user;
             _profileRepository = profileRepository;
 
-            this._user.GenerateNewSalt(new UserAuthenticator());
+            this._user.GenerateNewSalt(new UserAuthenticator(Configuration.Configuration.PBKDF2LoginIterations, 
+                                                             Configuration.Configuration.OLD_PBKDF2LoginIterations, 
+                                                             Configuration.Configuration.TryOldValues));
 
             var securePassword = new SecureString();
             securePassword.PopulateWithString(user.PlaintextPassword);
 
-            _passwordRep = new StoredPasswordRepository(securePassword);
+            _passwordRep = new StoredPasswordRepository(securePassword, Configuration.Configuration.ExportImportIterations);
 
             UpdateList(OperationType.RefreshList, this);
 

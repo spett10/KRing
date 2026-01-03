@@ -1,5 +1,4 @@
-﻿using KRingCore.Core;
-using KRingCore.Core.Services;
+﻿using KRingCore.Core.Services;
 using KRingCore.Interfaces;
 using KRingCore.Krypto;
 using KRingCore.Persistence.Interfaces;
@@ -17,11 +16,11 @@ namespace KRingCore.Persistence.Repositories
 
         public IStoredPasswordWriter Writer { get; }
 
-        public JsonStoredPasswordIO(IDataConfig dataConfig, SecureString password)
+        public JsonStoredPasswordIO(IDataConfig dataConfig, SecureString password, int exportImportIterations)
         {
-            Reader = new JsonPasswordReader(dataConfig, password);
+            Reader = new JsonPasswordReader(dataConfig, password, exportImportIterations);
 
-            Writer = new JsonPasswordWriter(dataConfig, password); 
+            Writer = new JsonPasswordWriter(dataConfig, password, exportImportIterations); 
         }
 
     }
@@ -33,9 +32,9 @@ namespace KRingCore.Persistence.Repositories
         private readonly IStreamReadToEnd _streamReader;
         private readonly SecureString _password;
 
-        public JsonPasswordReader(IDataConfig dataConfig, SecureString password)
+        public JsonPasswordReader(IDataConfig dataConfig, SecureString password, int exportImportIterations)
         {
-            _importer = new DecryptingPasswordImporter(new KeyGenerator(), password, Configuration.ExportImportIterations);
+            _importer = new DecryptingPasswordImporter(new KeyGenerator(), password, exportImportIterations);
             _dataConfig = dataConfig;
             _password = password;
             _streamReader = new StreamReaderToEnd();
@@ -81,9 +80,9 @@ namespace KRingCore.Persistence.Repositories
 
         public bool EncryptionErrorOccured { get; private set; }
 
-        public JsonPasswordWriter(IDataConfig dataConfig, SecureString password)
+        public JsonPasswordWriter(IDataConfig dataConfig, SecureString password, int exportImportIterations)
         {
-            _exporter = new EncryptingPasswordExporter(new KeyGenerator(), password, Configuration.ExportImportIterations);
+            _exporter = new EncryptingPasswordExporter(new KeyGenerator(), password, exportImportIterations);
             _dataConfig = dataConfig;
             _streamWriter = new StreamWriterToEnd();
             _password = password;

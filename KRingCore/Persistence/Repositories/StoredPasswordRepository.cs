@@ -30,8 +30,7 @@ namespace KRingCore.Persistence.Repositories
         public bool DecryptionErrorOccured { get; private set; }
         public bool EncryptionErrorOccured { get; private set; }
 
-
-        public StoredPasswordRepository(SecureString password, List<StoredPassword> passwords)
+        public StoredPasswordRepository(SecureString password, int exportImportIterations)
         {
 #if DEBUG
             _dataConfig = new DataConfig(
@@ -46,119 +45,9 @@ namespace KRingCore.Persistence.Repositories
 
             _password = password;
             
-            _passwordIO = new JsonStoredPasswordIO(_dataConfig, _password);
-
-            _entries = passwords;
-        }
-
-        public StoredPasswordRepository(SecureString password)
-        {
-#if DEBUG
-            _dataConfig = new DataConfig(
-                               ConfigurationManager.AppSettings["relativedbPathDebug"]);
-#else
-            _dataConfig = new DataConfig(
-                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"]);
-#endif
-
-            DecryptionErrorOccured = false;
-            EncryptionErrorOccured = false;
-
-            _password = password;
-            
-            _passwordIO = new JsonStoredPasswordIO(_dataConfig, _password);
+            _passwordIO = new JsonStoredPasswordIO(_dataConfig, _password, exportImportIterations);
 
             _entries = LoadEntriesFromDb();
-        }
-
-
-        /// <summary>
-        /// If you create a new Repository object, and the underlying DB already exists
-        /// The password must be the same. Otherwise, the decryption will fail and an error must be thrown.
-        /// </summary>
-        /// <param name="password"></param>
-        public StoredPasswordRepository(SecureString password, byte[] encrKeySalt, byte[] macKeySalt)
-        {
-#if DEBUG
-            _dataConfig = new DataConfig(
-                               ConfigurationManager.AppSettings["relativedbPathDebug"]);
-#else
-            _dataConfig = new DataConfig(
-                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"]);
-#endif
-
-            DecryptionErrorOccured = false;
-            EncryptionErrorOccured = false;
-
-            var _saltForEncrKey = encrKeySalt;
-            var _saltForMacKey = macKeySalt;
-            var _password = password;
-
-            var _encrKey = new SymmetricKey(password, _saltForEncrKey, Core.Configuration.PBKDF2DeriveIterations);
-            var _macKey = new SymmetricKey(password, _saltForMacKey, Core.Configuration.PBKDF2DeriveIterations);
-            
-            _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
-
-            _entries = LoadEntriesFromDb();  
-        }
-
-        /// <summary>
-        /// Used for creating new repository at runtime, e.g. copy over password list at runtime. 
-        /// </summary>
-        /// <param name="password"></param>
-        /// <param name="encrKeySalt"></param>
-        /// <param name="macKeySalt"></param>
-        /// <param name="passwords"></param>
-        public StoredPasswordRepository(SecureString password, byte[] encrKeySalt, byte[] macKeySalt, List<StoredPassword> passwords)
-        {
-#if DEBUG
-            _dataConfig = new DataConfig(
-                               ConfigurationManager.AppSettings["relativedbPathDebug"]);
-#else
-            _dataConfig = new DataConfig(
-                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"]);
-#endif
-
-            DecryptionErrorOccured = false;
-            EncryptionErrorOccured = false;
-
-            var _saltForEncrKey = encrKeySalt;
-            var _saltForMacKey = macKeySalt;
-            var _password = password;
-
-            var _encrKey = new SymmetricKey(password, _saltForEncrKey, Core.Configuration.PBKDF2DeriveIterations);
-            var _macKey = new SymmetricKey(password, _saltForMacKey, Core.Configuration.PBKDF2DeriveIterations);
-
-            _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
-
-            _entries = passwords;
-        }
-
-
-        //TODO: do we need keys as objects? when and where to call dispose? when we clear keys? 
-        public StoredPasswordRepository(SecureString password, SymmetricKey encrKey, SymmetricKey macKey, List<StoredPassword> passwords)
-        {
-#if DEBUG
-            _dataConfig = new DataConfig(
-                               ConfigurationManager.AppSettings["relativedbPathDebug"]);
-#else
-            _dataConfig = new DataConfig(
-                               base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativedbPath"]);
-#endif
-
-            DecryptionErrorOccured = false;
-            EncryptionErrorOccured = false;
-
-            var _saltForEncrKey = new byte[0];
-            var _saltForMacKey = new byte[0];
-            _password = password;
-
-            var _encrKey = encrKey;
-            var _macKey = macKey;
-                        
-            _passwordIO = new NsvStoredPasswordIO(_password, _encrKey, _macKey, _dataConfig);
-
-            _entries = passwords;
         }
 
         /// <summary>

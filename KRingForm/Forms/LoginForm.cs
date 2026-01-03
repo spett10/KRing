@@ -45,7 +45,9 @@ namespace KRingForm
 
                 var authenticateTask = Task<bool>.Run(() =>
                 {
-                    var userAuthenticator = new UserAuthenticator();
+                    var userAuthenticator = new UserAuthenticator(Configuration.Configuration.PBKDF2LoginIterations,
+                                                                  Configuration.Configuration.OLD_PBKDF2LoginIterations,
+                                                                  Configuration.Configuration.TryOldValues);
 
                     var correctUsername = userAuthenticator.Authenticate(userName, savedUser.SecurityData.UsernameHashSalt, savedUser.SecurityData.HashedUsername);
 

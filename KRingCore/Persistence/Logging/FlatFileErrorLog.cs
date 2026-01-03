@@ -16,19 +16,6 @@ namespace KRingCore.Persistence.Logging
 
         private readonly int _deriveIterations;
 
-        public FlatFileErrorLog()
-        {
-#if DEBUG
-            _logfile = ConfigurationManager.AppSettings["relativeLogPathDebug"];
-            _logIntegrityFile = ConfigurationManager.AppSettings["relativeLogIntegrityPathDebug"];
-#else
-            _logfile = base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeLogPath"];
-            _logIntegrityFile = base.ReleasePathPrefix() + ConfigurationManager.AppSettings["relativeLogIntegrityPath"];
-#endif
-
-            _deriveIterations = Core.Configuration.PBKDF2DeriveIterations;
-        }
-
         public FlatFileErrorLog(int deriveIterations)
         {
 #if DEBUG
