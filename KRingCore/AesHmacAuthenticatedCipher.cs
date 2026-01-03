@@ -6,7 +6,7 @@ namespace KRingCore
     /// <summary>
     /// A concrete implementation of the generic base class. Uses AES and HMACSHA256. 
     /// </summary>
-    public class AesHmacAuthenticatedCipher : AuthenticatedCipher<AesCryptoServiceProvider, HMACSHA256>
+    public class AesHmacAuthenticatedCipher : AuthenticatedCipher<AesCng, HMACSHA256>
     {
         public AesHmacAuthenticatedCipher(CipherMode cipherMode, PaddingMode paddingMode) : base(cipherMode, paddingMode)
         {
@@ -29,12 +29,12 @@ namespace KRingCore
                 this.tag = Convert.FromBase64String(tag);
             }
 
-            public string GetCipherAsBase64()
+            public readonly string GetCipherAsBase64()
             {
                 return Convert.ToBase64String(ciphertext);
             }
 
-            public string GetTagAsBase64()
+            public readonly string GetTagAsBase64()
             {
                 return Convert.ToBase64String(tag);
             }
