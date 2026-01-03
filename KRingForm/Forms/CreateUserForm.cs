@@ -1,5 +1,4 @@
-﻿using KRingCore.Core;
-using KRingCore.Core.Model;
+﻿using KRingCore.Core.Model;
 using KRingCore.Core.Services;
 using KRingCore.Persistence.Repositories;
 using System;
@@ -9,7 +8,7 @@ using System.Windows.Forms;
 namespace KRingForm
 {
     public partial class CreateUserForm : Form
-    {        
+    {
         public CreateUserForm()
         {
             InitializeComponent();
@@ -23,64 +22,35 @@ namespace KRingForm
 
             var password = passwordBox.Text;
 
-            if(password == null || password == String.Empty)
+            if (string.IsNullOrEmpty(password))
             {
                 Program._messageToUser("Password cannot be empty");
                 return;
             }
 
-            //var score = PasswordAdvisor.CheckStrength(password);
 
-            if (true)
-            {
-                var profileRep = new ProfileRepository();
 
-                var userAuthenticator = new UserAuthenticator(Configuration.Configuration.PBKDF2LoginIterations,
-                                                              Configuration.Configuration.OLD_PBKDF2LoginIterations,
-                                                              Configuration.Configuration.TryOldValues);
+            var profileRep = new ProfileRepository();
 
-                var user = await Task<User>.Run(() => { return User.NewUserWithFreshSalt(userAuthenticator, username, password); });
+            var userAuthenticator = new UserAuthenticator(Configuration.Configuration.PBKDF2LoginIterations,
+                                                          Configuration.Configuration.OLD_PBKDF2LoginIterations,
+                                                          Configuration.Configuration.TryOldValues);
 
-                var writeUserTask = profileRep.WriteUserAsync(user);
+            var user = await Task<User>.Run(() => { return User.NewUserWithFreshSalt(userAuthenticator, username, password); });
 
-                /* Callback to set User */
-                Program.SavedUser = user;
-                Program.userCreated = true;
+            var writeUserTask = profileRep.WriteUserAsync(user);
 
-                /* Update Profile */
-                await writeUserTask;
+            /* Callback to set User */
+            Program.SavedUser = user;
+            Program.userCreated = true;
 
-                this.Enabled = true;
+            /* Update Profile */
+            await writeUserTask;
 
-                this.Close();
-            }
-            else
-            {
-                this.Enabled = true;
-                Program._messageToUser("Password not strong enough - it must have at least one special character, one capital character and one digit! Or, it has to have a length of at least 16.");
-            }            
+            this.Enabled = true;
+
+            this.Close();
+
         }
-
-        private bool IsPasswordStrongEnough(PasswordScore score)
-        {
-            bool passwordStrongEnough = false;
-
-            switch (score)
-            {
-                case PasswordScore.Blank:
-                case PasswordScore.VeryWeak:
-                case PasswordScore.Weak:
-                    passwordStrongEnough = false;
-                    break;
-                case PasswordScore.Medium:
-                case PasswordScore.Strong:
-                case PasswordScore.VeryStrong:
-                    passwordStrongEnough = true;
-                    break;
-            }
-
-            return passwordStrongEnough;
-        }
-
     }
 }
