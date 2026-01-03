@@ -1,10 +1,4 @@
-﻿Migration:
-
-upgrade to .net standard -> netcore 8 or 10
-	- it builds, but a lot of warnings, and a lot of windows specific warnings, fix them?
-
-
-
+﻿
 
 Try using types to avoid the mess where the order of iv and key got messed up in that one test. 
 https://allan.reyes.sh/posts/branded-types/
@@ -43,12 +37,12 @@ a user session - that is we assume the adversary is logged in as the user on her
 
 
 INSECURITIES:
-The authentication to log on simply reads the data folder that has the hashed password. Any attacker can substitute
-the values stored here for hashes produced by the same algorithms and parameters, but with a password he knows.
-That would allow an attacker to "log in" - but this would be of little use, since his password would not be the correct one,
-that the actual user used. This means the key derviation at runtime for encryption and macs would not be correct,
-so he would not be able to decrypt correctly, so he would gain no information. However, its still not a good design. Can we
-make this data internal? 
+
+The nature of the application allows for offline attacks if a user obtains the encrypted password file - they can simply try and guess the main password and try and decrypt
+ad nasuem. 
+
+We use salt with the password derivation function and have iterations set quite high, so an adversary should not practically be able to guess the password, unless it is weak / short. 
+
 
 
 LINKS:
