@@ -64,7 +64,7 @@ namespace KRingForm
             var securePassword = new SecureString();
             securePassword.PopulateWithString(user.PlaintextPassword);
 
-            _passwordRep = new StoredPasswordRepository(securePassword, Configuration.Configuration.ExportImportIterations);
+            _passwordRep = new StoredPasswordRepository(securePassword, Configuration.Configuration.PBKDF2DeriveIterations);
 
             UpdateList(OperationType.RefreshList, this);
 

@@ -7,6 +7,7 @@ https://allan.reyes.sh/posts/branded-types/
 
 -------
 
+0. why do we delete database on intergrity fail? Then you have no passwords? sure they may have been tampered with, but some of them may still be ok? 
 1. Write in some file (db? export?) the iteration count, and check at runetime its not below "some value". Then yu can export import across versions. 
 1. Make the build a self-contained exe (except for folders) so we dont have all these files. 
 2. add a version to the stored data so we can migrate algorithms in future. 

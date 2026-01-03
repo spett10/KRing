@@ -11,11 +11,12 @@
 
         static Configuration()
         {
-            Configuration.PBKDF2LoginIterations = 500000;
-            Configuration.PBKDF2DeriveIterations = 500000;
-            Configuration.OLD_PBKDF2LoginIterations = 10000;
-            Configuration.OLD_PBKDF2DeriveIterations = 10000;
-            Configuration.ExportImportIterations = 500000;
+            // Iteration count set as suggested as of 2025 
+            Configuration.PBKDF2LoginIterations = 600000;
+            Configuration.PBKDF2DeriveIterations = 600000;
+            Configuration.OLD_PBKDF2LoginIterations = 500000;
+            Configuration.OLD_PBKDF2DeriveIterations = 500000;
+            Configuration.ExportImportIterations = 600000;
             Configuration.TryOldValues = true;
         }
     }

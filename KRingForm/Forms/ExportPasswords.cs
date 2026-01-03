@@ -15,7 +15,6 @@ namespace KRingForm.Forms
         Cancel = 1
     }
 
-    //TODO: rename to export password? 
     public partial class ExportPasswords : Form
     {
         private readonly SaveFileDialog _dialogue;
@@ -77,7 +76,7 @@ namespace KRingForm.Forms
 
         private void Export(SecureString password)
         {
-            var exporter = new EncryptingPasswordExporter(new KeyGenerator(), password, deriveIterations: 1);
+            var exporter = new EncryptingPasswordExporter(new KeyGenerator(), password, Configuration.Configuration.ExportImportIterations);
 
             var exportedJson = exporter.ExportPasswords(_passwords);
 
