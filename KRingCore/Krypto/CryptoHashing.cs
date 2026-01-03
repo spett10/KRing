@@ -1,27 +1,19 @@
-﻿using System;
-
+﻿using KRingCore.Krypto.Model;
+using System;
 using System.Security.Cryptography;
-using KRingCore.Krypto.Model;
 
 namespace KRingCore.Krypto
 {
     public static class CryptoHashing
-    {        
+    {
         // Based on IV size for AES, but should be like 64 for password hashing.. 
         public static byte[] GenerateSalt(int size = 16)
         {
-            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+            using var rng = RandomNumberGenerator.Create();
             byte[] buffer = new byte[size];
-            try
-            {
-                rng.GetBytes(buffer);
+            rng.GetBytes(buffer);
 
-                return buffer;
-            }
-            finally
-            {
-                rng.Dispose();
-            }
+            return buffer;
         }
 
 
@@ -45,21 +37,9 @@ namespace KRingCore.Krypto
             return equal;
         }
 
-        public static void ZeroOutArray(ref byte[] array)
+        public static byte[] PBKDF2HMACSHA256(byte[] password, byte[] salt, int iterations, int keyLengthInBits)
         {
-            for (int i = 0; i < array.Length; i++)
-            {
-                array[i] = 0;
-            }
-        }
-
-        public static byte[] PBKDF2HMACSHA256(byte[] password, byte[] salt, int rounds, int keyLengthInBits)
-        {
-            using (var pbkdf2 = new Rfc2898DeriveBytes(
-                password, salt, rounds, HashAlgorithmName.SHA256))
-            {
-                return pbkdf2.GetBytes(keyLengthInBits / 8);
-            }
+            return Rfc2898DeriveBytes.Pbkdf2(password, salt, iterations, HashAlgorithmName.SHA256, keyLengthInBits / 8);
         }
 
         public static byte[] HMACSHA256(byte[] data, byte[] key)

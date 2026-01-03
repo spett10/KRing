@@ -95,7 +95,7 @@ namespace KRingForm
                         Log("Main", "Login succesfull");
                         Application.Run(new PasswordList(SavedUser, _profileRepository));
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {   
                         //TODO: show something to user, i.e. fatal exception occured. 
                         Log("Main", "PasswordList got exception");

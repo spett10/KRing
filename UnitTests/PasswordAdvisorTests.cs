@@ -14,7 +14,7 @@ namespace UnitTests
 
             var score = PasswordAdvisor.CheckStrength(weakPassword);
 
-            Assert.AreEqual(score, PasswordScore.VeryWeak);
+            Assert.AreEqual(PasswordScore.VeryWeak, score);
         }
     }
 }
